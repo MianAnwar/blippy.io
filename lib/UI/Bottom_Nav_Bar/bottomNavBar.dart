@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:total_app/UI/B1_Home/B1_Home_Screen/B1_Home_Screen.dart';
 import 'package:total_app/UI/B2_Message/B2_MessageScreen.dart';
@@ -6,16 +5,16 @@ import 'package:total_app/UI/B3_Trips/B3_TripScreen.dart';
 import 'package:total_app/UI/B4_Favorite/B4_FavoriteScreen.dart';
 import 'package:total_app/UI/B5_Profile/B5_ProfileScreen.dart';
 import 'custom_nav_bar.dart';
+import 'package:total_app/constants.dart';
 
-class bottomNavBar extends StatefulWidget {
-  bottomNavBar();
+class BottomNavBar extends StatefulWidget {
+  BottomNavBar();
 
-  _bottomNavBarState createState() => _bottomNavBarState();
+  _BottomNavBarState createState() => _BottomNavBarState();
 }
 
-class _bottomNavBarState extends State<bottomNavBar> {
+class _BottomNavBarState extends State<BottomNavBar> {
   int currentIndex = 0;
-  bool _color = true;
   Widget callPage(int current) {
     switch (current) {
       case 0:
@@ -31,7 +30,7 @@ class _bottomNavBarState extends State<bottomNavBar> {
         return new recommendation();
         break;
       case 4:
-        return new profile();
+        return new Profile();
         break;
       default:
         return new Home();
@@ -41,53 +40,49 @@ class _bottomNavBarState extends State<bottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Constants.basicColor,
       body: callPage(currentIndex),
       bottomNavigationBar: BottomNavigationDotBar(
-          color: Colors.black26,
-          items: <BottomNavigationDotBarItem>[
-            BottomNavigationDotBarItem(
-                icon: IconData(0xe900, fontFamily: 'home'),
-                onTap: () {
-                  setState(() {
-                    currentIndex = 0;
-                  });
-                }),
-            BottomNavigationDotBarItem(
-                icon: IconData(0xe900, fontFamily: 'message'),
-                onTap: () {
-                  setState(() {
-                    currentIndex = 1;
-                  });
-                }),
-            BottomNavigationDotBarItem(
-                icon: IconData(
-                  0xe900,
-                  fontFamily: 'trip',
-                ),
-                onTap: () {
-                  setState(() {
-                    currentIndex = 2;
-                  });
-                }),
-            BottomNavigationDotBarItem(
-                icon: IconData(
-                  0xe900,
-                  fontFamily: 'hearth',
-                ),
-                onTap: () {
-                  setState(() {
-                    currentIndex = 3;
-                  });
-                }),
-            BottomNavigationDotBarItem(
-                icon: IconData(0xe900, fontFamily: 'profile'),
-                onTap: () {
-                  setState(() {
-                    currentIndex = 4;
-                  });
-                }),
-          ]),
+        activeColor: Constants.basicColor,
+        color: Colors.black26,
+        items: <BottomNavigationDotBarItem>[
+          BottomNavigationDotBarItem(
+              icon: Icons.home, // IconData(0xe900, fontFamily: 'home'),
+              onTap: () {
+                setState(() {
+                  currentIndex = 0;
+                });
+              }),
+          BottomNavigationDotBarItem(
+              icon: (Icons.qr_code_scanner),
+              onTap: () {
+                setState(() {
+                  currentIndex = 1;
+                });
+              }),
+          BottomNavigationDotBarItem(
+              icon: Icons.storefront,
+              onTap: () {
+                setState(() {
+                  currentIndex = 2;
+                });
+              }),
+          BottomNavigationDotBarItem(
+              icon: Icons.star_rate_outlined,
+              onTap: () {
+                setState(() {
+                  currentIndex = 3;
+                });
+              }),
+          BottomNavigationDotBarItem(
+              icon: Icons.more_horiz,
+              onTap: () {
+                setState(() {
+                  currentIndex = 4;
+                });
+              }),
+        ],
+      ),
     );
   }
 }

@@ -29,7 +29,7 @@ class _BottomNavigationDotBarState extends State<BottomNavigationDotBar> {
 
   _afterLayout(_) {
     _color = widget.color ?? Colors.yellow.withOpacity(0.1);
-    _activeColor = widget.activeColor ?? Color(0xFF928CEF);
+    _activeColor = widget.activeColor ?? Color(0xFF56aeff);
     final sizeBottomBar =
         (_keyBottomBar.currentContext.findRenderObject() as RenderBox).size;
     _numPositionBase = ((sizeBottomBar.width / widget.items.length));
@@ -176,6 +176,6 @@ class _NavigationIconButtonState extends State<_NavigationIconButton>
               child: Icon(
                 widget._icon,
                 color: widget._colorIcon,
-                size: 20.0,
+                size: 25.0,
               ))));
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:total_app/UI/IntroApps/travelSelection.dart';
+import 'package:total_app/UI/Bottom_Nav_Bar/bottomNavBar.dart';
+import 'package:flutter/services.dart';
+import 'package:total_app/constants.dart';
 
 /// Componen Login Animation to set Animation in login like a bounce ball to fullscreen
 class LoginAnimation extends StatefulWidget {
@@ -23,7 +25,7 @@ class LoginAnimation extends StatefulWidget {
           height: animation.value,
           width: animation.value,
           decoration: BoxDecoration(
-            color: Color(0xFF8DA2BF),
+            color: Constants.basicColor,
             shape: animation.value < 600 ? BoxShape.circle : BoxShape.rectangle,
           ),
         ));
@@ -38,11 +40,22 @@ class _LoginAnimationState extends State<LoginAnimation> {
 
   /// To navigation after animation complete
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+      statusBarColor: Colors.transparent,
+    ));
     widget.animationController.addListener(() {
       if (widget.animation.isCompleted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (BuildContext context) => new mainSelection(),
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => new BottomNavBar(),
+            transitionDuration: Duration(milliseconds: 600),
+            transitionsBuilder:
+                (_, Animation<double> animation, __, Widget child) {
+              return Opacity(
+                opacity: animation.value,
+                child: child,
+              );
+            },
           ),
         );
       }

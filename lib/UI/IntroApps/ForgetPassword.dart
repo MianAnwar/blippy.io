@@ -49,14 +49,17 @@ class _ForgetPasswordState extends State<ForgetPassword>
           },
           child: Icon(
             Icons.arrow_back,
-            color: Constants.thirdColor,
+            color: Constants.secondColor,
           ),
         ),
         backgroundColor: Constants.basicColor,
         centerTitle: true,
         title: Text(
-          "Forget Password",
-          style: TextStyle(color: Constants.thirdColor),
+          "Password Reset",
+          style: TextStyle(
+            color: Constants.secondColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         elevation: 0.0,
       ),
@@ -77,11 +80,11 @@ class _ForgetPasswordState extends State<ForgetPassword>
         children: [
           ListTile(
             title: Text(
-              "Enter Email:", //
+              "Enter the email address associated with your Teams account. ", //
+              textAlign: TextAlign.center,
               style: TextStyle(
-                color: Constants.basicColor, //Colors.black38,
+                color: Constants.secondColor, //Colors.black38,
                 fontFamily: "profile",
-                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1,
               ),
@@ -94,7 +97,7 @@ class _ForgetPasswordState extends State<ForgetPassword>
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   border: InputBorder.none,
-                  hintText: "Already Registered Email",
+                  hintText: "Registered Email",
                   icon: Icon(
                     Icons.email,
                     color: Colors.black12,

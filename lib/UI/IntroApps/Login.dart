@@ -49,9 +49,6 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Constants.basicColor,
-    ));
     return Scaffold(
       backgroundColor: Constants.thirdColor,
       body: ListView(
@@ -66,7 +63,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                   // top picture
                   Container(
                     height: MediaQuery.of(context).size.height * 0.33,
-                    color: Constants.basicColor,
+                    color: Constants.thirdColor,
                     child: FadeAnimation(
                       0.2,
                       Container(
@@ -106,7 +103,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                             child: Text(
                               "Sign In",
                               style: TextStyle(
-                                  color: Constants.basicColor,
+                                  color: Constants.secondColor,
                                   fontFamily: "Sofia",
                                   fontWeight: FontWeight.w800,
                                   fontSize:
@@ -160,15 +157,16 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                                   child: TextField(
                                     obscureText: true,
                                     decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "Password",
-                                        icon: Icon(
-                                          Icons.vpn_key,
-                                          color: Colors.black12,
-                                        ),
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey,
-                                            fontFamily: "sofia")),
+                                      border: InputBorder.none,
+                                      hintText: "Password",
+                                      icon: Icon(
+                                        Icons.vpn_key,
+                                        color: Colors.black12,
+                                      ),
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey,
+                                          fontFamily: "sofia"),
+                                    ),
                                   ),
                                 )
                               ],
@@ -190,6 +188,10 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                           splashColor: Constants.secondColor,
                           onTap: () {
                             setState(() {
+                              /////
+                              /////// Get the credentials and verify them from database,
+                              ///////     after verification take use to dashboard
+                              ///// if not verified then return 'foran' with -1
                               tap = 1;
                             });
                             new LoginAnimation(
@@ -263,9 +265,9 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                               right: MediaQuery.of(context).size.width * 0.05,
                             ),
                             child: Text(
-                              "Forget Password ?",
+                              "Forget Password?",
                               style: TextStyle(
-                                color: Constants.basicColor, //Colors.black38,
+                                color: Constants.secondColor, //Colors.black38,
                                 fontFamily: "Sofia",
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.3,
@@ -305,7 +307,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                           child: Text(
                             "Sign Up",
                             style: TextStyle(
-                                color: Constants.basicColor, //Colors.black38,
+                                color: Constants.secondColor, //Colors.black38,
                                 fontFamily: "Sofia",
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,

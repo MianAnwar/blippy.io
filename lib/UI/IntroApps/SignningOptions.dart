@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:total_app/Library/SupportingLibrary/Animation/FadeAnimation.dart';
-import 'package:total_app/UI/IntroApps/Login.dart';
 import 'package:total_app/constants.dart';
 
 class SignningOptions extends StatefulWidget {
@@ -48,16 +47,14 @@ class _SignningOptionsState extends State<SignningOptions>
           onTap: () {
             Navigator.of(context).pop();
           },
-          child: Icon(
-            Icons.arrow_back,
-            color: Constants.thirdColor,
-          ),
+          child: Icon(Icons.arrow_back, color: Constants.thirdColor),
         ),
         backgroundColor: Constants.basicColor,
         centerTitle: true,
         title: Text(
-          "Plan",
-          style: TextStyle(color: Constants.thirdColor),
+          "Plan Options",
+          style: TextStyle(
+              color: Constants.secondColor, fontWeight: FontWeight.bold),
         ),
         elevation: 0.0,
       ),
@@ -84,7 +81,7 @@ class _SignningOptionsState extends State<SignningOptions>
             title: Text(
               name, //
               style: TextStyle(
-                color: Constants.basicColor, //Colors.black38,
+                color: Constants.secondColor, //Colors.black38,
                 fontFamily: "profile",
                 fontSize: 22,
                 fontWeight: FontWeight.bold,

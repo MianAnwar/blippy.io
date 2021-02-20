@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:total_app/constants.dart';
 
-class profileUser extends StatefulWidget {
-  profileUser({Key key}) : super(key: key);
+import 'SettingAcount.dart';
+
+class ProfileUser extends StatefulWidget {
+  ProfileUser({Key key}) : super(key: key);
 
   @override
-  _profileUserState createState() => _profileUserState();
+  _ProfileUserState createState() => _ProfileUserState();
 }
 
-class _profileUserState extends State<profileUser> {
+class _ProfileUserState extends State<ProfileUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,42 +21,68 @@ class _profileUserState extends State<profileUser> {
           children: <Widget>[
             Stack(
               children: <Widget>[
+                // Background curve
                 Container(
                   width: double.infinity,
-                  height: 280.0,
+                  height: 250.0,
                   decoration: BoxDecoration(
-                      color: Color(0xFF72A065),
+                      color: Constants.basicColor,
                       borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(30.0),
                           bottomRight: Radius.circular(30.0))),
                 ),
+
+                // Back Button...........
                 Padding(
-                  padding: const EdgeInsets.only(top: 60.0, left: 20.0),
+                  padding: EdgeInsets.only(top: 60.0, left: 20.0),
                   child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+
+                // Setting Button...........
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 60.0, right: 20.0),
+                    child: InkWell(
                       onTap: () {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).push(PageRouteBuilder(
+                            pageBuilder: (_, __, ___) => new SettingAcount()));
                       },
                       child: Icon(
-                        Icons.arrow_back,
+                        Icons.settings,
                         color: Colors.white,
-                      )),
+                      ),
+                    ),
+                  ),
                 ),
+
+                // Profile Picture, FullName, Email, countOf a, b
                 Padding(
-                  padding: const EdgeInsets.only(top: 150.0),
+                  padding: EdgeInsets.only(top: 100.0),
                   child: Center(
                     child: Container(
-                      height: 250.0,
+                      height: 230.0,
                       width: 310.0,
                       decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black12.withOpacity(0.1)),
-                          ]),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                        boxShadow: [
+                          BoxShadow(color: Colors.black12.withOpacity(0.1)),
+                        ],
+                      ),
                       child: Column(
                         children: <Widget>[
+                          // Picture
                           Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
+                            padding: EdgeInsets.only(top: 10.0),
                             child: Container(
                               height: 100.0,
                               width: 100.0,
@@ -74,27 +103,33 @@ class _profileUserState extends State<profileUser> {
                                   ]),
                             ),
                           ),
-                          SizedBox(
-                            height: 5.0,
-                          ),
+                          SizedBox(height: 5.0),
+
+                          // Username
                           Text(
                             "Alex Nourin",
                             style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Sofia",
-                                fontWeight: FontWeight.w700,
-                                fontSize: 20.0),
+                              color: Colors.black,
+                              fontFamily: "Sofia",
+                              fontWeight: FontWeight.w700,
+                              fontSize: 20.0,
+                            ),
                           ),
+
+                          // Email
                           Text(
-                            "Alexnourin12@gmai.com",
+                            "miananwar.developer@gmai.com",
+                            maxLines: 1,
                             style: TextStyle(
                                 color: Colors.black38,
                                 fontFamily: "Sofia",
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16.0),
                           ),
+
+                          // countOf a, b
                           Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
+                            padding: EdgeInsets.only(top: 5.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -102,16 +137,14 @@ class _profileUserState extends State<profileUser> {
                                 Row(
                                   children: <Widget>[
                                     CircleAvatar(
-                                        backgroundColor:
-                                            Color(0xFF72A065).withOpacity(0.6),
+                                        backgroundColor: Constants.basicColor
+                                            .withOpacity(0.6),
                                         child: Icon(
-                                          Icons.photo,
+                                          Icons.people,
                                           color: Colors.white,
-                                          size: 18.0,
                                         )),
                                     Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 10.0),
+                                      padding: EdgeInsets.only(left: 10.0),
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
@@ -127,12 +160,13 @@ class _profileUserState extends State<profileUser> {
                                                 fontSize: 16.0),
                                           ),
                                           Text(
-                                            "Photo",
+                                            "Staff",
                                             style: TextStyle(
-                                                color: Colors.black45,
-                                                fontFamily: "Sofia",
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 16.0),
+                                              color: Colors.black45,
+                                              fontFamily: "Sofia",
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16.0,
+                                            ),
                                           )
                                         ],
                                       ),
@@ -145,12 +179,12 @@ class _profileUserState extends State<profileUser> {
                                 Row(
                                   children: <Widget>[
                                     CircleAvatar(
-                                        backgroundColor:
-                                            Color(0xFF72A065).withOpacity(0.6),
+                                        backgroundColor: Constants.basicColor
+                                            .withOpacity(0.6),
                                         child: Icon(
-                                          Icons.thumb_up,
+                                          Icons
+                                              .integration_instructions_outlined,
                                           color: Colors.white,
-                                          size: 18.0,
                                         )),
                                     Padding(
                                       padding:
@@ -162,7 +196,7 @@ class _profileUserState extends State<profileUser> {
                                             CrossAxisAlignment.center,
                                         children: <Widget>[
                                           Text(
-                                            "120 K",
+                                            "220",
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontFamily: "Sofia",
@@ -170,7 +204,7 @@ class _profileUserState extends State<profileUser> {
                                                 fontSize: 16.0),
                                           ),
                                           Text(
-                                            "Likes",
+                                            "Products",
                                             style: TextStyle(
                                                 color: Colors.black45,
                                                 fontFamily: "Sofia",
@@ -192,21 +226,12 @@ class _profileUserState extends State<profileUser> {
                 )
               ],
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 25.0, top: 40.0, bottom: 10.0),
-              child: Text(
-                "Start Sharing Your Thought",
-                style: TextStyle(
-                    fontFamily: "Sofia",
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16.0),
-              ),
-            ),
-            _card(Icons.hotel, "Hotel"),
-            _card(Icons.local_dining, "Eats"),
-            _card(Icons.directions_run, "Experience"),
-            _card(Icons.directions_car, "Car Rental"),
+//
+            _card(Icons.contact_phone, "+1 (408) 568 9614 \n+1 (408) 568 9615"),
+            _card(Icons.location_on, "Location >> Loc"),
+            _card(Icons.location_city,
+                "Address Address Address Address Address Address"),
+            _card(Icons.sanitizer, "In Stock"),
             _card(Icons.directions_bus, "Bus"),
             SizedBox(
               height: 20.0,
@@ -222,7 +247,7 @@ class _profileUserState extends State<profileUser> {
   ///
   Widget _card(IconData _icon, String title) {
     return Padding(
-      padding: const EdgeInsets.only(top: 15.0),
+      padding: EdgeInsets.only(top: 15.0),
       child: InkWell(
         onTap: () {
           // Navigator.of(context).push(PageRouteBuilder(
@@ -265,8 +290,8 @@ class _profileUserState extends State<profileUser> {
                         end: Alignment.bottomRight,
                         tileMode: TileMode.repeated,
                         colors: [
-                          Color(0xFF72A065),
-                          Color(0xFF72A065).withOpacity(0.7)
+                          Constants.basicColor,
+                          Constants.basicColor.withOpacity(0.7)
                         ]),
                     borderRadius: BorderRadius.all(Radius.circular(50.0)),
                   ),

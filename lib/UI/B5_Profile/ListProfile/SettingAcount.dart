@@ -1,31 +1,18 @@
 import 'package:flutter/material.dart';
+import '../../../constants.dart';
 
-class settingAcount extends StatefulWidget {
+class SettingAcount extends StatefulWidget {
   @override
-  _settingAcountState createState() => _settingAcountState();
+  _SettingAcountState createState() => _SettingAcountState();
 }
 
-class _settingAcountState extends State<settingAcount> {
-  static var _txtCustomHead = TextStyle(
-    color: Colors.black54,
-    fontSize: 17.0,
-    fontWeight: FontWeight.w600,
-    fontFamily: "Gotik",
-  );
-
-  static var _txtCustomSub = TextStyle(
-    color: Colors.black38,
-    fontSize: 15.0,
-    fontWeight: FontWeight.w500,
-    fontFamily: "Gotik",
-  );
-
+class _SettingAcountState extends State<SettingAcount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Setting Account",
+          "Account Settings",
           style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 18.0,
@@ -33,41 +20,25 @@ class _settingAcountState extends State<settingAcount> {
               fontFamily: "Gotik"),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Color(0xFF6991C7)),
+        iconTheme: IconThemeData(color: Constants.basicColor),
         elevation: 0.0,
       ),
       body: SingleChildScrollView(
         child: Container(
           child: Column(
             children: <Widget>[
-              setting(
+              Setting(
                 head: "Account",
                 sub1: "Address",
                 sub2: "Telephone",
                 sub3: "Email",
               ),
-              setting(
+              Setting(
                 head: "Setting",
-                sub1: "Order Notifications",
-                sub2: "Discount Notifications",
-                sub3: "Credit Card",
+                sub1: "Profile Image",
+                sub2: "My Location",
+                sub3: "Way to intact",
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 5.0),
-                child: Container(
-                  height: 50.0,
-                  width: 1000.0,
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        top: 13.0, left: 20.0, bottom: 15.0),
-                    child: Text(
-                      "Logout",
-                      style: _txtCustomHead,
-                    ),
-                  ),
-                ),
-              )
             ],
           ),
         ),
@@ -76,7 +47,7 @@ class _settingAcountState extends State<settingAcount> {
   }
 }
 
-class setting extends StatelessWidget {
+class Setting extends StatelessWidget {
   static var _txtCustomHead = TextStyle(
     color: Colors.black54,
     fontSize: 17.0,
@@ -93,7 +64,7 @@ class setting extends StatelessWidget {
 
   String head, sub1, sub2, sub3;
 
-  setting({this.head, this.sub1, this.sub2, this.sub3});
+  Setting({this.head, this.sub1, this.sub2, this.sub3});
 
   @override
   Widget build(BuildContext context) {

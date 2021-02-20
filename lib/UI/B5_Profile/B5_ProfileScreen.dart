@@ -1,181 +1,142 @@
 import 'package:flutter/material.dart';
-import 'package:total_app/UI/B1_Home/House/HouseList.dart';
 import 'package:total_app/UI/B2_Message/AppBar_ItemScreen/notificationAppbar.dart';
+import 'package:total_app/constants.dart';
 
-import 'ListProfile/CallCenter.dart';
 import 'ListProfile/SettingAcount.dart';
-import 'ListProfile/addCreditCard.dart';
-import 'ListProfile/category.dart';
+import 'ListProfile/License.dart';
+import 'package:total_app/UI/IntroApps/SignningOptions.dart';
 import 'ListProfile/profileUser.dart';
 
-class profile extends StatefulWidget {
-  profile({Key key}) : super(key: key);
+class Profile extends StatefulWidget {
+  Profile({Key key}) : super(key: key);
 
   @override
-  _profileState createState() => _profileState();
+  _ProfileState createState() => _ProfileState();
 }
 
-class _profileState extends State<profile> {
+class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        title: Text(
+          "Settings",
+          style: TextStyle(fontFamily: "Sofia", fontSize: 25.0),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Stack(
           children: <Widget>[
-            Container(
-              height: 352.0,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage(
-                        "assets/image/images/bannerProfile.png",
-                      ),
-                      fit: BoxFit.cover)),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 67.0, left: 20.0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          height: 90.0,
-                          width: 90.0,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage(
-                                      "assets/image/profile/profile3.jpg"),
-                                  fit: BoxFit.cover),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(50.0),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black12.withOpacity(0.1),
-                                    blurRadius: 10.0,
-                                    spreadRadius: 2.0)
-                              ]),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 25.0, top: 20.0),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  "Alex Nourin",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: "Sofia",
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 20.0),
-                                ),
-                                Text(
-                                  "AlexNou21@gmail.com",
-                                  style: TextStyle(
-                                      color: Colors.black38,
-                                      fontFamily: "Sofia",
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 16.0),
-                                ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-                              ]),
-                        ),
-                      ]),
+            //
+            //
+            // options hi options
+            Column(
+              children: <Widget>[
+                // Account
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new ProfileUser()));
+                  },
+                  child: Category(
+                    txt: "Account",
+                    image: "assets/image/icon/profile.png",
+                    padding: 20.0,
+                  ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 230.0),
-              child: Column(
-                children: <Widget>[
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => new profileUser()));
-                    },
-                    child: category(
-                      txt: "Profile",
-                      image: "assets/image/icon/profile.png",
-                      padding: 20.0,
+
+                // Plans
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new SignningOptions()));
+                  },
+                  child: Category(
+                    txt: "Plan",
+                    image: "assets/image/icon/box.png",
+                    padding: 20.0,
+                  ),
+                ),
+
+                // Notifications
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new notificationAppbar()));
+                  },
+                  child: Category(
+                    txt: "Notification",
+                    image: "assets/image/icon/notification.png",
+                    padding: 20.0,
+                  ),
+                ),
+
+                // // Card
+                // InkWell(
+                //   onTap: () {
+                //     Navigator.of(context).push(PageRouteBuilder(
+                //         pageBuilder: (_, __, ___) => new addCreditCard()));
+                //   },
+                //   child: category(
+                //     txt: "Card erase ",
+                //     image: "assets/image/icon/card.png",
+                //     padding: 20.0,
+                //   ),
+                // ),
+
+                //Settings
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new SettingAcount()));
+                  },
+                  child: Category(
+                    txt: "Settings",
+                    image: "assets/image/icon/settings.png",
+                    padding: 20.0,
+                  ),
+                ),
+
+                // About
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new LicensesSimplePage()));
+                  },
+                  child: Category(
+                    txt: "About",
+                    image: "assets/image/icon/italia.png",
+                    padding: 20.0,
+                  ),
+                ),
+
+                // Logout Button
+                Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Container(
+                    height: 50.0,
+                    width: 100.0,
+                    color: Constants.basicColor,
+                    child: Padding(
+                      padding:
+                          EdgeInsets.only(top: 13.0, left: 20.0, bottom: 15.0),
+                      child: Text(
+                        "Logout",
+                        style: TextStyle(
+                          color: Constants.thirdColor,
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: "Gotik",
+                        ),
+                      ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => new categoryProfile()));
-                    },
-                    child: category(
-                      txt: "Category",
-                      image: "assets/image/icon/box.png",
-                      padding: 20.0,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) =>
-                              new notificationAppbar()));
-                    },
-                    child: category(
-                      txt: "Notification",
-                      image: "assets/image/icon/notification.png",
-                      padding: 20.0,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => new houseList(
-                                nameAppbar: "Discount",
-                              )));
-                    },
-                    child: category(
-                      txt: "Discount",
-                      image: "assets/image/icon/coupon.png",
-                      padding: 20.0,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => new addCreditCard()));
-                    },
-                    child: category(
-                      txt: "Card",
-                      image: "assets/image/icon/card.png",
-                      padding: 20.0,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => new callCenter()));
-                    },
-                    child: category(
-                      txt: "Call Center",
-                      image: "assets/image/icon/callCenter.png",
-                      padding: 20.0,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => new settingAcount()));
-                    },
-                    child: category(
-                      txt: "Settings",
-                      image: "assets/image/icon/settings.png",
-                      padding: 20.0,
-                    ),
-                  ),
-                ],
-              ),
+                )
+              ],
             ),
           ],
         ),
@@ -185,14 +146,13 @@ class _profileState extends State<profile> {
 }
 
 /// Component category class to set list
-class category extends StatelessWidget {
-  @override
+class Category extends StatelessWidget {
   String txt, image;
   GestureTapCallback tap;
   double padding;
 
-  category({this.txt, this.image, this.tap, this.padding});
-
+  Category({this.txt, this.image, this.tap, this.padding});
+  @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: tap,
@@ -237,9 +197,7 @@ class category extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
-            height: 20.0,
-          ),
+          SizedBox(height: 8.0),
           Divider(
             color: Colors.black12,
           )

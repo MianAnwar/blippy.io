@@ -40,6 +40,8 @@ dependencies:
   flutter_credit_card:
   google_maps_flutter: ^0.5.27+1
 
+  badges: ^1.1.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

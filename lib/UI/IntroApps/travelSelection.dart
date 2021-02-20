@@ -253,7 +253,7 @@ class _mainSelectionState extends State<mainSelection> {
                             Navigator.of(context).pushReplacement(
                                 PageRouteBuilder(
                                     pageBuilder: (_, __, ___) =>
-                                        new bottomNavBar(),
+                                        new BottomNavBar(),
                                     transitionDuration:
                                         Duration(milliseconds: 600),
                                     transitionsBuilder: (_,
@@ -269,7 +269,7 @@ class _mainSelectionState extends State<mainSelection> {
                             Navigator.of(context).pushReplacement(
                                 PageRouteBuilder(
                                     pageBuilder: (_, __, ___) =>
-                                        new bottomNavBar(),
+                                        new BottomNavBar(),
                                     transitionDuration:
                                         Duration(milliseconds: 600),
                                     transitionsBuilder: (_,
@@ -285,7 +285,7 @@ class _mainSelectionState extends State<mainSelection> {
                             Navigator.of(context).pushReplacement(
                                 PageRouteBuilder(
                                     pageBuilder: (_, __, ___) =>
-                                        new bottomNavBar(),
+                                        new BottomNavBar(),
                                     transitionDuration:
                                         Duration(milliseconds: 600),
                                     transitionsBuilder: (_,
@@ -301,7 +301,7 @@ class _mainSelectionState extends State<mainSelection> {
                             Navigator.of(context).pushReplacement(
                                 PageRouteBuilder(
                                     pageBuilder: (_, __, ___) =>
-                                        new bottomNavBar(),
+                                        new BottomNavBar(),
                                     transitionDuration:
                                         Duration(milliseconds: 600),
                                     transitionsBuilder: (_,
@@ -317,7 +317,7 @@ class _mainSelectionState extends State<mainSelection> {
                             Navigator.of(context).pushReplacement(
                                 PageRouteBuilder(
                                     pageBuilder: (_, __, ___) =>
-                                        new bottomNavBar(),
+                                        new BottomNavBar(),
                                     transitionDuration:
                                         Duration(milliseconds: 600),
                                     transitionsBuilder: (_,
@@ -333,7 +333,7 @@ class _mainSelectionState extends State<mainSelection> {
                             Navigator.of(context).pushReplacement(
                                 PageRouteBuilder(
                                     pageBuilder: (_, __, ___) =>
-                                        new bottomNavBar(),
+                                        new BottomNavBar(),
                                     transitionDuration:
                                         Duration(milliseconds: 600),
                                     transitionsBuilder: (_,

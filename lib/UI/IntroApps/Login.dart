@@ -246,7 +246,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                         Navigator.of(context).push(
                           PageRouteBuilder(
                             pageBuilder: (_, __, ___) => ForgetPassword(),
-                            transitionDuration: Duration(milliseconds: 2000),
+                            transitionDuration: Duration(milliseconds: 700),
                             transitionsBuilder: (_, Animation<double> animation,
                                 __, Widget child) {
                               return Opacity(
@@ -287,7 +287,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                         Navigator.of(context).push(
                           PageRouteBuilder(
                             pageBuilder: (_, __, ___) => SignningOptions(),
-                            transitionDuration: Duration(milliseconds: 2000),
+                            transitionDuration: Duration(milliseconds: 750),
                             transitionsBuilder: (_, Animation<double> animation,
                                 __, Widget child) {
                               return Opacity(

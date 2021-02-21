@@ -5,12 +5,12 @@ import 'package:total_app/DataSample/HotelListData.dart';
 import 'package:total_app/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:shimmer/shimmer.dart';
 
-class hotelList extends StatefulWidget {
+class HotelList extends StatefulWidget {
   @override
-  _hotelListState createState() => _hotelListState();
+  _HotelListState createState() => _HotelListState();
 }
 
-class _hotelListState extends State<hotelList> {
+class _HotelListState extends State<HotelList> {
   @override
   static hotelListData hotelData;
   bool loadImage = true;
@@ -42,7 +42,7 @@ class _hotelListState extends State<hotelList> {
         loadImage = false;
       });
     });
-    // TODO: implement initState
+    // TODo implement initState
     super.initState();
   }
 
@@ -88,10 +88,10 @@ class _hotelListState extends State<hotelList> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                          "Hotel",
+                          "Demo Products",
                           style: TextStyle(
                               fontFamily: "Sofia",
-                              fontSize: 35.0,
+                              fontSize: 25.0,
                               fontWeight: FontWeight.w800),
                         ),
                         Row(

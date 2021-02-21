@@ -54,7 +54,7 @@ class _tripState extends State<trip> {
                   InkWell(
                     onTap: () {
                       Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => exploreTrip()));
+                          pageBuilder: (_, __, ___) => ExploreTrip()));
                     },
                     child: Container(
                       height: 45.0,

@@ -1,20 +1,19 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
-import 'package:total_app/DataSample/HotelListData.dart';
 import 'package:total_app/DataSample/travelModelData.dart';
 import 'package:total_app/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:total_app/UI/B1_Home/Destination/destinationDetail.dart';
 import 'package:total_app/UI/B1_Home/Hotel/Hotel_Detail_Concept_1/hotelDetail_concept_1.dart';
 import 'package:total_app/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
 
-class exploreTrip extends StatefulWidget {
-  exploreTrip({Key key}) : super(key: key);
+class ExploreTrip extends StatefulWidget {
+  ExploreTrip({Key key}) : super(key: key);
 
   @override
-  _exploreTripState createState() => _exploreTripState();
+  _ExploreTripState createState() => _ExploreTripState();
 }
 
-class _exploreTripState extends State<exploreTrip> {
+class _ExploreTripState extends State<ExploreTrip> {
   var _recommended = Padding(
     padding: EdgeInsets.only(left: 5.0),
     child: Container(
@@ -507,7 +506,7 @@ class cardCountry extends StatelessWidget {
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (_, __, ___) => new destination(
+              pageBuilder: (_, __, ___) => new Destination(
                     title: this.title,
                   ),
               transitionDuration: Duration(milliseconds: 600),

@@ -37,9 +37,6 @@ class _SignningOptionsState extends State<SignningOptions>
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Constants.basicColor,
-    ));
     return Scaffold(
       backgroundColor: Constants.thirdColor,
       appBar: AppBar(

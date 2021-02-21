@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:total_app/UI/B1_Home/B1_Home_Screen/B1_Home_Screen.dart';
 import 'package:total_app/UI/B2_Message/B2_MessageScreen.dart';
 import 'package:total_app/UI/B3_Trips/B3_TripScreen.dart';
-import 'package:total_app/UI/B4_Favorite/B4_FavoriteScreen.dart';
+import 'package:total_app/UI/B4_Review/B4_ReviewScreen.dart';
 import 'package:total_app/UI/B5_Profile/B5_ProfileScreen.dart';
 import 'custom_nav_bar.dart';
+import 'package:flutter/services.dart';
 import 'package:total_app/constants.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -21,13 +22,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
         return new Home();
         break;
       case 1:
-        return new noMessage();
+        return new Scanning();
         break;
       case 2:
         return new trip();
         break;
       case 3:
-        return new recommendation();
+        return new ReviewScreen();
         break;
       case 4:
         return new Profile();
@@ -49,6 +50,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
           BottomNavigationDotBarItem(
               icon: Icons.home, // IconData(0xe900, fontFamily: 'home'),
               onTap: () {
+                SystemChrome.setSystemUIOverlayStyle(
+                    SystemUiOverlayStyle.light.copyWith(
+                  statusBarColor: Colors.transparent,
+                ));
                 setState(() {
                   currentIndex = 0;
                 });
@@ -56,6 +61,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
           BottomNavigationDotBarItem(
               icon: (Icons.qr_code_scanner),
               onTap: () {
+                SystemChrome.setSystemUIOverlayStyle(
+                    SystemUiOverlayStyle.light.copyWith(
+                  statusBarColor: Colors.transparent,
+                ));
                 setState(() {
                   currentIndex = 1;
                 });
@@ -64,6 +73,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
               icon: Icons.storefront,
               onTap: () {
                 setState(() {
+                  SystemChrome.setSystemUIOverlayStyle(
+                      SystemUiOverlayStyle.light.copyWith(
+                    statusBarColor: Colors.transparent,
+                  ));
                   currentIndex = 2;
                 });
               }),
@@ -71,6 +84,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
               icon: Icons.star_rate_outlined,
               onTap: () {
                 setState(() {
+                  SystemChrome.setSystemUIOverlayStyle(
+                      SystemUiOverlayStyle.light.copyWith(
+                    statusBarColor: Colors.transparent,
+                  ));
                   currentIndex = 3;
                 });
               }),
@@ -78,6 +95,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
               icon: Icons.more_horiz,
               onTap: () {
                 setState(() {
+                  SystemChrome.setSystemUIOverlayStyle(
+                      SystemUiOverlayStyle.light.copyWith(
+                    statusBarColor: Colors.transparent,
+                  ));
                   currentIndex = 4;
                 });
               }),

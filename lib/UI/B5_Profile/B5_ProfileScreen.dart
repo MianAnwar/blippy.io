@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:total_app/UI/B2_Message/AppBar_ItemScreen/notificationAppbar.dart';
 import 'package:total_app/constants.dart';
 
-import 'ListProfile/SettingAcount.dart';
+import 'ListProfile/SettingApp.dart';
 import 'ListProfile/License.dart';
 import 'package:total_app/UI/IntroApps/SignningOptions.dart';
-import 'ListProfile/profileUser.dart';
+import 'package:total_app/UI/B1_Home/B1_Home_Screen/editProfile.dart';
+import 'package:total_app/UI/IntroApps/Login.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key key}) : super(key: key);
@@ -40,7 +41,7 @@ class _ProfileState extends State<Profile> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new ProfileUser()));
+                        pageBuilder: (_, __, ___) => new EditProfile()));
                   },
                   child: Category(
                     txt: "Account",
@@ -92,10 +93,10 @@ class _ProfileState extends State<Profile> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new SettingAcount()));
+                        pageBuilder: (_, __, ___) => new SettingApp()));
                   },
                   child: Category(
-                    txt: "Settings",
+                    txt: "App Settings",
                     image: "assets/image/icon/settings.png",
                     padding: 20.0,
                   ),
@@ -117,20 +118,61 @@ class _ProfileState extends State<Profile> {
                 // Logout Button
                 Padding(
                   padding: EdgeInsets.all(20.0),
-                  child: Container(
-                    height: 50.0,
-                    width: 100.0,
-                    color: Constants.basicColor,
-                    child: Padding(
-                      padding:
-                          EdgeInsets.only(top: 13.0, left: 20.0, bottom: 15.0),
-                      child: Text(
-                        "Logout",
-                        style: TextStyle(
-                          color: Constants.thirdColor,
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: "Gotik",
+                  child: InkWell(
+                    onTap: () {
+                      var alterDialog = AlertDialog(
+                        title: Text('Alert'),
+                        content: Text('Are you sure to logout?'),
+                        actions: [
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(
+                                PageRouteBuilder(
+                                  pageBuilder: (_, __, ___) => new Login(),
+                                  transitionDuration: Duration(milliseconds: 0),
+                                  transitionsBuilder: (_,
+                                      Animation<double> animation,
+                                      __,
+                                      Widget child) {
+                                    return Opacity(
+                                      opacity: animation.value,
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                            child: Text("Yes"),
+                          ),
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("No"),
+                          ),
+                        ],
+                      );
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return alterDialog;
+                          });
+                    },
+                    child: Container(
+                      height: 50.0,
+                      width: 100.0,
+                      color: Constants.basicColor,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: 13.0, left: 20.0, bottom: 15.0),
+                        child: Text(
+                          "Logout",
+                          style: TextStyle(
+                            color: Constants.thirdColor,
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: "Gotik",
+                          ),
                         ),
                       ),
                     ),

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
-class search extends StatefulWidget {
+class Search extends StatefulWidget {
   @override
-  _searchState createState() => _searchState();
+  _SearchState createState() => _SearchState();
 }
 
-class _searchState extends State<search> {
-  @override
+class _SearchState extends State<Search> {
   var _appBar = AppBar(
     iconTheme: IconThemeData(
-      color: Colors.deepPurpleAccent,
+      color: Color(0xFF56aeff),
     ),
     title: Text(
       "Search",
@@ -19,25 +18,15 @@ class _searchState extends State<search> {
           color: Colors.black,
           fontFamily: "Gotik"),
     ),
-    actions: <Widget>[
-      Padding(
-        padding: const EdgeInsets.only(right: 20.0),
-        child: CircleAvatar(
-          backgroundColor: Colors.black54,
-          radius: 15.0,
-          child: Image.asset("assets/image/images/GirlProfile.png"),
-        ),
-      )
-    ],
     centerTitle: true,
     backgroundColor: Colors.white,
     elevation: 0.0,
   );
 
   var _textHello = Padding(
-    padding: const EdgeInsets.only(right: 50.0, left: 20.0),
+    padding: EdgeInsets.only(right: 50.0, left: 20.0),
     child: Text(
-      "Hello, Alice. \nWhat would you like to search ?",
+      "Hello, \nWhat would you like to search ?",
       style: TextStyle(
           letterSpacing: 0.1,
           fontWeight: FontWeight.w600,
@@ -52,7 +41,7 @@ class _searchState extends State<search> {
 
   /// Item TextFromField Search
   var _search = Padding(
-      padding: const EdgeInsets.only(top: 65.0, right: 20.0, left: 20.0),
+      padding: EdgeInsets.only(top: 50.0, right: 20.0, left: 20.0),
       child: Column(
         children: <Widget>[
           Container(
@@ -68,90 +57,19 @@ class _searchState extends State<search> {
                 ]),
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.only(left: 20.0, right: 10.0),
-                child: Theme(
-                  data: ThemeData(hintColor: Colors.transparent),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        icon: Icon(
-                          Icons.search,
-                          color: Color(0xFF6991C7),
-                          size: 28.0,
-                        ),
-                        hintText: "Find you want",
-                        hintStyle: txtButton),
-                  ),
+                padding: EdgeInsets.only(left: 20.0, right: 10.0),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      icon: Icon(
+                        Icons.search,
+                        color: Color(0xFF56aeff),
+                        size: 28.0,
+                      ),
+                      hintText: "Find you want",
+                      hintStyle: txtButton),
                 ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10.0),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  height: 50.0,
-                  width: 120.0,
-                  decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                    BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 2.0,
-                        spreadRadius: 0.0)
-                  ]),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15.0),
-                        child: Icon(
-                          Icons.access_time,
-                          color: Colors.black26,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Text(
-                          "Now",
-                          style: txtButton,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Container(
-                    height: 50.0,
-                    width: 190.0,
-                    decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 2.0,
-                          spreadRadius: 0.0)
-                    ]),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Icon(
-                            Icons.location_on,
-                            color: Colors.black26,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            "Location",
-                            style: txtButton,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
             ),
           ),
           Padding(
@@ -159,7 +77,7 @@ class _searchState extends State<search> {
             child: Container(
               height: 50.0,
               decoration: BoxDecoration(
-                color: Colors.deepPurpleAccent,
+                color: Color(0xFF56aeff),
               ),
               child: Center(
                 child: Text(
@@ -234,6 +152,7 @@ class _searchState extends State<search> {
     ),
   );
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar,
@@ -241,7 +160,7 @@ class _searchState extends State<search> {
         child: Container(
           color: Colors.white,
           child: Padding(
-            padding: EdgeInsets.only(top: 15.0),
+            padding: EdgeInsets.only(top: 5.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -249,7 +168,7 @@ class _searchState extends State<search> {
                 _textHello,
                 _search,
                 _popular,
-                Padding(padding: EdgeInsets.only(bottom: 30.0, top: 2.0))
+                // Padding(padding: EdgeInsets.only(bottom: 30.0, top: 2.0))
               ],
             ),
           ),

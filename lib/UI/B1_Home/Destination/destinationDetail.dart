@@ -4,15 +4,15 @@ import 'package:total_app/DataSample/travelModelData.dart';
 import 'package:total_app/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:total_app/UI/B1_Home/B1_Home_Screen/B1_Home_Screen.dart';
 
-class destination extends StatefulWidget {
-  String title;
-  destination({Key key, this.title}) : super(key: key);
+class Destination extends StatefulWidget {
+  final String title;
+  Destination({Key key, this.title}) : super(key: key);
 
   @override
-  _destinationState createState() => _destinationState();
+  _DestinationState createState() => _DestinationState();
 }
 
-class _destinationState extends State<destination> {
+class _DestinationState extends State<Destination> {
   @override
   Widget build(BuildContext context) {
     var onClickMenuIcon = () {

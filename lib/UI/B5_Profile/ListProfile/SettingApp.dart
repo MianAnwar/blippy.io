@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import '../../../constants.dart';
 
-class SettingAcount extends StatefulWidget {
+class SettingApp extends StatefulWidget {
   @override
-  _SettingAcountState createState() => _SettingAcountState();
+  _SettingApp createState() => _SettingApp();
 }
 
-class _SettingAcountState extends State<SettingAcount> {
+class _SettingApp extends State<SettingApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Account Settings",
+          "App Settings",
           style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 18.0,
@@ -28,13 +28,7 @@ class _SettingAcountState extends State<SettingAcount> {
           child: Column(
             children: <Widget>[
               Setting(
-                head: "Account",
-                sub1: "Address",
-                sub2: "Telephone",
-                sub3: "Email",
-              ),
-              Setting(
-                head: "Setting",
+                head: "Setting | Visiblity of Data |",
                 sub1: "Profile Image",
                 sub2: "My Location",
                 sub3: "Way to intact",

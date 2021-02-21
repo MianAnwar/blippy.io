@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:total_app/Library/SupportingLibrary/Animation/FadeAnimation.dart';
 import 'package:total_app/constants.dart';
 
 class ForgetPassword extends StatefulWidget {
@@ -37,9 +35,6 @@ class _ForgetPasswordState extends State<ForgetPassword>
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Constants.basicColor,
-    ));
     return Scaffold(
       backgroundColor: Constants.thirdColor,
       appBar: AppBar(

@@ -41,7 +41,7 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
   }
 
   /// Playanimation set forward reverse
-  Future<Null> _PlayAnimation() async {
+  Future<Null> _playAnimation() async {
     try {
       await sanimationController.forward();
       await sanimationController.reverse();
@@ -224,7 +224,7 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                         new LoginAnimation(
                           animationController: sanimationController.view,
                         );
-                        _PlayAnimation();
+                        _playAnimation();
                         return tap;
                       },
                       child: FadeAnimation(

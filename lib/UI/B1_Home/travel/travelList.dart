@@ -36,7 +36,7 @@ class _travelListState extends State<travelList> {
         title: InkWell(
           onTap: () {
             Navigator.of(context).push(
-                PageRouteBuilder(pageBuilder: (_, __, ___) => new search()));
+                PageRouteBuilder(pageBuilder: (_, __, ___) => new Search()));
           },
           child: Container(
             height: 37.0,

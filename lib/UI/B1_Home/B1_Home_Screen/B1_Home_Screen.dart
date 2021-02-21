@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'Search.dart';
 import 'package:total_app/constants.dart';
 import 'package:badges/badges.dart';
+import 'package:total_app/UI/B1_Home/B1_Home_Screen/editProfile.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -41,7 +42,7 @@ class _HomeState extends State<Home> {
       child: InkWell(
         onTap: () => Navigator.of(context).push(
           PageRouteBuilder(
-            pageBuilder: (_, __, ___) => new search(),
+            pageBuilder: (_, __, ___) => new Search(),
             transitionsBuilder:
                 (_, Animation<double> animation, __, Widget child) {
               return Opacity(
@@ -142,17 +143,37 @@ class _HomeState extends State<Home> {
                       child: Row(
                         children: [
                           // user image
-                          Container(
-                              height: 70.0,
-                              width: 70.0,
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(50.0)),
-                                  image: DecorationImage(
-                                    image: AssetImage(
-                                      "assets/image/images/GirlProfile.png",
-                                    ),
-                                  ))),
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder: (_, __, ___) => EditProfile(),
+                                  transitionDuration:
+                                      Duration(milliseconds: 1000),
+                                  transitionsBuilder: (_,
+                                      Animation<double> animation,
+                                      __,
+                                      Widget child) {
+                                    return Opacity(
+                                      opacity: animation.value,
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                            child: Container(
+                                height: 70.0,
+                                width: 70.0,
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(50.0)),
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                        "assets/image/images/GirlProfile.png",
+                                      ),
+                                    ))),
+                          ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

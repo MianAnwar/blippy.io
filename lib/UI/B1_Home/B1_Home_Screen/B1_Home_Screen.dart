@@ -17,21 +17,21 @@ class _HomeState extends State<Home> {
       statusBarColor: Constants.basicColor,
     ));
 
-    // var _appBar = AppBar(
-    //   backgroundColor: Constants.basicColor,
-    //   title: Text(
-    //     "Dashboard",
-    //     style: TextStyle(
-    //       fontWeight: FontWeight.w900,
-    //       fontFamily: "Gotik",
-    //       fontSize: 25.0,
-    //       color: Constants.thirdColor,
-    //     ),
-    //   ),
-    //   centerTitle: true,
-    //   // brightness: Brightness.light,
-    //   elevation: 0.0,
-    // );
+    var _appBar = AppBar(
+      backgroundColor: Constants.basicColor,
+      title: Text(
+        "Dashboard",
+        style: TextStyle(
+          fontWeight: FontWeight.w900,
+          fontFamily: "Gotik",
+          fontSize: 25.0,
+          color: Constants.thirdColor,
+        ),
+      ),
+      centerTitle: true,
+      brightness: Brightness.light,
+      elevation: 0.0,
+    );
 
     var _searchBox = Padding(
       padding: EdgeInsets.only(
@@ -95,7 +95,7 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       backgroundColor: Constants.thirdColor,
-      // appBar: _appBar,
+      appBar: _appBar,
       body: ListView(
         children: [
           Column(
@@ -105,7 +105,7 @@ class _HomeState extends State<Home> {
                 color: Constants.basicColor,
                 alignment: Alignment.topRight,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 2, right: 15.0),
+                  padding: const EdgeInsets.only(top: 0, right: 15.0),
                   child: Text(
                     getToday(), // "Monday, feb 2",
                     style: TextStyle(color: Constants.thirdColor),
@@ -118,19 +118,19 @@ class _HomeState extends State<Home> {
                 alignment: AlignmentDirectional.bottomEnd,
                 children: [
                   Align(
-                    alignment: Alignment.center,
+                    alignment: Alignment.topCenter,
                     child: Container(
-                      height: MediaQuery.of(context).size.height * 0.27,
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height * 0.05),
+                      height: MediaQuery.of(context).size.height * 0.2,
                       color: Constants.basicColor,
-                      child: Container(
-                        child: Center(
-                          child: Hero(
-                            tag: 'iconImage',
-                            child: Image.asset(
-                              'assets/logos.png',
-                              height: MediaQuery.of(context).size.height * 0.6,
-                              width: MediaQuery.of(context).size.width * 0.6,
-                            ),
+                      child: Center(
+                        child: Hero(
+                          tag: 'iconImage',
+                          child: Image.asset(
+                            'assets/logos.png',
+                            height: MediaQuery.of(context).size.height * 0.5,
+                            width: MediaQuery.of(context).size.width * 0.5,
                           ),
                         ),
                       ),
@@ -139,7 +139,7 @@ class _HomeState extends State<Home> {
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: Container(
-                      padding: const EdgeInsets.only(left: 3.0),
+                      padding: EdgeInsets.only(left: 3.0),
                       child: Row(
                         children: [
                           // user image
@@ -184,7 +184,7 @@ class _HomeState extends State<Home> {
                                   "Welcome,",
                                   style: TextStyle(
                                     color: Constants.thirdColor,
-                                    fontSize: 22,
+                                    fontSize: 20,
                                   ),
                                 ),
                               ),

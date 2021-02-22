@@ -29,9 +29,9 @@ class _SettingApp extends State<SettingApp> {
             children: <Widget>[
               Setting(
                 head: "Setting | Visiblity of Data |",
-                sub1: "Profile Image",
+                sub1: "Change Password",
                 sub2: "My Location",
-                sub3: "Way to intact",
+                sub3: "Contant Number",
               ),
             ],
           ),
@@ -56,7 +56,7 @@ class Setting extends StatelessWidget {
     fontFamily: "Gotik",
   );
 
-  String head, sub1, sub2, sub3;
+  final String head, sub1, sub2, sub3;
 
   Setting({this.head, this.sub1, this.sub2, this.sub3});
 

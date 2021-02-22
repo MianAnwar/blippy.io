@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:total_app/constants.dart';
 
 class EditProfile extends StatefulWidget {
   EditProfile({Key key}) : super(key: key);
@@ -52,9 +53,9 @@ class _EditProfileState extends State<EditProfile> {
                 child: Column(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(18.0),
+                      padding: EdgeInsets.all(18.0),
                       child: Container(
-                        height: 420.0,
+                        height: 430.0,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -267,32 +268,6 @@ class _EditProfileState extends State<EditProfile> {
                               color: Colors.black12.withOpacity(0.1),
                               height: 1.3,
                             ),
-
-                            Padding(
-                              padding: EdgeInsets.only(top: 8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Staff: 4",
-                                    style: TextStyle(
-                                        fontFamily: "Sofia",
-                                        color: Colors.blueGrey,
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                  Text(
-                                    "Products: 124",
-                                    style: TextStyle(
-                                        fontFamily: "Sofia",
-                                        color: Colors.blueGrey,
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              ),
-                            ),
                           ],
                         ),
                       ),
@@ -301,8 +276,9 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               Align(
-                  alignment: Alignment.topCenter,
-                  child: Stack(children: <Widget>[
+                alignment: Alignment.topCenter,
+                child: Stack(
+                  children: <Widget>[
                     Hero(
                       tag: 'hero-tag-profile',
                       child: Container(
@@ -319,7 +295,7 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 80.0, left: 90.0),
+                      padding: EdgeInsets.only(top: 80.0, left: 90.0),
                       child: InkWell(
                         onTap: () {},
                         child: Container(
@@ -340,11 +316,50 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                       ),
                     ),
-                  ]))
+                  ],
+                ),
+              ),
             ],
           ),
         ),
       ),
+      floatingActionButton: FlatButton(
+        onPressed: () {
+          var alterDialog = AlertDialog(
+            title: Text('Alert'),
+            content: Text(
+                'Are you sure to Delete your Account?\n It will erase all data from our system.'),
+            actions: [
+              FlatButton(
+                onPressed: () {
+                  //
+                },
+                child: Text("Yes"),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("No"),
+              ),
+            ],
+          );
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return alterDialog;
+              });
+        },
+        color: Colors.red,
+        child: Text(
+          'Delete My Store Permanently',
+          // 'Delete My Account Permanently',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

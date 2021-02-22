@@ -5,7 +5,7 @@ import 'package:total_app/constants.dart';
 import 'ListProfile/SettingApp.dart';
 import 'ListProfile/License.dart';
 import 'package:total_app/UI/IntroApps/SignningOptions.dart';
-import 'package:total_app/UI/B1_Home/B1_Home_Screen/editProfile.dart';
+import 'package:total_app/UI/B5_Profile/ListProfile/ViewProfile.dart';
 import 'package:total_app/UI/IntroApps/Login.dart';
 
 class Profile extends StatefulWidget {
@@ -16,6 +16,68 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  Widget buildItem() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 13),
+      // color: Colors.amber,
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: Hero(
+                    tag: '001122ff',
+                    child: Image(
+                      // width: 100,
+                      // height: 100,
+                      image: AssetImage(
+                        'assets/image/images/GirlProfile.png',
+                      ),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(PageRouteBuilder(
+                    pageBuilder: (_, __, ___) => new ViewEditProfile()));
+              },
+              child: Padding(
+                padding: EdgeInsets.only(left: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Username",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      padding: EdgeInsets.all(4),
+                      color: Colors.grey[300],
+                      child: Text("View and Edit Profile"),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,19 +99,10 @@ class _ProfileState extends State<Profile> {
             // options hi options
             Column(
               children: <Widget>[
-                // Account
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new EditProfile()));
-                  },
-                  child: Category(
-                    txt: "Account",
-                    image: "assets/image/icon/profile.png",
-                    padding: 20.0,
-                  ),
+                buildItem(),
+                SizedBox(
+                  height: 20,
                 ),
-
                 // Plans
                 InkWell(
                   onTap: () {

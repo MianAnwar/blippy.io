@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:total_app/Library/SupportingLibrary/Animation/FadeAnimation.dart';
 import 'package:total_app/constants.dart';
 
@@ -44,12 +43,12 @@ class _SignningOptionsState extends State<SignningOptions>
           onTap: () {
             Navigator.of(context).pop();
           },
-          child: Icon(Icons.arrow_back, color: Constants.thirdColor),
+          child: Icon(Icons.arrow_back, color: Constants.secondColor),
         ),
         backgroundColor: Constants.basicColor,
         centerTitle: true,
         title: Text(
-          "Plan Options",
+          "PLAN OPTIONS",
           style: TextStyle(
               color: Constants.secondColor, fontWeight: FontWeight.bold),
         ),

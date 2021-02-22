@@ -62,7 +62,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                 children: <Widget>[
                   // top picture
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.33,
+                    height: MediaQuery.of(context).size.height * 0.25,
                     color: Constants.thirdColor,
                     child: FadeAnimation(
                       0.2,
@@ -86,7 +86,6 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                   /////////////////////////////////////////////////
                   Padding(
                     padding: EdgeInsets.only(
-                      top: 10,
                       left: MediaQuery.of(context).size.width * 0.05,
                       right: MediaQuery.of(context).size.width * 0.05,
                     ),
@@ -278,7 +277,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.25),
 
                   FadeAnimation(
                     1.7,
@@ -300,12 +299,11 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                       },
                       child: Container(
                         padding: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.04,
-                        ),
+                            top: MediaQuery.of(context).size.height * 0.0),
                         child: Align(
                           alignment: Alignment.bottomCenter,
                           child: Text(
-                            "Sign Up",
+                            "Create New Account",
                             style: TextStyle(
                                 color: Constants.secondColor, //Colors.black38,
                                 fontFamily: "Sofia",

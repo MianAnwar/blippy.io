@@ -3,7 +3,6 @@ import 'package:flutter_rating/flutter_rating.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:total_app/UI/B1_Home/Hotel/Hotel_Detail_Concept_1/reviewDetail1.dart';
 import 'package:total_app/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/maps.dart';
-import 'gallery.dart';
 
 class hotelDetail extends StatefulWidget {
   String image, title, price, location, id;
@@ -14,13 +13,13 @@ class hotelDetail extends StatefulWidget {
 }
 
 class _hotelDetailState extends State<hotelDetail> {
-  @override
   double rating = 3.5;
   final Set<Marker> _markers = {};
   final LatLng _currentPosition = LatLng(40.7078523, -74.008981);
 
   @override
   void initState() {
+    // get from firebase
     _markers.add(
       Marker(
         markerId: MarkerId("40.7078523, -74.008981"),
@@ -31,41 +30,77 @@ class _hotelDetailState extends State<hotelDetail> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     double _height = MediaQuery.of(context).size.height;
-    double _width = MediaQuery.of(context).size.width;
+    // double _width = MediaQuery.of(context).size.width;
 
+//attribute icons
     var _icon = Container(
-      height: 105.0,
+      height: 100.0,
       width: double.infinity,
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.only(top: 15.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: _infoCircle("assets/image/icon/wifi.png", "Free Wifi")),
-            Padding(
-                padding: const EdgeInsets.only(right: 0.0),
-                child: _infoCircle("assets/image/icon/food.png", "Food")),
-            Padding(
-                padding: const EdgeInsets.only(right: 0.0),
-                child: _infoCircle("assets/image/icon/clean.png", "Clean")),
-            Padding(
-                padding: const EdgeInsets.only(right: 0.0),
-                child:
-                    _infoCircle("assets/image/icon/monitor.png", "Television")),
-            Padding(
-                padding: const EdgeInsets.only(right: 15.0),
-                child:
-                    _infoCircle("assets/image/icon/swimming.png", "Swimming")),
-          ],
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Padding(
+                  padding: const EdgeInsets.only(left: 15.0, right: 15),
+                  child:
+                      _infoCircle("assets/image/icon/wifi.png", "Free Wifi")),
+              Padding(
+                  padding: const EdgeInsets.only(right: 15.0),
+                  child: _infoCircle("assets/image/icon/food.png", "Food")),
+              Padding(
+                  padding: const EdgeInsets.only(right: 15.0),
+                  child: _infoCircle("assets/image/icon/clean.png", "Clean")),
+              Padding(
+                  padding: const EdgeInsets.only(right: 15.0),
+                  child: _infoCircle(
+                      "assets/image/icon/monitor.png", "Television")),
+              Padding(
+                  padding: const EdgeInsets.only(right: 15.0),
+                  child: _infoCircle(
+                      "assets/image/icon/swimming.png", "Swimming")),
+            ],
+          ),
         ),
       ),
     );
 
+    var _deals = Container(
+      height: 100.0,
+      width: double.infinity,
+      color: Colors.white,
+      child: Padding(
+        padding: EdgeInsets.only(top: 15.0),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(left: 15.0, right: 15),
+                  child: _infoBox(
+                      "Top Deals", Colors.deepOrangeAccent, Colors.white)),
+              Padding(
+                  padding: EdgeInsets.only(right: 15.0),
+                  child:
+                      _infoBox("Sale", Colors.deepOrangeAccent, Colors.white)),
+              Padding(
+                  padding: EdgeInsets.only(right: 15.0),
+                  child:
+                      _infoBox("Featured", Colors.grey[400], Colors.black45)),
+            ],
+          ),
+        ),
+      ),
+    );
+
+//description
     var _desc = Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +109,7 @@ class _hotelDetailState extends State<hotelDetail> {
           padding: const EdgeInsets.only(
               top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
           child: Text(
-            "About",
+            "Description / Comment",
             style: TextStyle(
                 fontFamily: "Sofia",
                 fontSize: 20.0,
@@ -86,7 +121,7 @@ class _hotelDetailState extends State<hotelDetail> {
           padding: const EdgeInsets.only(
               top: 0.0, left: 20.0, right: 20.0, bottom: 50.0),
           child: Text(
-            "Spend a unforgettable holiday in the enchanting surroundings of the town of Cisternino (reachable from the near airports of Bari and Brindisi). \n\nTrullo Edera offers a heaven of peace and tranquillity, set in an elevated position with a stunning view. It's the perfect place if you like nature. You can stay under an olive tree reading a good book, you can have a walk in the small country streets or go to the nearest beaches.",
+            "Spend a unforgettable in the enchanting surroundings of the town of Cisternino (reachable from the near airports of Bari and Brindisi). \n\nTrullo Edera offers a heaven of peace and tranquillity, set in an elevated position with a stunning view. It's the perfect place if you like nature. You can stay under an olive tree reading a good book, you can have a walk in the small country streets or go to the nearest beaches.",
             style: TextStyle(
                 fontFamily: "Sofia",
                 color: Colors.black54,
@@ -98,6 +133,7 @@ class _hotelDetailState extends State<hotelDetail> {
       ],
     );
 
+// location
     var _location = Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +142,7 @@ class _hotelDetailState extends State<hotelDetail> {
           padding: const EdgeInsets.only(
               top: 0.0, left: 20.0, right: 20.0, bottom: 20.0),
           child: Text(
-            "Location",
+            "Store Map",
             style: TextStyle(
                 fontFamily: "Sofia",
                 fontSize: 20.0,
@@ -118,6 +154,7 @@ class _hotelDetailState extends State<hotelDetail> {
           children: <Widget>[
             Container(
               height: 190.0,
+              //Google Map
               child: GoogleMap(
                 mapType: MapType.normal,
                 initialCameraPosition: CameraPosition(
@@ -127,8 +164,9 @@ class _hotelDetailState extends State<hotelDetail> {
                 markers: _markers,
               ),
             ),
+            ///// see map
             Padding(
-              padding: const EdgeInsets.only(top: 135.0, right: 60.0),
+              padding: EdgeInsets.only(top: 135.0, right: 60.0),
               child: Align(
                 alignment: Alignment.bottomRight,
                 child: InkWell(
@@ -151,122 +189,6 @@ class _hotelDetailState extends State<hotelDetail> {
                 ),
               ),
             )
-          ],
-        ),
-      ],
-    );
-
-    var _gallery = Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(
-              top: 70.0, left: 20.0, right: 20.0, bottom: 10.0),
-          child: Text(
-            "Gallery",
-            style: TextStyle(
-                fontFamily: "Sofia",
-                fontSize: 20.0,
-                fontWeight: FontWeight.w700),
-            textAlign: TextAlign.justify,
-          ),
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Container(
-                  height: _width / 3,
-                  width: _width / 3.1,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                            "assets/image/room/room1.jpg",
-                          ),
-                          fit: BoxFit.cover)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 3.0, right: 3.0),
-                  child: Container(
-                    height: _width / 3,
-                    width: _width / 3.05,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(
-                              "assets/image/room/room2.jpg",
-                            ),
-                            fit: BoxFit.cover)),
-                  ),
-                ),
-                Container(
-                  height: _width / 3,
-                  width: _width / 3.1,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                            "assets/image/room/room3.jpg",
-                          ),
-                          fit: BoxFit.cover)),
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Container(
-                  height: _width / 3,
-                  width: _width / 3.1,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                            "assets/image/room/room4.jpg",
-                          ),
-                          fit: BoxFit.cover)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(3.0),
-                  child: Container(
-                    height: _width / 3,
-                    width: _width / 3.05,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(
-                              "assets/image/room/room5.jpg",
-                            ),
-                            fit: BoxFit.cover)),
-                  ),
-                ),
-                Container(
-                  height: _width / 3,
-                  width: _width / 3.1,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                            "assets/image/room/room6.jpg",
-                          ),
-                          fit: BoxFit.cover)),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => new gallery()));
-                    },
-                    child: Container(
-                      color: Colors.black54,
-                      child: Center(
-                        child: Text("See More",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: "Sofia",
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16.0)),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ],
@@ -403,94 +325,99 @@ class _hotelDetailState extends State<hotelDetail> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 40.0),
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  "Related Post",
-                  style: TextStyle(
-                      fontFamily: "Sofia",
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w700),
-                ),
-                Text(
-                  "See all",
-                  style: TextStyle(
-                      fontFamily: "Sofia",
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w300),
-                ),
-              ]),
-        ),
-        SizedBox(
-          height: 10.0,
-        ),
-        Container(
-          height: 200.0,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: <Widget>[
-              SizedBox(
-                width: 10.0,
-              ),
-              _relatedPost("assets/image/room/room7.jpg", "The Cheeses Guide",
-                  "87 Botsford", "4,3"),
-              _relatedPost("assets/image/room/room8.jpg", "Garage Bar Seafood",
-                  "Gilison London", "4,1"),
-              _relatedPost("assets/image/room/room9.jpg",
-                  "Spagheti Kilimanjaro", "Netherland", "4,2"),
-              _relatedPost("assets/image/room/room10.jpg", "Gangtok Vegetable",
-                  "Nepal", "4,7"),
-              _relatedPost("assets/image/room/room11.jpg", "Soup Caikaki",
-                  "Orlando", "4,5"),
-              SizedBox(
-                width: 10.0,
-              ),
-            ],
-          ),
-        ),
         SizedBox(
           height: 40.0,
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-          child: InkWell(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: Container(
-              height: 55.0,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  gradient: LinearGradient(
-                      colors: [
-                        const Color(0xFF8F73F2),
-                        Colors.deepPurpleAccent,
-                      ],
-                      begin: const FractionalOffset(0.0, 0.0),
-                      end: const FractionalOffset(1.0, 0.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp)),
-              child: Center(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Row(
+            children: [
+              Icon(Icons.share),
+              TextButton(
+                onPressed: () {},
                 child: Text(
-                  "Book Now",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 19.0,
-                      fontFamily: "Sofia",
-                      fontWeight: FontWeight.w600),
+                  'Share',
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
-            ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Row(
+            children: [
+              Icon(Icons.paste_outlined),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  'Return Policy',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Row(
+            children: [
+              Icon(Icons.info),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  'Price Match Policy',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Row(
+            children: [
+              Icon(Icons.question_answer_outlined),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  'Q&A',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ],
           ),
         ),
         SizedBox(
           height: 30.0,
         ),
       ],
+    );
+
+    var instock = Container(
+      height: 40.0,
+      width: 100,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          gradient: LinearGradient(
+              colors: [
+                const Color(0xFF8F03F2),
+                Colors.deepOrangeAccent,
+              ],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(1.0, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp)),
+      child: Center(
+        child: Text(
+          "in Stock",
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 19.0,
+              fontFamily: "Sofia",
+              fontWeight: FontWeight.w600),
+        ),
+      ),
     );
 
     return Scaffold(
@@ -518,16 +445,71 @@ class _hotelDetailState extends State<hotelDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                   /// For icon row
+                  Padding(
+                    padding:
+                        EdgeInsets.only(top: 40.0, left: 20.0, right: 20.0),
+                    child: Text(
+                      "Attributes",
+                      style: TextStyle(
+                          fontFamily: "Sofia",
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w700),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ),
+
                   _icon,
+
+                  Padding(
+                    padding: EdgeInsets.only(left: 20.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Place in Store'),
+                            SizedBox(height: 10),
+                            Text(
+                              'Aisle: X',
+                              style: TextStyle(
+                                  fontFamily: "Sofia",
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w700),
+                              textAlign: TextAlign.justify,
+                            ),
+                            Text(
+                              'Section: Xx',
+                              style: TextStyle(
+                                  fontFamily: "Sofia",
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w700),
+                              textAlign: TextAlign.justify,
+                            ),
+                            Text(
+                              'Shelf: Y',
+                              style: TextStyle(
+                                  fontFamily: "Sofia",
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w700),
+                              textAlign: TextAlign.justify,
+                            ),
+                          ],
+                        ),
+                        instock,
+                      ],
+                    ),
+                  ),
 
                   /// Desc
                   _desc,
 
+                  /// For icon row
+                  _deals,
+
                   /// Location
                   _location,
-
-                  /// Gallery
-                  _gallery,
 
                   /// Ratting
                   _ratting,
@@ -542,6 +524,7 @@ class _hotelDetailState extends State<hotelDetail> {
   }
 }
 
+///////////silver appbar
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
 
@@ -563,14 +546,14 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
       overflow: Overflow.clip,
       children: [
         Container(
-          height: 50.0,
+          height: 0.0,
           width: double.infinity,
           color: Colors.white,
         ),
         Align(
           alignment: Alignment.center,
           child: Text(
-            "Trevatel",
+            "$title",
             style: TextStyle(
               color: Colors.black,
               fontFamily: "Gotik",
@@ -582,7 +565,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
         Opacity(
           opacity: (1 - shrinkOffset / expandedHeight),
           child: Hero(
-            tag: 'hero-tag-${id}',
+            tag: 'hero-tag-$id',
             child: new DecoratedBox(
               decoration: new BoxDecoration(
                 image: new DecorationImage(
@@ -612,65 +595,68 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
           alignment: Alignment.bottomLeft,
           child: Opacity(
             opacity: (1 - shrinkOffset / expandedHeight),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width - 30,
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                          color: Colors.black87.withOpacity(0.65),
-                          fontSize: 30.5,
-                          fontFamily: "Sofia",
-                          fontWeight: FontWeight.w700),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width - 30,
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                            color: Colors.black87.withOpacity(0.65),
+                            fontSize: 30.5,
+                            fontFamily: "Sofia",
+                            fontWeight: FontWeight.w700),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.location_on,
-                        size: 14.0,
-                        color: Colors.black26,
-                      ),
-                      Text(
-                        "Wembley, London",
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.location_on,
+                          size: 14.0,
+                          color: Colors.black26,
+                        ),
+                        Text(
+                          "Wembley, London",
+                          style: TextStyle(
+                              color: Colors.black26,
+                              fontSize: 14.5,
+                              fontFamily: "Popins",
+                              fontWeight: FontWeight.w800),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20.0, top: 10.0, bottom: 10.0),
+                    child: Container(
+                      child: Text(
+                        '$price',
                         style: TextStyle(
-                            color: Colors.black26,
-                            fontSize: 14.5,
+                            color: Color(0xFF8F73F2),
+                            fontSize: 25.5,
                             fontFamily: "Popins",
                             fontWeight: FontWeight.w800),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 20.0, top: 10.0, bottom: 10.0),
-                  child: Container(
-                    child: Text(
-                      price,
-                      style: TextStyle(
-                          color: Color(0xFF8F73F2),
-                          fontSize: 25.5,
-                          fontFamily: "Popins",
-                          fontWeight: FontWeight.w800),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -719,123 +705,6 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
 }
 
-Widget _photo(String image) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          height: 110.0,
-          width: 140.0,
-          decoration: BoxDecoration(
-              image:
-                  DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
-              color: Colors.black12,
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              boxShadow: [
-                BoxShadow(
-                    blurRadius: 5.0,
-                    color: Colors.black12.withOpacity(0.1),
-                    spreadRadius: 2.0)
-              ]),
-        ),
-        SizedBox(
-          height: 5.0,
-        ),
-      ],
-    ),
-  );
-}
-
-Widget _relatedPost(String image, title, location, ratting) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          height: 110.0,
-          width: 180.0,
-          decoration: BoxDecoration(
-              image:
-                  DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
-              color: Colors.black12,
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              boxShadow: [
-                BoxShadow(
-                    blurRadius: 5.0,
-                    color: Colors.black12.withOpacity(0.1),
-                    spreadRadius: 2.0)
-              ]),
-        ),
-        SizedBox(
-          height: 5.0,
-        ),
-        Text(
-          title,
-          style: TextStyle(
-              fontFamily: "Sofia",
-              fontWeight: FontWeight.w600,
-              fontSize: 17.0,
-              color: Colors.black87),
-        ),
-        SizedBox(
-          height: 2.0,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Icon(
-              Icons.location_on,
-              size: 18.0,
-              color: Colors.black12,
-            ),
-            Text(
-              location,
-              style: TextStyle(
-                  fontFamily: "Sofia",
-                  fontWeight: FontWeight.w500,
-                  fontSize: 15.0,
-                  color: Colors.black26),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.star,
-              size: 18.0,
-              color: Colors.yellow,
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 3.0),
-              child: Text(
-                ratting,
-                style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontFamily: "Sofia",
-                    fontSize: 13.0),
-              ),
-            ),
-
-            // Text("(233 Rating)",style: TextStyle(fontWeight: FontWeight.w500,fontFamily: "Sofia",fontSize: 11.0,color: Colors.black45),),
-            SizedBox(
-              width: 35.0,
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
 Widget _infoCircle(String image, title) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
@@ -845,8 +714,9 @@ Widget _infoCircle(String image, title) {
           height: 45.0,
           width: 45.0,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(50.0)),
-              color: Color(0xFFF0E5FB)),
+            borderRadius: BorderRadius.all(Radius.circular(50.0)),
+            color: Color(0xFFF0E5FB),
+          ),
           child: Center(
             child: Image.asset(
               image,
@@ -872,6 +742,38 @@ Widget _infoCircle(String image, title) {
           ],
         ),
       )
+    ],
+  );
+}
+
+Widget _infoBox(String deal, Color bg, Color tcolor) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Container(
+          height: 55.0,
+          width: 100.0,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            // color: Color(0xFFF0E5FB),
+            color: bg,
+            // color: Colors.grey,
+          ),
+          child: Center(
+              child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              '$deal',
+              style: TextStyle(
+                // color: Colors.deepPurpleAccent.shade400,
+                // color: Colors.white,
+                color: tcolor,
+                fontFamily: "Berlin",
+                fontSize: 18,
+              ),
+            ),
+          ))),
     ],
   );
 }

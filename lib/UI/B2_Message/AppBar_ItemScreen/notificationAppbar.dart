@@ -1,20 +1,28 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:total_app/constants.dart';
 
-class notificationAppbar extends StatefulWidget {
-  notificationAppbar({Key key}) : super(key: key);
+class NotificationAppbar extends StatefulWidget {
+  NotificationAppbar({Key key}) : super(key: key);
 
   @override
-  _notificationAppbarState createState() => _notificationAppbarState();
+  _NotificationAppbarState createState() => _NotificationAppbarState();
 }
 
-class _notificationAppbarState extends State<notificationAppbar> {
+class _NotificationAppbarState extends State<NotificationAppbar> {
+  bool flagged = true;
+  bool lowStock = true;
+  bool itemAddrd = false;
+  bool salePromo = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      //
       appBar: AppBar(
         title: Text(
-          "Notification",
+          "Push Notifications",
           style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 22.0,
@@ -22,38 +30,84 @@ class _notificationAppbarState extends State<notificationAppbar> {
               color: Colors.black54,
               fontFamily: "Berlin"),
         ),
-        iconTheme: IconThemeData(
-          color: Colors.deepPurpleAccent,
-        ),
         centerTitle: true,
         elevation: 0.0,
         backgroundColor: Colors.white,
       ),
-      body: Container(
-        color: Colors.white,
-        width: 500.0,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(padding: EdgeInsets.only(top: 120.0)),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-              child: Image.asset(
-                "assets/image/illustration/message.png",
-                height: 250.0,
+      //
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Padding(padding: EdgeInsets.only(top: 20.0)),
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.flag),
+              title: Text('Flagged'),
+              trailing: Transform.scale(
+                scale: 1,
+                child: Switch(
+                  value: flagged,
+                  onChanged: (value) {
+                    setState(() {
+                      this.flagged = value;
+                    });
+                  },
+                ),
               ),
             ),
-            Padding(padding: EdgeInsets.only(bottom: 20.0)),
-            Text(
-              "Not Have Notification",
-              style: TextStyle(
-                  fontWeight: FontWeight.w300,
-                  fontSize: 21.5,
-                  color: Colors.black54,
-                  fontFamily: "Sofia"),
+          ),
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.flag),
+              title: Text('Low Stock'),
+              trailing: Transform.scale(
+                scale: 1,
+                child: Switch(
+                  value: lowStock,
+                  onChanged: (value) {
+                    setState(() {
+                      this.lowStock = value;
+                    });
+                  },
+                ),
+              ),
             ),
-          ],
-        ),
+          ),
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.flag),
+              title: Text('Item Add'),
+              trailing: Transform.scale(
+                scale: 1,
+                child: Switch(
+                  value: itemAddrd,
+                  onChanged: (value) {
+                    setState(() {
+                      this.itemAddrd = value;
+                    });
+                  },
+                ),
+              ),
+            ),
+          ),
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.flag),
+              title: Text('Sale/Promo'),
+              trailing: Transform.scale(
+                scale: 1,
+                child: Switch(
+                  value: salePromo,
+                  onChanged: (value) {
+                    setState(() {
+                      this.salePromo = value;
+                    });
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

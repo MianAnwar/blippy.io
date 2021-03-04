@@ -95,30 +95,30 @@ class _ScanningState extends State<Scanning> {
                           barcodeScanRes =
                               await FlutterBarcodeScanner.scanBarcode(
                                   "#56aeff", "Cancel", true, ScanMode.BARCODE);
-                          print(barcodeScanRes);
                         } on PlatformException {
                           barcodeScanRes = 'Failed to get platform version.';
                         }
-                        barcodeScanRes == "-1"
-                            ? showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Not Exists in our system"),
-                                    content: Text(
-                                        'Want to see product Details? Scan Again some other Products or add it as New Item from Dashboard.'),
-                                    actions: [
-                                      FlatButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text("Ok"),
-                                      ),
-                                    ],
-                                  );
-                                })
-                            : print(
-                                "Show the list of products having scanned barcode.");
+                        if (barcodeScanRes == "-1") {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Not Exists in our system"),
+                                  content: Text(
+                                      'Want to see product Details? Scan Again some other Products or add it as New Item from Dashboard.'),
+                                  actions: [
+                                    FlatButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Ok"),
+                                    ),
+                                  ],
+                                );
+                              });
+                        } else {
+                          // PRoducts
+                        }
 
                         // Navigator.of(context).push(PageRouteBuilder(
                         //     pageBuilder: (_, __, ___) => new message()));

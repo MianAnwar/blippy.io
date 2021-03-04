@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:total_app/constants.dart';
+import 'package:total_app/APIs/LoginService.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgetPassword extends StatefulWidget {
   @override
@@ -8,6 +10,11 @@ class ForgetPassword extends StatefulWidget {
 
 class _ForgetPasswordState extends State<ForgetPassword>
     with TickerProviderStateMixin {
+  //
+  TextEditingController emailCtrl = TextEditingController();
+  var _formkey = GlobalKey<FormState>();
+
+  //
   //Animation Declaration
   AnimationController sanimationController;
   // var tap = 0;
@@ -88,16 +95,27 @@ class _ForgetPasswordState extends State<ForgetPassword>
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
                   border: Border(bottom: BorderSide(color: Colors.grey[200]))),
-              child: TextField(
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: "Registered Email",
-                  icon: Icon(
-                    Icons.email,
-                    color: Colors.black12,
+              child: Form(
+                key: _formkey,
+                child: TextFormField(
+                  controller: emailCtrl,
+                  validator: (v) {
+                    if (v.isEmpty) {
+                      return "Must fill the Field!";
+                    }
+                    return null;
+                  },
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "Registered Email",
+                    icon: Icon(
+                      Icons.email,
+                      color: Colors.black12,
+                    ),
+                    hintStyle:
+                        TextStyle(color: Colors.grey, fontFamily: "sofia"),
                   ),
-                  hintStyle: TextStyle(color: Colors.grey, fontFamily: "sofia"),
                 ),
               ),
             ),
@@ -107,8 +125,35 @@ class _ForgetPasswordState extends State<ForgetPassword>
           ),
           InkWell(
             splashColor: Constants.secondColor,
-            onTap: () {
+            onTap: () async {
               // call some function for further management with 1, 2 ,3
+              if (this._formkey.currentState.validate()) {
+                //
+                int x = await AuthenticationService(FirebaseAuth.instance)
+                    .sendPasswordResetEmail(emailCtrl.text);
+                //
+                if (x == 0) {
+                  ////////////////////////////////////////////////////
+                  Constants.showAlertDialogBox(context, 'Message',
+                      'Password Reset E-mail Sent. Check your inbox and reset your password carefully.\nThanks.');
+                  emailCtrl.clear();
+                  ////////////////////////////////////////////////////
+                } else if (x == -1) {
+                  Constants.showAlertDialogBox(context, 'Alert',
+                      'user-not-found. Please use correct E-mail.');
+                } else if (x == -2) {
+                  Constants.showAlertDialogBox(context, 'Alert',
+                      'invalid-email. Please use correct E-mail.');
+                } else if (x == -3) {
+                  Constants.showAlertDialogBox(context, 'Alert',
+                      'Please Try later. There is problem with network.');
+                }
+
+                return;
+              } else {
+                // print("Must fill fields");
+              }
+              //
             },
             child: Container(
               height: 48,

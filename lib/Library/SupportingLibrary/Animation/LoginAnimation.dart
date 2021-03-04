@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:total_app/UI/Bottom_Nav_Bar/bottomNavBar.dart';
 import 'package:flutter/services.dart';
 import 'package:total_app/constants.dart';
+import 'package:total_app/DataModels/ProfileModel.dart';
 
 /// Componen Login Animation to set Animation in login like a bounce ball to fullscreen
 class LoginAnimation extends StatefulWidget {
   /// To set type animation and  start and end animation
-  LoginAnimation({Key key, this.animationController})
+  LoginAnimation({Key key, this.animationController, this.profile})
       : animation = new Tween(
           end: 900.0,
           begin: 70.0,
@@ -16,6 +17,7 @@ class LoginAnimation extends StatefulWidget {
 
   final AnimationController animationController;
   final Animation animation;
+  final Profile profile;
 
   Widget _buildAnimation(BuildContext context, Widget child) {
     /// Setting shape a animation
@@ -47,7 +49,8 @@ class _LoginAnimationState extends State<LoginAnimation> {
       if (widget.animation.isCompleted) {
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
-            pageBuilder: (_, __, ___) => new BottomNavBar(),
+            pageBuilder: (_, __, ___) =>
+                new BottomNavBar(profile: widget.profile), //////////
             transitionDuration: Duration(milliseconds: 600),
             transitionsBuilder:
                 (_, Animation<double> animation, __, Widget child) {

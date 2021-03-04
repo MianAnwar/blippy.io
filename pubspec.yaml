@@ -39,12 +39,25 @@ dependencies:
   flutter_rating: ^0.0.2
   giffy_dialog: ^1.3.0
   flutter_credit_card:
-  google_maps_flutter: ^0.5.27+1
+  google_maps_flutter: ^1.2.0
   badges: ^1.1.6
 ########################################
 
   # Below are the dependencies for Backend
   flutter_barcode_scanner: ^1.0.2
+  firebase_core: ^0.7.0
+  firebase_analytics: ^7.0.1
+  firebase_auth: ^0.20.1
+  cloud_firestore: ^0.16.0+1
+  firebase_storage: ^7.0.0
+
+  progress_dialog: ^1.2.2
+  shared_preferences: ^0.5.12+4
+  focused_menu: ^1.0.2
+  image_picker: ^0.6.0
+  # url_launcher: ^5.7.10
+  intl: ^0.16.1
+
   ########################################
 
 dev_dependencies:
@@ -162,6 +175,7 @@ flutter:
     - assets/image/icon/food.png
     - assets/image/images/Bubble.png
     - assets/image/images/GirlProfile.png
+    - assets/image/hotel/abc.jpg
     - assets/image/hotel/hotel1.jpg
     - assets/image/hotel/hotel2.jpg
     - assets/image/hotel/hotel3.jpg

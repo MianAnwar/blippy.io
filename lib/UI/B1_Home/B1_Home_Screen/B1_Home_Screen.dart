@@ -1,16 +1,127 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:total_app/APIs/APIService.dart';
+import 'AddItemScreen.dart';
 import 'Search.dart';
+import 'package:total_app/APIs/GettingData.dart';
 import 'package:total_app/constants.dart';
 import 'package:badges/badges.dart';
 import 'package:total_app/UI/B1_Home/B1_Home_Screen/editProfile.dart';
+import 'package:total_app/DataModels/ProfileModel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Home extends StatefulWidget {
+  Profile profile;
+
+  Home({this.profile});
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  CollectionReference ref;
+  CollectionReference refSubCat;
+  var companylogo = 'assets/logos.png';
+  var companyMainImage = 'assets/Image/banner/banner1Travel.jpg';
+  var countFlagged = 0;
+  var countLowStock = 0;
+  var countItems = 0;
+  var countReview = 0;
+
+  @override
+  void initState() {
+    // TOD implement initState
+    super.initState();
+    ref = (GettingData.getCategoriesReference(widget.profile.companycode));
+
+    getCompanyMainIamge(); //
+    getCompanyLogo(); //
+    getUserProfile();
+    getFlaggedItemsCount();
+    getLowStockItemsCount();
+    getCountOfProducts();
+    getBeingReviewItemsCount();
+    // refresh();
+  }
+
+  refresh() async {
+    ProgressDialog dialog = ProgressDialog(context);
+    await dialog.show();
+    getCompanyMainIamge();
+    getCompanyLogo();
+    getUserProfile();
+    getFlaggedItemsCount();
+    getLowStockItemsCount();
+    getCountOfProducts();
+
+    getBeingReviewItemsCount();
+    setState(() {});
+    await dialog.hide();
+  }
+
+  refreshOnlyProfile() async {
+    getUserProfile();
+  }
+
+  getCompanyMainIamge() async {
+    companyMainImage = 'assets/logos.png';
+    this.companyMainImage =
+        await GettingData.getCompanyMainImage(widget.profile.companycode);
+    companyMainImage = companyMainImage ?? '';
+    if (companyMainImage == '') {
+      companyMainImage = 'assets/logos.png';
+    }
+    setState(() {});
+  }
+
+  getCompanyLogo() async {
+    companylogo = 'assets/logos.png';
+
+    this.companylogo =
+        await GettingData.getCompanyUserDPURL(widget.profile.email);
+    companylogo = companylogo ?? '';
+    if (companylogo == '') {
+      companylogo = 'assets/logos.png';
+    }
+    setState(() {});
+  }
+
+  getUserProfile() async {
+    widget.profile = await APIServices.getRegisteredUser(widget.profile.email);
+    setState(() {});
+  }
+
+  getFlaggedItemsCount() async {
+    // get the count of the products having flagged yes.
+    int c = await GettingData.getCountOfFlagged(widget.profile.companycode);
+    //return count of flagged items
+    this.countFlagged = c;
+
+    setState(() {});
+  }
+
+  getLowStockItemsCount() async {
+    //return count of low stock items.
+    int c = await GettingData.getCountOfLowStock(widget.profile.companycode);
+    this.countLowStock = c;
+    setState(() {});
+  }
+
+  //getCountOfProducts
+  getCountOfProducts() async {
+    //return count of low stock items.
+    int c = await GettingData.getCountOfProducts(widget.profile.companycode);
+    this.countItems = c;
+    setState(() {});
+  }
+
+  getBeingReviewItemsCount() async {
+    //return count of being review items.
+    this.countReview = await getFlaggedItemsCount();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
@@ -31,6 +142,17 @@ class _HomeState extends State<Home> {
       centerTitle: true,
       brightness: Brightness.light,
       elevation: 0.0,
+      actions: [
+        IconButton(
+          icon: Icon(
+            Icons.refresh,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            this.refresh();
+          },
+        ),
+      ],
     );
 
     var _searchBox = Padding(
@@ -40,19 +162,23 @@ class _HomeState extends State<Home> {
         bottom: 10.0,
       ),
       child: InkWell(
-        onTap: () => Navigator.of(context).push(
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) => new Search(),
-            transitionsBuilder:
-                (_, Animation<double> animation, __, Widget child) {
-              return Opacity(
-                opacity: animation.value,
-                child: child,
-              );
-            },
-            transitionDuration: Duration(milliseconds: 500),
-          ),
-        ),
+        onTap: () {
+          return Navigator.of(context).push(
+            PageRouteBuilder(
+              pageBuilder: (_, __, ___) => new Search(
+                companycode: widget.profile.companycode,
+              ),
+              transitionsBuilder:
+                  (_, Animation<double> animation, __, Widget child) {
+                return Opacity(
+                  opacity: animation.value,
+                  child: child,
+                );
+              },
+              transitionDuration: Duration(milliseconds: 500),
+            ),
+          );
+        },
         child: Container(
           height: 43.0,
           width: double.infinity,
@@ -117,6 +243,7 @@ class _HomeState extends State<Home> {
               Stack(
                 alignment: AlignmentDirectional.bottomEnd,
                 children: [
+                  //top picture
                   Align(
                     alignment: Alignment.topCenter,
                     child: Container(
@@ -127,15 +254,31 @@ class _HomeState extends State<Home> {
                       child: Center(
                         child: Hero(
                           tag: 'iconImage',
-                          child: Image.asset(
-                            'assets/logos.png',
-                            height: MediaQuery.of(context).size.height * 0.5,
-                            width: MediaQuery.of(context).size.width * 0.5,
-                          ),
+                          child: this.companyMainImage == 'assets/logos.png'
+                              ? Image.asset(
+                                  companyMainImage,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.5,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                )
+                              : Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.5,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: NetworkImage(companyMainImage),
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                     ),
                   ),
+
+                  //user image
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: Container(
@@ -145,9 +288,13 @@ class _HomeState extends State<Home> {
                           // user image
                           InkWell(
                             onTap: () {
+                              refreshOnlyProfile();
+                              setState(() {});
                               Navigator.of(context).push(
                                 PageRouteBuilder(
-                                  pageBuilder: (_, __, ___) => EditProfile(),
+                                  pageBuilder: (_, __, ___) => EditProfile(
+                                    profile: widget.profile,
+                                  ),
                                   transitionDuration:
                                       Duration(milliseconds: 1000),
                                   transitionsBuilder: (_,
@@ -161,19 +308,29 @@ class _HomeState extends State<Home> {
                                   },
                                 ),
                               );
+                              refreshOnlyProfile();
                             },
-                            child: Container(
+                            child: Hero(
+                              tag: 'hero-tag-profile',
+                              child: Container(
                                 height: 70.0,
                                 width: 70.0,
                                 decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50.0)),
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                        "assets/image/images/GirlProfile.png",
-                                      ),
-                                    ))),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(50.0)),
+                                  image: DecorationImage(
+                                    image:
+                                        this.companylogo == 'assets/logos.png'
+                                            ? AssetImage(
+                                                "assets/image/icon/profile.png",
+                                              )
+                                            : NetworkImage(companylogo),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
+                          // Welcome
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -192,7 +349,8 @@ class _HomeState extends State<Home> {
                               Padding(
                                 padding: EdgeInsets.only(left: 9.0),
                                 child: Text(
-                                  "Demohan",
+                                  // "Demohan",
+                                  widget.profile.fullname,
                                   style: TextStyle(
                                     color: Constants.thirdColor,
                                     letterSpacing: 1.1,
@@ -214,7 +372,7 @@ class _HomeState extends State<Home> {
                   children: <Widget>[
                     SingleChildScrollView(
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
+                        padding: EdgeInsets.only(top: 10.0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,14 +384,95 @@ class _HomeState extends State<Home> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  buildCardButton(
-                                      Icons.flag_outlined, "Flagged", true, 10),
+                                  buildCardButton(Icons.flag_outlined,
+                                      "Flagged", true, countFlagged),
                                   SizedBox(width: 5),
                                   buildCardButton(Icons.account_tree,
-                                      "Low Stock", true, 23),
+                                      "Low Stock", true, countLowStock),
                                   SizedBox(width: 5),
-                                  buildCardButton(Icons.breakfast_dining,
-                                      "Items Add", true, 231),
+
+                                  ///////////
+                                  InkWell(
+                                    onTap: () {
+                                      //
+
+                                      var alterDialog = AlertDialog(
+                                        title:
+                                            Text('Select Appropriate Category'),
+                                        content: StreamBuilder(
+                                          stream: ref.snapshots(),
+                                          // initialData:  ,
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<QuerySnapshot>
+                                                  snapshot) {
+                                            if (!snapshot.hasData) {
+                                              return Container(
+                                                width: 10,
+                                                height: 10,
+                                                // color: Colors.black,
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            }
+                                            return SingleChildScrollView(
+                                              scrollDirection: Axis.vertical,
+                                              child: Column(
+                                                children: snapshot.data.docs
+                                                    .map((DocumentSnapshot
+                                                        document) {
+                                                  return Column(
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+
+                                                          print(document.data()[
+                                                              'CatName']);
+                                                          proceedToSubCategories(
+                                                              document.data()[
+                                                                  'CatName']);
+                                                        },
+                                                        child: _infoCircle(
+                                                            document.data()[
+                                                                'CatName']),
+                                                      ),
+                                                    ],
+                                                  );
+                                                }).toList(),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        actions: [
+                                          FlatButton(
+                                            onPressed: () {
+                                              // Navigator.of(context).pop();
+                                              addNewCategory();
+                                            },
+                                            child: Text("Add New Category"),
+                                          ),
+                                          FlatButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text("Exit"),
+                                          ),
+                                        ],
+                                      );
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return alterDialog;
+                                          });
+                                      //
+                                    },
+                                    child: buildCardButton(
+                                        Icons.breakfast_dining,
+                                        "Items Add",
+                                        true,
+                                        countItems),
+                                  ),
                                 ],
                               ),
                             ),
@@ -250,8 +489,73 @@ class _HomeState extends State<Home> {
                                   buildCardButton(
                                       Icons.star, "Featured", false, 0),
                                   SizedBox(width: 5),
-                                  buildCardButton(
-                                      Icons.fiber_new_sharp, "New", false, 0),
+
+                                  ////////////////////////////////////////////////////////////
+                                  /////////////////////////< Add New>/////////////////////////
+                                  ////////////////////////////////////////////////////////////
+                                  InkWell(
+                                    onTap: () {
+                                      var alterDialog = AlertDialog(
+                                        title: Text('Add New'),
+                                        content: Container(
+                                          // color: Colors.red[100],
+                                          height: 100,
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  OutlinedButton(
+                                                    onPressed: () {
+                                                      addNewCategory();
+                                                    },
+                                                    child: Text('New Category'),
+                                                  ),
+                                                  OutlinedButton(
+                                                    onPressed: () {},
+                                                    child: Text('New Sale'),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  OutlinedButton(
+                                                    onPressed: () {},
+                                                    child: Text('New Item'),
+                                                  ),
+                                                  OutlinedButton(
+                                                    onPressed: () {},
+                                                    child: Text('New Sale'),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        actions: [
+                                          FlatButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text("Exit"),
+                                          ),
+                                        ],
+                                      );
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return alterDialog;
+                                          });
+                                      //
+                                    },
+                                    child: buildCardButton(
+                                        Icons.fiber_new_sharp, "New", false, 0),
+                                  ),
                                 ],
                               ),
                             ),
@@ -281,6 +585,262 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
+    );
+  }
+
+  String newCat;
+  var _addCatFormKey = GlobalKey<FormState>();
+  addNewCategory() {
+    var alterDialog = AlertDialog(
+      title: Text('Add New Category'),
+      content: Container(
+        height: 100,
+        child: Form(
+          key: _addCatFormKey,
+          child: Column(
+            children: [
+              TextFormField(
+                validator: (v) {
+                  if (v.isEmpty) {
+                    return "Required";
+                  }
+                  return null;
+                },
+                onChanged: (c) {
+                  newCat = c;
+                  setState(() {});
+                },
+                decoration: InputDecoration(
+                  labelText: 'Category',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        FlatButton(
+          onPressed: () async {
+            int ret;
+            if (_addCatFormKey.currentState.validate()) {
+              ret = await GettingData.checkNewCategory(
+                  newCat, widget.profile.companycode);
+              if (ret == 0) {
+                print('Already Exists');
+                Constants.showAlertDialogBox(
+                    context, 'Alert', 'Already Exists');
+              } else if (ret == 1) {
+                // print('Now Add');
+                ret = GettingData.saveNewCategory(
+                    newCat, widget.profile.companycode);
+                if (ret != 1) {
+                  Constants.showAlertDialogBox(
+                      context, 'Alert', 'Couldn\'t Add');
+                } else {
+                  Navigator.of(context).pop();
+                }
+              } else {
+                // print('There is problem.');
+              }
+            }
+          },
+          child: Text("Add"),
+        ),
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text("Exit"),
+        ),
+      ],
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alterDialog;
+        });
+  }
+
+  proceedToSubCategories(String cat) {
+    refSubCat =
+        GettingData.getSubCategoriesReference(widget.profile.companycode, cat);
+    //////////////
+    var alterDialog = AlertDialog(
+      title: Text('$cat: Sub Category'),
+      content: StreamBuilder(
+        stream: refSubCat.snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return Container(
+              width: 10,
+              height: 10,
+              // color: Colors.black,
+              child: CircularProgressIndicator(),
+            );
+          }
+          return SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              children: snapshot.data.docs.map((DocumentSnapshot document) {
+                return Column(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        //
+                        // print('sdddddddddddddddddddddddd');
+                        // print(document.data()['SubCat']);
+                        // print(cat);
+                        // print('sdddddddddddddddddddddddd');
+
+                        // proceedTo addNew PRoduct with (document.data()['CatName']);
+                        ///////////////
+                        Navigator.of(context).pop();
+
+                        Navigator.of(context).push(
+                          PageRouteBuilder(
+                            pageBuilder: (_, __, ___) => AddNewItem(
+                              profile: widget.profile,
+                              category: cat,
+                              subCategory: document.data()['SubCat'],
+                            ),
+                            transitionDuration: Duration(milliseconds: 1000),
+                            transitionsBuilder: (_, Animation<double> animation,
+                                __, Widget child) {
+                              return Opacity(
+                                opacity: animation.value,
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      child: _infoCircle(document.data()['SubCat']),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
+          );
+        },
+      ),
+      actions: [
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            addNewSubCategory(cat);
+          },
+          child: Text("Add New SubCategory"),
+        ),
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text("Exit"),
+        ),
+      ],
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alterDialog;
+        });
+
+    //////////////
+  }
+
+  String newSubCat = '';
+  var _addSubCatFormKey = GlobalKey<FormState>();
+  addNewSubCategory(String cat) {
+    var alterDialog = AlertDialog(
+      title: Text('Add New SubCategory'),
+      content: Container(
+        height: 100,
+        child: Form(
+          key: _addSubCatFormKey,
+          child: Column(
+            children: [
+              TextFormField(
+                validator: (v) {
+                  if (v.isEmpty) {
+                    return "Required";
+                  }
+                  return null;
+                },
+                onChanged: (c) {
+                  newSubCat = c;
+                  setState(() {});
+                },
+                decoration: InputDecoration(
+                  labelText: 'Sub Category',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        FlatButton(
+          onPressed: () async {
+            int ret;
+            if (_addSubCatFormKey.currentState.validate()) {
+              ret = await GettingData.checkNewSubCategory(
+                  cat, newSubCat, widget.profile.companycode);
+              if (ret == 0) {
+                print('Already Exists');
+                Constants.showAlertDialogBox(
+                    context, 'Alert', 'Already Exists');
+              } else if (ret == 1) {
+                // print('Now Add');
+                ret = GettingData.saveNewSubCategory(
+                    cat, newSubCat, widget.profile.companycode);
+                if (ret != 1) {
+                  Constants.showAlertDialogBox(
+                      context, 'Alert', 'Couldn\'t Add');
+                } else {
+                  Navigator.of(context).pop();
+                }
+              } else {
+                // print('There is problem.');
+              }
+            }
+          },
+          child: Text("Add"),
+        ),
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text("Exit"),
+        ),
+      ],
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alterDialog;
+        });
+  }
+
+  Widget _infoCircle(String title) {
+    return Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Container(
+          height: 45.0,
+          // width: 85.0,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+            // color: Color(0xFFF0E5FB),
+            color: Constants.basicColor.withOpacity(1),
+          ),
+          child: Center(
+              child: Text(
+            title,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+            ),
+          ))),
     );
   }
 

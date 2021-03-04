@@ -28,10 +28,10 @@ class _SettingApp extends State<SettingApp> {
           child: Column(
             children: <Widget>[
               Setting(
-                head: "Setting | Visiblity of Data |",
+                head: "Setting | Visiblity |",
                 sub1: "Change Password",
                 sub2: "My Location",
-                sub3: "Contant Number",
+                sub3: "Display Logo",
               ),
             ],
           ),
@@ -70,20 +70,20 @@ class Setting extends StatelessWidget {
           color: Colors.white,
         ),
         child: Padding(
-          padding: const EdgeInsets.only(left: 20.0),
+          padding: EdgeInsets.only(left: 20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(bottom: 15.0, top: 15.0),
+                padding: EdgeInsets.only(bottom: 15.0, top: 15.0),
                 child: Text(
                   head,
                   style: _txtCustomHead,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+                padding: EdgeInsets.only(left: 10.0, right: 20.0),
                 child: Divider(
                   color: Colors.black12,
                   height: 0.5,
@@ -105,7 +105,7 @@ class Setting extends StatelessWidget {
                     ]),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+                padding: EdgeInsets.only(left: 10.0, right: 20.0),
                 child: Divider(
                   color: Colors.black12,
                   height: 0.5,
@@ -127,7 +127,7 @@ class Setting extends StatelessWidget {
                     ]),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+                padding: EdgeInsets.only(left: 10.0, right: 20.0),
                 child: Divider(
                   color: Colors.black12,
                   height: 0.5,

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "712099683690",
+    "project_id": "blippyio",
+    "storage_bucket": "blippyio.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:712099683690:android:a53dde53698a203c48d913",
+        "android_client_info": {
+          "package_name": "com.blippy.total_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "712099683690-61ldnvi4s0ollntdhvklmsdu5gviebsn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.blippy.total_app",
+            "certificate_hash": "a100eb2221734a17cf382e2ff355f6a8d6744854"
+          }
+        },
+        {
+          "client_id": "712099683690-t23b3hchvl421la2rumfev4j1ilvhq66.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpzgDshur7aiqEQic1n8QzFeNvjn2pAWQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "712099683690-t23b3hchvl421la2rumfev4j1ilvhq66.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,21 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:total_app/APIs/LoginService.dart';
 import 'package:total_app/UI/B2_Message/AppBar_ItemScreen/notificationAppbar.dart';
 import 'package:total_app/constants.dart';
-
-import 'ListProfile/SettingApp.dart';
+import 'package:total_app/APIs/APIService.dart';
+import 'ListProfile/TSSettingApp.dart';
 import 'ListProfile/License.dart';
+import 'package:total_app/DataModels/ProfileModel.dart';
+import 'package:total_app/APIs/GettingData.dart';
 import 'package:total_app/UI/IntroApps/SignningOptions.dart';
 import 'package:total_app/UI/B5_Profile/ListProfile/ViewProfile.dart';
 import 'package:total_app/UI/IntroApps/Login.dart';
 
-class Profile extends StatefulWidget {
-  Profile({Key key}) : super(key: key);
+class ProfileScreen extends StatefulWidget {
+  final Profile profile;
+  ProfileScreen({Key key, this.profile}) : super(key: key);
 
   @override
-  _ProfileState createState() => _ProfileState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileScreenState extends State<ProfileScreen> {
+  String username;
+  String companylogo;
+
+  @override
+  void initState() {
+    // TO: implement initState
+    setUSername();
+    getCompanyLogo();
+    super.initState();
+  }
+
+  setUSername() async {
+    this.username =
+        await APIServices.getRegisteredUserName(widget.profile.email);
+    setState(() {});
+  }
+
+  getCompanyLogo() async {
+    this.companylogo =
+        await GettingData.getCompanyUserDPURL(widget.profile.email);
+    setState(() {});
+  }
+
   Widget buildItem() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 13),
@@ -29,15 +56,23 @@ class _ProfileState extends State<Profile> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: Hero(
-                    tag: '001122ff',
-                    child: Image(
-                      // width: 100,
-                      // height: 100,
-                      image: AssetImage(
-                        'assets/image/images/GirlProfile.png',
-                      ),
-                      fit: BoxFit.cover,
-                    ),
+                    tag: 'hero-tag-profile',
+                    child: widget.profile.dpimageURL == ''
+                        ? Image(
+                            image: AssetImage(
+                              'assets/image/icon/profile.png',
+                            ),
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: NetworkImage(widget.profile.dpimageURL),
+                              ),
+                            ),
+                          ),
                   ),
                 ),
               ],
@@ -48,7 +83,8 @@ class _ProfileState extends State<Profile> {
             child: InkWell(
               onTap: () {
                 Navigator.of(context).push(PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => new ViewEditProfile()));
+                    pageBuilder: (_, __, ___) =>
+                        new ViewEditProfile(profile: widget.profile)));
               },
               child: Padding(
                 padding: EdgeInsets.only(left: 10.0),
@@ -56,18 +92,24 @@ class _ProfileState extends State<Profile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Username",
+                      "${username ?? 'Test User'}",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
                       ),
                     ),
                     SizedBox(height: 8),
-                    Container(
-                      padding: EdgeInsets.all(4),
-                      color: Colors.grey[300],
-                      child: Text("View and Edit Profile"),
-                    )
+                    RaisedButton(
+                      elevation: 10.0,
+                      padding: EdgeInsets.all(5.0),
+                      onPressed: () {
+                        Navigator.of(context).push(PageRouteBuilder(
+                            pageBuilder: (_, __, ___) =>
+                                new ViewEditProfile(profile: widget.profile)));
+                      },
+                      color: Colors.white,
+                      child: Text("view And Edit Profile"),
+                    ),
                   ],
                 ),
               ),
@@ -86,6 +128,62 @@ class _ProfileState extends State<Profile> {
         elevation: 0.0,
         backgroundColor: Colors.transparent,
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: EdgeInsets.all(20.0).copyWith(right: 0),
+            child: Text('Logout'),
+          ),
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              var alterDialog = AlertDialog(
+                title: Text('Alert'),
+                content: Text('Are you sure to logout?'),
+                actions: [
+                  FlatButton(
+                    onPressed: () async {
+                      //
+                      // Get ready
+                      AuthenticationService service =
+                          AuthenticationService(Constants.firebaseAuth);
+
+                      // get result if sucessfull or not
+                      await service.signOut();
+                      Constants.logoutEmailSP();
+
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushReplacement(
+                        PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => new Login(),
+                          transitionDuration: Duration(milliseconds: 0),
+                          transitionsBuilder: (_, Animation<double> animation,
+                              __, Widget child) {
+                            return Opacity(
+                              opacity: animation.value,
+                              child: child,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: Text("Yes"),
+                  ),
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("No"),
+                  ),
+                ],
+              );
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return alterDialog;
+                  });
+            },
+          )
+        ],
         title: Text(
           "Settings",
           style: TextStyle(fontFamily: "Sofia", fontSize: 25.0),
@@ -120,7 +218,7 @@ class _ProfileState extends State<Profile> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new notificationAppbar()));
+                        pageBuilder: (_, __, ___) => new NotificationAppbar()));
                   },
                   child: Category(
                     txt: "Notification",
@@ -129,24 +227,11 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
 
-                // // Card
-                // InkWell(
-                //   onTap: () {
-                //     Navigator.of(context).push(PageRouteBuilder(
-                //         pageBuilder: (_, __, ___) => new addCreditCard()));
-                //   },
-                //   child: category(
-                //     txt: "Card erase ",
-                //     image: "assets/image/icon/card.png",
-                //     padding: 20.0,
-                //   ),
-                // ),
-
                 //Settings
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new SettingApp()));
+                        pageBuilder: (_, __, ___) => new TSAppSetting()));
                   },
                   child: Category(
                     txt: "App Settings",
@@ -167,33 +252,83 @@ class _ProfileState extends State<Profile> {
                     padding: 20.0,
                   ),
                 ),
+                SizedBox(
+                  height: 20,
+                ),
 
-                // Logout Button
+                // Delete
                 Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: InkWell(
-                    onTap: () {
+                  padding: EdgeInsets.all(2.0),
+                  child: CategoryDEL(
+                    txt: "Delete Account | Not Recoverable",
+                    padding: 20.0,
+                    tap: () {
+                      String pwd = '';
                       var alterDialog = AlertDialog(
-                        title: Text('Alert'),
-                        content: Text('Are you sure to logout?'),
+                        title: Column(
+                          children: [
+                            Text('Verify your Credentials'),
+                            Text(
+                                '\n${Constants.firebaseAuth.currentUser.email}'),
+                          ],
+                        ),
+                        content: Container(
+                          padding: EdgeInsets.all(10),
+                          child: TextField(
+                            onChanged: (p) {
+                              pwd = p;
+                              print(pwd);
+                            },
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Your Password",
+                              icon: Icon(Icons.vpn_key, color: Colors.black12),
+                              hintStyle: TextStyle(
+                                  color: Colors.grey, fontFamily: "sofia"),
+                            ),
+                          ),
+                        ),
                         actions: [
                           FlatButton(
-                            onPressed: () {
-                              Navigator.of(context).pushReplacement(
-                                PageRouteBuilder(
-                                  pageBuilder: (_, __, ___) => new Login(),
-                                  transitionDuration: Duration(milliseconds: 0),
-                                  transitionsBuilder: (_,
-                                      Animation<double> animation,
-                                      __,
-                                      Widget child) {
-                                    return Opacity(
-                                      opacity: animation.value,
-                                      child: child,
-                                    );
-                                  },
-                                ),
-                              );
+                            onPressed: () async {
+                              ////////////////////////////////////////
+
+                              print(Constants.firebaseAuth.currentUser.email);
+                              bool result = (await deleteAccount(
+                                  Constants.firebaseAuth.currentUser.email,
+                                  pwd));
+                              if (result) {
+                                // deleted
+                                //pop, pop
+                                print('deleted!');
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pushReplacement(
+                                  PageRouteBuilder(
+                                    pageBuilder: (_, __, ___) => new Login(),
+                                    transitionDuration:
+                                        Duration(milliseconds: 0),
+                                    transitionsBuilder: (_,
+                                        Animation<double> animation,
+                                        __,
+                                        Widget child) {
+                                      return Opacity(
+                                        opacity: animation.value,
+                                        child: child,
+                                      );
+                                    },
+                                  ),
+                                );
+                              } else {
+                                // Wrong credentials, try again
+                                //just pop
+                                print('Not deleted!');
+                                Constants.showAlertDialogBox(
+                                    context, 'Message', 'Not Deleted');
+                                // Navigator.of(context).pop();
+                              }
+
+                              ////////////////////////////////////////
                             },
                             child: Text("Yes"),
                           ),
@@ -211,26 +346,8 @@ class _ProfileState extends State<Profile> {
                             return alterDialog;
                           });
                     },
-                    child: Container(
-                      height: 50.0,
-                      width: 100.0,
-                      color: Constants.basicColor,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            top: 13.0, left: 20.0, bottom: 15.0),
-                        child: Text(
-                          "Logout",
-                          style: TextStyle(
-                            color: Constants.thirdColor,
-                            fontSize: 17.0,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: "Gotik",
-                          ),
-                        ),
-                      ),
-                    ),
                   ),
-                )
+                ),
               ],
             ),
           ],
@@ -238,13 +355,18 @@ class _ProfileState extends State<Profile> {
       ),
     );
   }
+
+  Future<bool> deleteAccount(String email, String pwd) async {
+    bool res = await APIServices.deleteAccount(email, pwd);
+    return res;
+  }
 }
 
 /// Component category class to set list
 class Category extends StatelessWidget {
-  String txt, image;
-  GestureTapCallback tap;
-  double padding;
+  final String txt, image;
+  final GestureTapCallback tap;
+  final double padding;
 
   Category({this.txt, this.image, this.tap, this.padding});
   @override
@@ -297,6 +419,64 @@ class Category extends StatelessWidget {
             color: Colors.black12,
           )
         ],
+      ),
+    );
+  }
+}
+
+// Component category class to set list
+class CategoryDEL extends StatelessWidget {
+  final String txt, image;
+  final GestureTapCallback tap;
+  final double padding;
+
+  CategoryDEL({this.txt, this.image, this.tap, this.padding});
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.white,
+      child: InkWell(
+        onTap: tap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(top: 15.0, bottom: 15, left: 30.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                          padding: EdgeInsets.only(right: 0),
+                          child: Icon(Icons.delete_forever_outlined)),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                        child: Text(
+                          txt,
+                          style: TextStyle(
+                            fontSize: 14.5,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: "Sofia",
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(right: 20.0),
+                    child: Icon(
+                      Icons.delete_forever,
+                      color: Colors.black26,
+                      size: 20.0,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

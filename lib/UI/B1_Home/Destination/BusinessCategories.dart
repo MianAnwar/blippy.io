@@ -4,30 +4,31 @@ import 'package:total_app/DataSample/travelModelData.dart';
 import 'package:total_app/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:total_app/UI/B1_Home/B1_Home_Screen/B1_Home_Screen.dart';
 
-class Destination extends StatefulWidget {
+class CategoriesScreen extends StatefulWidget {
   final String title;
-  Destination({Key key, this.title}) : super(key: key);
+  CategoriesScreen({Key key, this.title}) : super(key: key);
 
   @override
-  _DestinationState createState() => _DestinationState();
+  _CategoriesScreenState createState() => _CategoriesScreenState();
 }
 
-class _DestinationState extends State<Destination> {
+class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
+    /////////////
     var onClickMenuIcon = () {
-      Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (_, __, ___) => new Home(),
-          transitionDuration: Duration(milliseconds: 750),
+      // Navigator.of(context).push(PageRouteBuilder(
+      //     pageBuilder: (_, __, ___) => new Home(),
+      //     transitionDuration: Duration(milliseconds: 750),
 
-          /// Set animation with opacity
-          transitionsBuilder:
-              (_, Animation<double> animation, __, Widget child) {
-            return Opacity(
-              opacity: animation.value,
-              child: child,
-            );
-          }));
+      //     /// Set animation with opacity
+      //     transitionsBuilder:
+      //         (_, Animation<double> animation, __, Widget child) {
+      //       return Opacity(
+      //         opacity: animation.value,
+      //         child: child,
+      //       );
+      //     }));
     };
 
     var _appBar = PreferredSize(
@@ -52,51 +53,23 @@ class _DestinationState extends State<Destination> {
         overlayShadowColors: Colors.white.withOpacity(0.1),
         overlayShadowSize: 0.9,
         images: [
-          AssetImage("assets/image/banner/banner4.jpg"),
-          AssetImage("assets/image/banner/banner6.jpg"),
-          AssetImage("assets/image/banner/banner10.jpg"),
-          AssetImage("assets/image/banner/banner12.jpg"),
+          NetworkImage(
+              'https://iogames.space/sites/default/files/Ee1nLJwWAAU6yhC.png'),
+          NetworkImage(
+              'https://static.vecteezy.com/system/resources/previews/000/692/619/non_2x/abstract-mega-sale-template-design-for-special-offers-sales-and-discounts-vector.jpg'),
+          NetworkImage(
+              'https://assets.keap.com/image/upload/b_rgb:FFFFFF,c_limit,dpr_2,f_auto,h_395,q_95,w_569/v1591741400/sales/e-commerce/26_ideas_to_get_your_next_sales_promo_noticed.jpg'),
+          NetworkImage(
+              'https://thumbs.dreamstime.com/z/mega-sale-banner-template-polygonal-d-shapes-text-special-offers-sales-discounts-promotion-shopping-abstract-161884771.jpg'),
         ],
       ),
-    );
-
-    var _description = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-          child: Text(
-            widget.title,
-            style: TextStyle(
-                fontFamily: "Sofia",
-                fontWeight: FontWeight.w700,
-                fontSize: 20.0),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-              left: 20.0, right: 20.0, top: 10.0, bottom: 30.0),
-          child: Container(
-              width: MediaQuery.of(context).size.width - 10.0,
-              child: Text(
-                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-                style: TextStyle(
-                    fontFamily: "Sofia",
-                    fontWeight: FontWeight.w300,
-                    fontSize: 14.5,
-                    color: Colors.black45),
-                overflow: TextOverflow.clip,
-                textAlign: TextAlign.justify,
-              )),
-        ),
-      ],
     );
 
     var _category = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.only(left: 20.0, top: 30.0, right: 20.0),
+          padding: EdgeInsets.only(left: 20.0, top: 0, right: 20.0),
           child: Text(
             "Category",
             style: TextStyle(
@@ -122,6 +95,7 @@ class _DestinationState extends State<Destination> {
           icon4: "assets/image/icon/plant.png",
           title4: "Spa",
         ),
+
         Padding(padding: EdgeInsets.only(top: 23.0)),
         CategoryIconValue(
           icon1: "assets/image/icon/lamp.png",
@@ -147,59 +121,14 @@ class _DestinationState extends State<Destination> {
       ],
     );
 
-    var _topDestination = Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 20.0, top: 30.0),
-          child: Text(
-            "Top Destination",
-            style: TextStyle(
-                fontFamily: "Sofia",
-                fontSize: 20.0,
-                fontWeight: FontWeight.w700),
-          ),
-        ),
-        SizedBox(height: 5.0),
-        Container(
-          height: 320.0,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: <Widget>[
-              SizedBox(
-                width: 10.0,
-              ),
-              _card("assets/image/banner/banner7.jpg", "Ama Dablam ",
-                  "Tanzania", "4,3"),
-              _card("assets/image/banner/banner8.jpg", "Table Mountain",
-                  "Africa", "4,1"),
-              _card("assets/image/banner/banner13.jpg", "Mount Kilimanjaro",
-                  "Nepal", "4,2"),
-              _card("assets/image/banner/banner9.jpg", "Gangtok Mount", "Nepal",
-                  "4,7"),
-              _card("assets/image/banner/banner11.jpg", "Mount Papua",
-                  "Indonesia", "4,5"),
-              SizedBox(
-                width: 10.0,
-              ),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 25.0,
-        ),
-      ],
-    );
-
-    var _recommended = Column(
+    var _products = Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(left: 22.0),
           child: Text(
-            "Recommended",
+            "Products items",
             style: TextStyle(
                 fontFamily: "Sofia",
                 fontSize: 20.0,
@@ -235,21 +164,11 @@ class _DestinationState extends State<Destination> {
             ///Slider image in top
             _slideImage,
 
-            SizedBox(
-              height: 20.0,
-            ),
-
-            /// Description
-            _description,
-
             /// Category
             _category,
 
-            /// Top Destination
-            _topDestination,
-
             /// Recommended
-            _recommended,
+            _products,
           ],
         ),
       ),
@@ -258,7 +177,6 @@ class _DestinationState extends State<Destination> {
 }
 
 class cardList extends StatelessWidget {
-  @override
   var _txtStyleTitle = TextStyle(
     color: Colors.black87,
     fontFamily: "Gotik",
@@ -276,6 +194,8 @@ class cardList extends StatelessWidget {
   travelListData hotelData;
 
   cardList(this.hotelData);
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
@@ -536,8 +456,8 @@ class cardCountry extends StatelessWidget {
 
 /// Component item Menu icon bellow a Description
 class CategoryIconValue extends StatelessWidget {
-  String icon1, icon2, icon3, icon4, title1, title2, title3, title4;
-  GestureTapCallback tap1, tap2, tap3, tap4;
+  final String icon1, icon2, icon3, icon4, title1, title2, title3, title4;
+  final GestureTapCallback tap1, tap2, tap3, tap4;
 
   CategoryIconValue(
       {this.icon1,

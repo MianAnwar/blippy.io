@@ -1,10 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:total_app/APIs/LoginService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:total_app/Library/SupportingLibrary/Animation/FadeAnimation.dart';
 import 'package:total_app/Library/SupportingLibrary/Animation/LoginAnimation.dart';
+import 'package:total_app/Library/SupportingLibrary/Animation/TSLoginAnimation.dart';
 import 'package:total_app/constants.dart';
 import 'SignningOptions.dart';
 import 'ForgetPassword.dart';
+import 'package:total_app/DataModels/ProfileModel.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -12,6 +17,18 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> with TickerProviderStateMixin {
+// backend miananwar.2244@gmail.com
+// backend miananwar.2244@gmail.com
+
+  var _signInformKey = GlobalKey<FormState>();
+  TextEditingController emailCtrl = TextEditingController();
+  TextEditingController pwdCtrl = TextEditingController();
+  Profile _profile;
+  String emailTS;
+  bool showPwd = true;
+// backend miananwar.2244@gmail.com
+// backend miananwar.2244@gmail.com
+
   //Animation Declaration
   AnimationController sanimationController;
   var tap = 0;
@@ -100,7 +117,8 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                           0,
                           Center(
                             child: Text(
-                              "Sign In",
+                              // "Sign In",
+                              "",
                               style: TextStyle(
                                   color: Constants.secondColor,
                                   fontFamily: "Sofia",
@@ -128,47 +146,86 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                                 )
                               ],
                             ),
-                            child: Column(
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              color: Colors.grey[200]))),
-                                  child: TextField(
-                                    keyboardType: TextInputType.emailAddress,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: "Email or Username",
-                                      icon: Icon(
-                                        Icons.email,
-                                        color: Colors.black12,
+                            child: Form(
+                              key: _signInformKey,
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                color: Colors.grey[200]))),
+                                    child: TextFormField(
+                                      controller: emailCtrl,
+                                      validator: (s) {
+                                        if (s.isEmpty) {
+                                          return "Required";
+                                        }
+                                        return null;
+                                      },
+                                      keyboardType: TextInputType.emailAddress,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Email",
+                                        icon: Icon(
+                                          Icons.email,
+                                          color: Colors.black12,
+                                        ),
+                                        hintStyle: TextStyle(
+                                            color: Colors.grey,
+                                            fontFamily: "sofia"),
                                       ),
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontFamily: "sofia"),
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(10),
-                                  child: TextField(
-                                    obscureText: true,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: "Password",
-                                      icon: Icon(
-                                        Icons.vpn_key,
-                                        color: Colors.black12,
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.6,
+                                        // color: Colors.red,
+                                        padding: EdgeInsets.all(10),
+                                        child: TextFormField(
+                                          controller: pwdCtrl,
+                                          validator: (s) {
+                                            if (s.isEmpty) {
+                                              return "Required";
+                                            }
+                                            return null;
+                                          },
+                                          obscureText: showPwd,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Password",
+                                            icon: Icon(Icons.vpn_key,
+                                                color: Colors.black12),
+                                            hintStyle: TextStyle(
+                                                color: Colors.grey,
+                                                fontFamily: "sofia"),
+                                          ),
+                                        ),
                                       ),
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontFamily: "sofia"),
-                                    ),
-                                  ),
-                                )
-                              ],
+                                      IconButton(
+                                        icon: Icon(!showPwd
+                                            ? Icons.remove_red_eye
+                                            : Icons.remove),
+                                        onPressed: () {
+                                          setState(() {
+                                            showPwd = !showPwd;
+                                          });
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.close),
+                                        onPressed: () {
+                                          pwdCtrl.text = '';
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -185,19 +242,128 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                   tap == 0
                       ? InkWell(
                           splashColor: Constants.secondColor,
-                          onTap: () {
-                            setState(() {
-                              /////
+                          onTap: () async {
+                            if (this._signInformKey.currentState.validate()) {
+                              ////////////////////////////////////
+                              ProgressDialog dialog = ProgressDialog(context);
+                              dialog.style(message: 'Please Wait...');
+                              await dialog.show();
+                              /////////////////////////////////////
+
                               /////// Get the credentials and verify them from database,
                               ///////     after verification take use to dashboard
-                              ///// if not verified then return 'foran' with -1
-                              tap = 1;
-                            });
-                            new LoginAnimation(
-                              animationController: sanimationController.view,
-                            );
-                            _playAnimation();
-                            return tap;
+
+                              String email = emailCtrl.text;
+                              emailTS = email;
+                              String password = pwdCtrl.text;
+
+                              // Get ready
+                              AuthenticationService service =
+                                  AuthenticationService(Constants.firebaseAuth);
+
+                              // get result if sucessfull or not
+                              int result = await service.signIn(
+                                  email: email, password: password);
+
+                              // check even for varified
+                              if (result == 0) {
+                                // successfull :: YES, verified
+                                bool testUser = await AuthenticationService
+                                    .checkEmailInTestUsers(email);
+                                await dialog.hide();
+                                ////////
+                                ////////
+                                ////////
+                                if (testUser) {
+                                  // Save the email in sharedPref
+                                  Constants.setEmail(email);
+
+                                  // proceed towards Tester Dashboard
+                                  //    :::::with ::::::: email,0
+                                  setState(() {
+                                    tap = 2;
+                                    new TSLoginAnimation(
+                                      animationController:
+                                          sanimationController.view,
+                                      email: emailTS,
+                                    );
+                                    _playAnimation();
+                                    return tap;
+                                    //////////////////////////////////////////////////////
+                                  });
+                                  ///////
+                                  ////////
+
+                                } else {
+                                  // proceed towards checking other Deshboard
+                                  Profile p = await AuthenticationService
+                                      .checkEmailinRegisteredUsers(email);
+                                  if (p != null) {
+                                    if (p.role != 'Role.Owner' &&
+                                        p.role != 'Role.DesignatedStaff' &&
+                                        p.role != 'Role.RegularStaff') {
+                                      // Error// No Correct Designation
+                                    } else {
+                                      Constants.setEmail(email);
+                                      this._profile = p;
+
+                                      if (p.role == 'Role.RegularStaff') {
+                                        // Navigate to regular staff dashboard
+                                        setState(() {
+                                          tap = 1; ////
+                                          new LoginAnimation(
+                                            //^^^^^^^^^^^^^
+                                            animationController:
+                                                sanimationController.view,
+                                            profile: p,
+                                          );
+                                          _playAnimation();
+                                          return tap;
+                                          //////////////////////////////////////////////////////
+                                        });
+                                      } else {
+                                        // NAvigate to owner dashboard
+                                        setState(() {
+                                          tap = 1;
+                                          new LoginAnimation(
+                                            animationController:
+                                                sanimationController.view,
+                                            profile: p,
+                                          );
+                                          _playAnimation();
+                                          return tap;
+                                          //////////////////////////////////////////////////////
+                                        });
+                                      }
+                                      ///////
+                                      //proceed to dashboard for respective owner, staff, D.staff
+                                      ///////////////////////////////////////////////
+                                      ///////////////////////////////////////////////
+
+                                    }
+                                  } else {
+                                    // proceed to setup profile
+                                    // user have credentials but not setup his profile.
+                                  }
+                                }
+                              } else {
+                                await dialog.hide();
+                                ////////////////////////////////////////////////////
+                                Constants.showAlertDialogBox(
+                                    context,
+                                    'Alert',
+                                    result == -1
+                                        ? 'Email is not verified. Please verify it first.'
+                                        : result == 1
+                                            ? 'user-not-found'
+                                            : result == 2
+                                                ? 'wrong-password'
+                                                : 'There is some problem. Try Again.');
+                                return -1;
+                              }
+                            } else {
+                              // print('object111111');
+                            }
                           },
                           child: FadeAnimation(
                             1.9,
@@ -232,9 +398,16 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                             ),
                           ),
                         )
-                      : new LoginAnimation(
-                          animationController: sanimationController.view,
-                        ),
+                      : tap == 1 // login with (email, 1) for Owner/Staff,
+                          ? new LoginAnimation(
+                              animationController: sanimationController.view,
+                              profile: this._profile,
+                            )
+                          : new TSLoginAnimation(
+                              // login with (email, 2) for TestUser
+                              animationController: sanimationController.view,
+                              email: emailTS,
+                            ),
 
                   SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                   //////// Forget Password ////////
@@ -264,7 +437,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                               right: MediaQuery.of(context).size.width * 0.05,
                             ),
                             child: Text(
-                              "Forget Password?",
+                              "Forgot Password?",
                               style: TextStyle(
                                 color: Constants.secondColor, //Colors.black38,
                                 fontFamily: "Sofia",

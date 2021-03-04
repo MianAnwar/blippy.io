@@ -204,6 +204,7 @@ class _mapsState extends State<maps> {
     return Scaffold(
         body: Stack(
       children: <Widget>[
+        // google map
         Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
@@ -228,20 +229,7 @@ class _mapsState extends State<maps> {
             },
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            height: 200.0,
-            width: MediaQuery.of(context).size.width,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: hotelLocation.length,
-              itemBuilder: (BuildContext context, int index) {
-                return _coffeeShopList(index);
-              },
-            ),
-          ),
-        ),
+/////////////////////////////
         Column(
           children: <Widget>[
             Padding(
@@ -286,6 +274,7 @@ class _mapsState extends State<maps> {
                 ),
               ),
             ),
+            //
             Container(
               height: 40.0,
               decoration: BoxDecoration(
@@ -301,6 +290,7 @@ class _mapsState extends State<maps> {
             ),
           ],
         ),
+/////////////////////////////
       ],
     ));
   }

@@ -53,31 +53,45 @@ class _AddNewItemState extends State<AddNewItem> {
 
   var categories;
   var subCategories;
-  var startDate;
-  var endDate;
+  var startDate = '';
+  var endDate = '';
 
   DateTimeRange dateRange;
 
   String getFrom() {
+    if (!sale) return '';
     if (dateRange == null) {
-      return DateFormat('MM/dd/yyyy').format(DateTime.now());
+      return '';
     } else {
-      return DateFormat('MM/dd/yyyy').format(dateRange.start);
+      return DateFormat('yyyy-MM-dd').format(dateRange.start);
     }
   }
 
   String getUntil() {
+    if (!sale) return '';
+
     if (dateRange == null) {
-      return DateFormat('MM/dd/yyyy')
-          .format(DateTime.now().add(Duration(days: 2)));
+      return '';
     } else {
-      return DateFormat('MM/dd/yyyy').format(dateRange.end);
+      return DateFormat('yyyy-MM-dd').format(dateRange.end);
     }
   }
 
+/*
+  ::Attributes::
+1 -overstock
+2 -rollbacks
+3 -low prices
+4 -special buys
+5 -2 day flash deals
+6 -3 day flash deals
+7 -weekly sales
+8 -top deals
+9 -member deals
+*/
+
   @override
   void initState() {
-    // TO: implement
     super.initState();
     // widget.profile.companycode
     categories = widget.category;
@@ -582,8 +596,22 @@ class _AddNewItemState extends State<AddNewItem> {
                                       currUOM = newSelectedItem;
                                     });
                                   },
-                                  items: ['Package', 'Dozen', 'Bag', 'sd']
-                                      .map((String item) {
+                                  items: [
+                                    'Package',
+                                    'Case',
+                                    'Each',
+                                    'Can',
+                                    'Bag',
+                                    'Box',
+                                    'Dozen',
+                                    'Kg',
+                                    'gram',
+                                    'Gallon',
+                                    'Pound',
+                                    'Roll',
+                                    'Stack',
+                                    'Carton'
+                                  ].map((String item) {
                                     return DropdownMenuItem<String>(
                                         value: item, child: Text('$item'));
                                   }).toList(),
@@ -606,6 +634,11 @@ class _AddNewItemState extends State<AddNewItem> {
                                 padding: EdgeInsets.only(left: 20.0),
                                 child: TextFormField(
                                     validator: (v) {
+                                      try {
+                                        int.parse(v);
+                                      } catch (e) {
+                                        return "Invalid";
+                                      }
                                       if (v.isEmpty) {
                                         return "Required";
                                       }
@@ -660,6 +693,11 @@ class _AddNewItemState extends State<AddNewItem> {
                                 child: TextFormField(
                                     controller: cost,
                                     validator: (v) {
+                                      try {
+                                        double.parse(v);
+                                      } catch (e) {
+                                        return "Invalid";
+                                      }
                                       if (v.isEmpty) {
                                         return "Required";
                                       }
@@ -696,6 +734,11 @@ class _AddNewItemState extends State<AddNewItem> {
                                 padding: EdgeInsets.only(left: 20.0),
                                 child: TextFormField(
                                     validator: (v) {
+                                      try {
+                                        double.parse(v);
+                                      } catch (e) {
+                                        return "Invalid";
+                                      }
                                       if (v.isEmpty) {
                                         return "Required";
                                       }

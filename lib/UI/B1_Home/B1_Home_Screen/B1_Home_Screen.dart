@@ -5,11 +5,17 @@ import 'package:total_app/APIs/APIService.dart';
 import 'AddItemScreen.dart';
 import 'Search.dart';
 import 'package:total_app/APIs/GettingData.dart';
+import 'package:total_app/DataModels/ITEMSCounts.dart';
 import 'package:total_app/constants.dart';
 import 'package:badges/badges.dart';
 import 'package:total_app/UI/B1_Home/B1_Home_Screen/editProfile.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:total_app/UI/B4_Review/B4_ReviewScreen.dart';
+import 'package:total_app/UI/B4_Review/B4_LowStockScreen.dart';
+import 'package:total_app/UI/B4_Review/B4_CurentSaleScreen.dart';
+import 'package:total_app/UI/B4_Review/B4_FeaturedScreen.dart';
+import 'package:total_app/UI/B4_Review/B4_ReportScreen.dart';
 
 class Home extends StatefulWidget {
   Profile profile;
@@ -24,10 +30,15 @@ class _HomeState extends State<Home> {
   CollectionReference refSubCat;
   var companylogo = 'assets/logos.png';
   var companyMainImage = 'assets/Image/banner/banner1Travel.jpg';
-  var countFlagged = 0;
-  var countLowStock = 0;
-  var countItems = 0;
-  var countReview = 0;
+
+  ////counts
+  // var countFlagged = 0;
+  // var countLowStock = 0;
+  // var countItems = 0;
+  // // var countReview = 0;
+  // var countSale = 0;
+  // var countFeatured = 0;
+  ITEMSCounts itemsCounts = ITEMSCounts();
 
   @override
   void initState() {
@@ -38,11 +49,14 @@ class _HomeState extends State<Home> {
     getCompanyMainIamge(); //
     getCompanyLogo(); //
     getUserProfile();
-    getFlaggedItemsCount();
-    getLowStockItemsCount();
-    getCountOfProducts();
-    getBeingReviewItemsCount();
+    // get count
+    getCounts();
     // refresh();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   refresh() async {
@@ -51,11 +65,7 @@ class _HomeState extends State<Home> {
     getCompanyMainIamge();
     getCompanyLogo();
     getUserProfile();
-    getFlaggedItemsCount();
-    getLowStockItemsCount();
-    getCountOfProducts();
-
-    getBeingReviewItemsCount();
+    getCounts();
     setState(() {});
     await dialog.hide();
   }
@@ -92,33 +102,9 @@ class _HomeState extends State<Home> {
     setState(() {});
   }
 
-  getFlaggedItemsCount() async {
-    // get the count of the products having flagged yes.
-    int c = await GettingData.getCountOfFlagged(widget.profile.companycode);
-    //return count of flagged items
-    this.countFlagged = c;
-
-    setState(() {});
-  }
-
-  getLowStockItemsCount() async {
-    //return count of low stock items.
-    int c = await GettingData.getCountOfLowStock(widget.profile.companycode);
-    this.countLowStock = c;
-    setState(() {});
-  }
-
-  //getCountOfProducts
-  getCountOfProducts() async {
-    //return count of low stock items.
-    int c = await GettingData.getCountOfProducts(widget.profile.companycode);
-    this.countItems = c;
-    setState(() {});
-  }
-
-  getBeingReviewItemsCount() async {
-    //return count of being review items.
-    this.countReview = await getFlaggedItemsCount();
+  /// Counts
+  getCounts() async {
+    this.itemsCounts = await GettingData.getCounts(widget.profile.companycode);
     setState(() {});
   }
 
@@ -384,11 +370,44 @@ class _HomeState extends State<Home> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  buildCardButton(Icons.flag_outlined,
-                                      "Flagged", true, countFlagged),
+                                  //////////////////// <Flagged>
+                                  InkWell(
+                                    onTap: () {
+                                      //
+                                      Navigator.of(context).push(
+                                          PageRouteBuilder(
+                                              pageBuilder: (_, __, ___) =>
+                                                  ReviewScreen(
+                                                      companycode: widget
+                                                          .profile
+                                                          .companycode)));
+                                    },
+                                    child: buildCardButton(
+                                        Icons.flag_outlined,
+                                        "Flagged",
+                                        true,
+                                        itemsCounts.flaggedCount),
+                                  ),
+                                  //////////////////
                                   SizedBox(width: 5),
-                                  buildCardButton(Icons.account_tree,
-                                      "Low Stock", true, countLowStock),
+
+                                  InkWell(
+                                    onTap: () {
+                                      //
+                                      Navigator.of(context).push(
+                                          PageRouteBuilder(
+                                              pageBuilder: (_, __, ___) =>
+                                                  LowStockScreen(
+                                                      companycode: widget
+                                                          .profile
+                                                          .companycode)));
+                                    },
+                                    child: buildCardButton(
+                                        Icons.account_tree,
+                                        "Low Stock",
+                                        true,
+                                        itemsCounts.lowStockCount),
+                                  ),
                                   SizedBox(width: 5),
 
                                   ///////////
@@ -471,7 +490,7 @@ class _HomeState extends State<Home> {
                                         Icons.breakfast_dining,
                                         "Items Add",
                                         true,
-                                        countItems),
+                                        itemsCounts.itemsCount),
                                   ),
                                 ],
                               ),
@@ -483,11 +502,44 @@ class _HomeState extends State<Home> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  buildCardButton(Icons.assignment_turned_in,
-                                      "Current Sale", false, 0),
+                                  /////////////////////////////////
+                                  InkWell(
+                                    onTap: () {
+                                      //
+                                      Navigator.of(context).push(
+                                          PageRouteBuilder(
+                                              pageBuilder: (_, __, ___) =>
+                                                  CurrentSaleScreen(
+                                                      companycode: widget
+                                                          .profile
+                                                          .companycode)));
+                                    },
+                                    child: buildCardButton(
+                                        Icons.assignment_turned_in,
+                                        "Current Sale",
+                                        true,
+                                        itemsCounts.currentSaleCount),
+                                  ),
+                                  //
                                   SizedBox(width: 5),
-                                  buildCardButton(
-                                      Icons.star, "Featured", false, 0),
+
+                                  InkWell(
+                                    onTap: () {
+                                      //
+                                      Navigator.of(context).push(
+                                          PageRouteBuilder(
+                                              pageBuilder: (_, __, ___) =>
+                                                  FeaturedScreen(
+                                                      companycode: widget
+                                                          .profile
+                                                          .companycode)));
+                                    },
+                                    child: buildCardButton(
+                                        Icons.star,
+                                        "Featured",
+                                        true,
+                                        itemsCounts.featuredCount),
+                                  ),
                                   SizedBox(width: 5),
 
                                   ////////////////////////////////////////////////////////////
@@ -499,7 +551,7 @@ class _HomeState extends State<Home> {
                                         title: Text('Add New'),
                                         content: Container(
                                           // color: Colors.red[100],
-                                          height: 100,
+                                          height: 150,
                                           child: Column(
                                             children: [
                                               Row(
@@ -526,11 +578,23 @@ class _HomeState extends State<Home> {
                                                 children: [
                                                   OutlinedButton(
                                                     onPressed: () {},
-                                                    child: Text('New Item'),
+                                                    child:
+                                                        Text('Feature Product'),
                                                   ),
                                                   OutlinedButton(
                                                     onPressed: () {},
-                                                    child: Text('New Sale'),
+                                                    child: Text('Add Stock'),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  OutlinedButton(
+                                                    onPressed: () {},
+                                                    child: Text(
+                                                        'Update Monthly theme'),
                                                   ),
                                                 ],
                                               ),
@@ -566,8 +630,22 @@ class _HomeState extends State<Home> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  buildCardButton(Icons.report_problem,
-                                      "Reports", false, 0),
+                                  //
+                                  //
+                                  InkWell(
+                                    onTap: () {
+                                      //
+                                      Navigator.of(context).push(
+                                          PageRouteBuilder(
+                                              pageBuilder: (_, __, ___) =>
+                                                  ReportScreen(
+                                                      companycode: widget
+                                                          .profile
+                                                          .companycode)));
+                                    },
+                                    child: buildCardButton(Icons.report_problem,
+                                        "Reports", false, 0),
+                                  ),
                                   SizedBox(width: 5),
                                   buildCardButton(
                                       Icons.trending_up, "Trending", false, 0),

@@ -199,11 +199,6 @@ class _TSBusinessProfileScreenState extends State<TSBusinessProfileScreen> {
       ),
     );
   }
-
-  Future<bool> deleteAccount(String email, String pwd) async {
-    bool res = await APIServices.deleteAccount(email, pwd);
-    return res;
-  }
 }
 
 /// Component category class to set list

@@ -6,7 +6,8 @@ class APIServices {
   //
 // deleteAccount
 // first get the sign in
-  static Future<bool> deleteAccount(String email, String password) async {
+  static Future<bool> deleteTestUserAccount(
+      String email, String password) async {
     print('1');
     final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
     print('2');

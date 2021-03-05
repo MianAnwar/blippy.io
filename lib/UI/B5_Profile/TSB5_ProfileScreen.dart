@@ -332,7 +332,7 @@ class _TSProfileScreenState extends State<TSProfileScreen> {
   }
 
   Future<bool> deleteAccount(String email, String pwd) async {
-    bool res = await APIServices.deleteAccount(email, pwd);
+    bool res = await APIServices.deleteTestUserAccount(email, pwd);
     return res;
   }
 }

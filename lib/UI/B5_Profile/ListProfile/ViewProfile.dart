@@ -14,6 +14,11 @@ class ViewEditProfile extends StatefulWidget {
 
 class _ViewEditProfileState extends State<ViewEditProfile> {
   TextEditingController codeCtrl = TextEditingController();
+  TextEditingController businessemailCtrl = TextEditingController();
+  TextEditingController businessAddressCtrl = TextEditingController();
+  TextEditingController contactCtrl = TextEditingController();
+  TextEditingController ownerNameCtrl = TextEditingController();
+
   var countItems;
   var countStaff;
   var businessName;
@@ -26,6 +31,10 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
     getSC();
     getBusinessName();
     codeCtrl.text = widget.profile.companycode;
+    businessemailCtrl.text = widget.profile.email;
+    contactCtrl.text = widget.profile.contactNo;
+    ownerNameCtrl.text = widget.profile.fullname;
+    // businessAddressCtrl.text //;
   }
 
   getPC() async {
@@ -210,6 +219,16 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.transparent,
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(top: 20.0),
+            child: Text('Hire Staff'),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.history_edu_sharp),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -235,13 +254,49 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
               child: Text(
                   "Stay Active with us. \n\n\nYour Business information will be here."),
             ),
+
+            /////////////////////
+
+/////////////////////////////////
             Padding(
               padding: EdgeInsets.only(top: 60.0, right: 20, left: 20),
+              child: Text(
+                'Company Code: ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 0.0, right: 20, left: 20),
               child: Center(
                 child: TextFormField(
                   controller: codeCtrl,
                   readOnly: true,
                 ),
+              ),
+            ),
+
+            Padding(
+              padding: EdgeInsets.only(top: 20.0, right: 20, left: 20),
+              child: Text(
+                'Company Email: ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(right: 20, left: 20),
+              child: Center(
+                child: TextFormField(
+                  controller: businessemailCtrl,
+                  readOnly: true,
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: EdgeInsets.only(top: 25.0, right: 20, left: 20),
+              child: Text(
+                'Company Location: ',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ],

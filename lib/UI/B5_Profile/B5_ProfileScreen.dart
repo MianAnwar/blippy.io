@@ -4,6 +4,7 @@ import 'package:total_app/UI/B2_Message/AppBar_ItemScreen/notificationAppbar.dar
 import 'package:total_app/constants.dart';
 import 'package:total_app/APIs/APIService.dart';
 import 'ListProfile/TSSettingApp.dart';
+import 'dart:async';
 import 'ListProfile/License.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
 import 'package:total_app/APIs/GettingData.dart';
@@ -38,8 +39,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   getCompanyLogo() async {
+    companylogo = 'assets/logos.png';
+
     this.companylogo =
         await GettingData.getCompanyUserDPURL(widget.profile.email);
+    companylogo = companylogo ?? '';
+    if (companylogo == '') {
+      companylogo = 'assets/logos.png';
+    }
     setState(() {});
   }
 
@@ -57,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(10.0),
                   child: Hero(
                     tag: 'hero-tag-profile',
-                    child: widget.profile.dpimageURL == ''
+                    child: companylogo == 'assets/logos.png'
                         ? Image(
                             image: AssetImage(
                               'assets/image/icon/profile.png',
@@ -69,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             width: 100,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: NetworkImage(widget.profile.dpimageURL),
+                                image: NetworkImage(companylogo),
                               ),
                             ),
                           ),
@@ -92,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${username ?? 'Test User'}",
+                      "${username ?? 'Registered User'}",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
@@ -108,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 new ViewEditProfile(profile: widget.profile)));
                       },
                       color: Colors.white,
-                      child: Text("view And Edit Profile"),
+                      child: Text("view Business Profile"),
                     ),
                   ],
                 ),
@@ -189,6 +196,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: TextStyle(fontFamily: "Sofia", fontSize: 25.0),
         ),
       ),
+
+      // Body
+      // Body
+      //
       body: SingleChildScrollView(
         child: Stack(
           children: <Widget>[
@@ -357,7 +368,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<bool> deleteAccount(String email, String pwd) async {
-    bool res = await APIServices.deleteAccount(email, pwd);
+    bool res = await APIServices.deleteTestUserAccount(email, pwd);
     return res;
   }
 }

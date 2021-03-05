@@ -6,8 +6,128 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:total_app/DataModels/productModel.dart';
 import 'package:total_app/DataModels/SearchResult.dart';
+import 'package:total_app/DataModels/SearchReviewed.dart';
+import 'package:total_app/DataModels/SearchLowStock.dart';
+import 'package:total_app/DataModels/SaleResult.dart';
+import 'package:total_app/DataModels/ITEMSCounts.dart';
 
 class GettingData {
+  ////
+  static Future<List<SearchResult>> featuredProdcuts(String cc) async {
+    List<SearchResult> result = List<SearchResult>();
+    CollectionReference ref = FirebaseFirestore.instance
+        .collection('Companies')
+        .doc(cc)
+        .collection('Products');
+    try {
+      final QuerySnapshot snapshot = await ref.get();
+
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        if (doc.data()['featured'] == 'YES') {
+          result.add(SearchResult.fromMapObj({
+            'did': doc.id,
+            'imageURL': doc.data()['imageURL'],
+            'title': doc.data()['title'],
+            'salePrice': doc.data()['salePrice'],
+          }));
+        }
+      });
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ////
+  static Future<List<SaleResult>> currentSales(String cc) async {
+    List<SaleResult> result = List<SaleResult>();
+    CollectionReference ref = FirebaseFirestore.instance
+        .collection('Companies')
+        .doc(cc)
+        .collection('Products');
+    try {
+      final QuerySnapshot snapshot = await ref.get();
+
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        if (doc.data()['sale'] == 'YES') {
+          result.add(SaleResult.fromMapObj({
+            'did': doc.id,
+            'imageURL': doc.data()['imageURL'],
+            'title': doc.data()['title'],
+            'salePrice': doc.data()['salePrice'],
+            'stock': doc.data()['stock'],
+            'startDate': doc.data()['startSale'],
+            'endDate': doc.data()['endSale'],
+            'deal': doc.data()['topDeal'],
+          }));
+        }
+      });
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ////
+  static Future<List<SearchLowStock>> lowStockProducts(String cc) async {
+    int xx = 0;
+    List<SearchLowStock> result = List<SearchLowStock>();
+    CollectionReference ref = FirebaseFirestore.instance
+        .collection('Companies')
+        .doc(cc)
+        .collection('Products');
+    try {
+      final QuerySnapshot snapshot = await ref.get();
+
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        xx = int.parse(doc.data()['stock']);
+        if (xx < 3) {
+          result.add(SearchLowStock.fromMapObj({
+            'did': doc.id,
+            'imageURL': doc.data()['imageURL'],
+            'title': doc.data()['title'],
+            'salePrice': doc.data()['salePrice'],
+            'stock': doc.data()['stock'],
+          }));
+        }
+      });
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ////
+  static Future<List<SearchReviewed>> flaggedProducts(String cc) async {
+    //
+    List<SearchReviewed> result = List<SearchReviewed>();
+    CollectionReference ref = FirebaseFirestore.instance
+        .collection('Companies')
+        .doc(cc)
+        .collection('Products');
+    try {
+      final QuerySnapshot snapshot = await ref.get();
+
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        String flagged = doc.data()['flagged'];
+        // print(flagged);
+        if (flagged == 'YES') {
+          result.add(SearchReviewed.fromMapObj({
+            'did': doc.id,
+            'imageURL': doc.data()['imageURL'],
+            'title': doc.data()['title'],
+            'flagged': doc.data()['flagged'],
+            'flaggedBy': doc.data()['flaggedBy'],
+            'flaggedReason': doc.data()['flaggedReason'],
+          }));
+        }
+      });
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
+
   ////
   static Future<List<SearchResult>> searchByBarcode(
       String cc, String barcode) async {
@@ -87,7 +207,24 @@ class GettingData {
     }
   }
 
-//getCountOfProducts
+  static Future<int> getCountOfStaff(String cc, String email) async {
+    int count = 0;
+    try {
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('RegisteredUsers');
+
+      final QuerySnapshot snapshot = await users.get();
+      //
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        if (doc.data()['companycode'] == cc) count += 1;
+      });
+      return count - 1;
+    } catch (e) {
+      return -1;
+    }
+  }
+
+  //
   static Future<int> getCountOfProducts(String cc) async {
     int count = 0;
     try {
@@ -106,7 +243,7 @@ class GettingData {
     }
   }
 
-//getCountOfProducts
+//
   static Future<String> getBusinessName(String cc) async {
     try {
       CollectionReference comp =
@@ -127,28 +264,14 @@ class GettingData {
     }
   }
 
-  //getCountOfProducts
-  static Future<int> getCountOfStaff(String cc, String myEmail) async {
-    int count = 0;
-    try {
-      CollectionReference staff =
-          FirebaseFirestore.instance.collection('RegisteredUsers');
-      final QuerySnapshot snapshot = await staff.get();
-      //
-      snapshot.docs.forEach((DocumentSnapshot doc) {
-        if (doc.data()['companycode'] == cc) count += 1;
-        if (doc.data()['email'] == myEmail) count -= 1;
-      });
-      return count;
-    } catch (e) {
-      return -1;
-    }
-  }
-
-//getCountOfLowStock
-  static Future<int> getCountOfLowStock(String cc) async {
+  /// Get Count of ....
+  static Future<ITEMSCounts> getCounts(String cc) async {
     int xx = 0;
-    int count = 0;
+    ITEMSCounts itemsCount = ITEMSCounts();
+    itemsCount.flaggedCount = 0;
+    itemsCount.lowStockCount = 0;
+    itemsCount.itemsCount = 0;
+
     try {
       CollectionReference company = FirebaseFirestore.instance
           .collection('Companies')
@@ -157,34 +280,29 @@ class GettingData {
       final QuerySnapshot snapshot = await company.get();
       //
       snapshot.docs.forEach((DocumentSnapshot doc) {
+        //flagged count
+        if (doc.data()['flagged'] == 'YES') {
+          itemsCount.flaggedCount += 1;
+        }
+        //low stock count
         xx = int.parse(doc.data()['stock']);
         if (xx < 3) {
-          count += 1;
+          itemsCount.lowStockCount += 1;
+        }
+        // items counts
+        itemsCount.itemsCount += 1;
+        // current Sale
+        if (doc.data()['sale'] == 'YES') {
+          itemsCount.currentSaleCount += 1;
+        }
+        // featured count
+        if (doc.data()['featured'] == 'YES') {
+          itemsCount.featuredCount += 1;
         }
       });
-      return count;
+      return itemsCount;
     } catch (e) {
-      return -1;
-    }
-  }
-
-  static Future<int> getCountOfFlagged(String cc) async {
-    int count = 0;
-    try {
-      CollectionReference company = FirebaseFirestore.instance
-          .collection('Companies')
-          .doc(cc)
-          .collection('Products');
-      final QuerySnapshot snapshot = await company.get();
-      //
-      snapshot.docs.forEach((DocumentSnapshot doc) {
-        if (doc.data()['flagged'] == 'YES') {
-          count += 1;
-        }
-      });
-      return count;
-    } catch (e) {
-      return -1;
+      return null;
     }
   }
 
@@ -415,12 +533,12 @@ class GettingData {
       if (doc.exists) {
         // print(doc.data()['username'].toString());
         String imageURL = doc.data()['imageURL'].toString();
-        return imageURL == '' ? 'assets/logo1.png' : imageURL;
+        return imageURL == '' ? 'assets/logos.png' : imageURL;
       } else {
-        return 'assets/logo1.png';
+        return 'assets/logos.png';
       }
     } catch (e) {
-      return 'assets/logo1.png';
+      return 'assets/logos.png';
     }
   }
 
@@ -432,12 +550,12 @@ class GettingData {
       if (doc.exists) {
         // print(doc.data()['username'].toString());
         String imageURL = doc.data()['dpimageURL'].toString();
-        return imageURL == '' ? 'assets/logo1.png' : imageURL;
+        return imageURL == '' ? 'assets/logos.png' : imageURL;
       } else {
-        return 'assets/logo1.png';
+        return 'assets/logos.png';
       }
     } catch (e) {
-      return 'assets/logo1.png';
+      return 'assets/logos.png';
     }
   }
 }

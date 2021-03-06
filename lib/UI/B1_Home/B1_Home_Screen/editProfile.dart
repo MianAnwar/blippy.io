@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:total_app/APIs/APIService.dart';
+import 'package:total_app/UI/B5_Profile/ListProfile/SettingApp.dart';
 import 'package:total_app/constants.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
 
@@ -371,20 +372,37 @@ class _EditProfileState extends State<EditProfile> {
                 alignment: Alignment.topCenter,
                 child: Stack(
                   children: <Widget>[
-                    Hero(
-                      tag: 'hero-tag-profile',
-                      child: Container(
-                        height: 130.0,
-                        width: 130.0,
-                        decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(50.0)),
-                            image: DecorationImage(
-                                image: widget.profile.dpimageURL == ''
-                                    ? AssetImage(
-                                        "assets/image/icon/profile.png")
-                                    : NetworkImage(widget.profile.dpimageURL),
-                                fit: BoxFit.cover)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(
+                          PageRouteBuilder(
+                            pageBuilder: (_, __, ___) => SettingApp(),
+                            transitionDuration: Duration(milliseconds: 1000),
+                            transitionsBuilder: (_, Animation<double> animation,
+                                __, Widget child) {
+                              return Opacity(
+                                opacity: animation.value,
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      child: Hero(
+                        tag: 'hero-tag-profile',
+                        child: Container(
+                          height: 130.0,
+                          width: 130.0,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(50.0)),
+                              image: DecorationImage(
+                                  image: widget.profile.dpimageURL == ''
+                                      ? AssetImage(
+                                          "assets/image/icon/profile.png")
+                                      : NetworkImage(widget.profile.dpimageURL),
+                                  fit: BoxFit.cover)),
+                        ),
                       ),
                     ),
                   ],

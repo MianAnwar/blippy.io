@@ -18,9 +18,6 @@ class PlanBSignup extends StatefulWidget {
 
 class _PlanBSignupState extends State<PlanBSignup>
     with TickerProviderStateMixin {
-// backend miananwar.2244@gmail.com
-// backend miananwar.2244@gmail.com
-
   var _signupformKey = GlobalKey<FormState>();
   TextEditingController fullnameCtrl = TextEditingController();
   TextEditingController emailCtrl = TextEditingController();
@@ -44,6 +41,7 @@ class _PlanBSignupState extends State<PlanBSignup>
   void initState() {
     // TOD implement initState
     super.initState();
+    ckeyCtrl.text = widget.companyCode ?? '';
   }
 
   /// Dispose controller
@@ -266,7 +264,7 @@ class _PlanBSignupState extends State<PlanBSignup>
                                       controller: contactCtrl,
                                       validator: (s) {
                                         if (s.isEmpty) {
-                                          return "Must Fill the Field";
+                                          return "Required";
                                         }
                                         return null;
                                       },
@@ -390,7 +388,7 @@ class _PlanBSignupState extends State<PlanBSignup>
                                       },
                                     ),
                                     title: Constants.getCheckBoxText(
-                                        'I agree, all the terms and condition. Total Blippy.io is sovereinty to us.'),
+                                        'I agree, all the terms and condition.'),
                                   ),
                                   ListTile(
                                     onTap: () {
@@ -472,9 +470,12 @@ class _PlanBSignupState extends State<PlanBSignup>
                           return -1;
                         } else if (exists == -1) {
                           Constants.showAlertDialogBox(context, 'Alert',
-                              'There is some problem with system.1');
+                              'There is some problem with system. -1');
                           return -1;
                         } else if (exists == 0) {
+                          ///////////////////
+                          /// Okay to go ////
+                          ///////////////////
                           //continue
                           print('continue.............................');
                           int countOfStaff =
@@ -485,7 +486,7 @@ class _PlanBSignupState extends State<PlanBSignup>
 
                           if (countOfStaff == -1) {
                             Constants.showAlertDialogBox(context, 'Alert',
-                                'There is some problem with system.2');
+                                'There is some problem with system. StaffCount_erRoR');
                             return -1;
                           } else if (countOfStaff == -2) {
                             Constants.showAlertDialogBox(
@@ -493,53 +494,58 @@ class _PlanBSignupState extends State<PlanBSignup>
                             return -1;
                           } else if (countOfStaff == 0) {
                             //hire first staff
-                            //
+                            //////////////////////
+                            BUser usr = await AuthenticationService(
+                                    FirebaseAuth.instance)
+                                .signUp(
+                                    email: emailCtrl.text,
+                                    password: pwdCtrl.text,
+                                    userName: fullnameCtrl.text);
+
+                            if (usr.retToken == 0) {
+                              // sucessfully account created
+                              int x = await AuthenticationService.saveStaffUser(
+                                  profile);
+                              if (x == 1) {
+                                Constants.showAlertDialogBox(context, 'Alert',
+                                    ' You successfully Hire a new Staff Memeber. Verification Email sent.');
+                              } else {
+                                Constants.showAlertDialogBox(context, 'Alert',
+                                    'There is some problem occured. Contact Admin for more details.');
+                              }
+                            }
+                            ///////// retToken other than 0 Means there is some problem.
+                            else {
+                              Constants.showAlertDialogBox(
+                                context,
+                                'Alert',
+                                usr.retToken == 1
+                                    ? 'weak-password'
+                                    : usr.retToken == 2
+                                        ? 'email-already-in-use'
+                                        : usr.retToken == 3
+                                            ? 'invalid-email'
+                                            : usr.retToken == 4
+                                                ? 'operation-not-allowed'
+                                                : 'There is some problem. Try Again.',
+                              );
+                              return -1;
+                            }
+                            //////////////////////
                             return 1;
                           } else {
                             // you need to pay
                             // then you can hire more staff
+
                             Constants.showAlertDialogBox(context, 'Alert',
                                 'pAY 10 eUROs to hire more staff.');
-                          }
-////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////
-                          BUser usr =
-                              await AuthenticationService(FirebaseAuth.instance)
-                                  .signUp(
-                                      email: emailCtrl.text,
-                                      password: pwdCtrl.text,
-                                      userName: fullnameCtrl.text);
+                            //
 
-                          if (usr.retToken == 0) {
-                            // sucessfully account created
-                            int x =
-                                AuthenticationService.saveStaffUser(profile);
-                            if (x == 1) {
-                              Constants.showAlertDialogBox(context, 'Alert',
-                                  ' You successfully Hire a new Staff Memeber. Verification Email sent.');
-                            } else {
-                              Constants.showAlertDialogBox(context, 'Alert',
-                                  'There is some problem occured. Contact Admin for more details.');
-                            }
                           }
-                          ///////// retToken other than 0 Means there is some problem.
-                          else {
-                            Constants.showAlertDialogBox(
-                              context,
-                              'Alert',
-                              usr.retToken == 1
-                                  ? 'weak-password'
-                                  : usr.retToken == 2
-                                      ? 'email-already-in-use'
-                                      : usr.retToken == 3
-                                          ? 'invalid-email'
-                                          : usr.retToken == 4
-                                              ? 'operation-not-allowed'
-                                              : 'There is some problem. Try Again.',
-                            );
-                            return -1;
-                          }
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
@@ -547,7 +553,7 @@ class _PlanBSignupState extends State<PlanBSignup>
 
                         }
                       } else {
-                        print('Empty Field(s)');
+                        // print('Empty Field(s)');
                       }
                     },
                     child: Container(

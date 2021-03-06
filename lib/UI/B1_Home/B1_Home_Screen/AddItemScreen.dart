@@ -10,6 +10,8 @@ import 'package:intl/intl.dart';
 import 'package:total_app/DataModels/productModel.dart';
 import 'package:total_app/constants.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
+import 'package:total_app/DataModels/AttributeModel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddNewItem extends StatefulWidget {
   final Profile profile;
@@ -24,6 +26,8 @@ class AddNewItem extends StatefulWidget {
 }
 
 class _AddNewItemState extends State<AddNewItem> {
+  CollectionReference ref;
+
   Product newProduct = Product();
 
   PickedFile _imageFile;
@@ -45,8 +49,6 @@ class _AddNewItemState extends State<AddNewItem> {
   TextEditingController nameProduct = TextEditingController();
   TextEditingController description = TextEditingController();
 
-  TextEditingController attriburtes = TextEditingController();
-
   bool topDeals = false;
   bool sale = false;
   bool featured = false;
@@ -56,12 +58,14 @@ class _AddNewItemState extends State<AddNewItem> {
   var startDate = '';
   var endDate = '';
 
+  List<String> attributes = List<String>();
+
   DateTimeRange dateRange;
 
   String getFrom() {
     if (!sale) return '';
     if (dateRange == null) {
-      return '';
+      return DateFormat('yyyy-MM-dd').format(DateTime.now());
     } else {
       return DateFormat('yyyy-MM-dd').format(dateRange.start);
     }
@@ -71,7 +75,8 @@ class _AddNewItemState extends State<AddNewItem> {
     if (!sale) return '';
 
     if (dateRange == null) {
-      return '';
+      return DateFormat('yyyy-MM-dd')
+          .format(DateTime.now().add(Duration(days: 2)));
     } else {
       return DateFormat('yyyy-MM-dd').format(dateRange.end);
     }
@@ -96,6 +101,7 @@ class _AddNewItemState extends State<AddNewItem> {
     // widget.profile.companycode
     categories = widget.category;
     subCategories = widget.subCategory;
+    ref = (GettingData.getAttributesReference(widget.profile.companycode));
   }
 
   Future pickDateRange(BuildContext context) async {
@@ -849,7 +855,7 @@ class _AddNewItemState extends State<AddNewItem> {
                                   maxLines: 6,
                                   decoration: InputDecoration(
                                     hintText:
-                                        'DescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescription',
+                                        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s',
                                     hintStyle: TextStyle(
                                         fontFamily: "Sofia",
                                         color: Colors.black26,
@@ -1041,108 +1047,65 @@ class _AddNewItemState extends State<AddNewItem> {
                         ),
                       ),
 
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 30.0, right: 30.0, bottom: 10.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              flex: 4,
-                              child: TextFormField(
-                                  controller: attriburtes,
-                                  validator: (v) {
-                                    if (v.isEmpty) {
-                                      return "Required";
+                      Container(
+                        padding: EdgeInsets.only(left: 20),
+                        height: 300,
+                        // color: Colors.amber,
+                        width: double.infinity,
+                        child: StreamBuilder(
+                          stream: ref.snapshots(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (!snapshot.hasData) {
+                              return Container(
+                                width: 50,
+                                height: 50,
+                                // color: Colors.black,
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            return GridView.count(
+                              crossAxisCount: 3,
+                              children: snapshot.data.docs
+                                  .map((DocumentSnapshot document) {
+                                // print(document.data()['AttName']);
+                                return InkWell(
+                                  onTap: () {
+                                    String a = (document.data()['AttName']);
+                                    print(this.attributes.length);
+                                    if (this.attributes.contains(a)) {
+                                      this.attributes.remove(a);
+                                      print('removed');
+                                    } else {
+                                      this.attributes.add(a);
+                                      print('added');
                                     }
-                                    if (v.length < 10) {
-                                      return "Must be more than 10 characters";
-                                    }
-                                    return null;
+                                    print(this.attributes.length);
+                                    setState(() {});
+                                    // print(document.data()['AttName']);
                                   },
-                                  maxLines: 3,
-                                  decoration: InputDecoration(
-                                    hintText:
-                                        '\t\t\tTags, Attributes\n commma-separated',
-                                    hintStyle: TextStyle(
-                                        fontFamily: "Sofia",
-                                        color: Colors.black26,
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w700),
-                                    enabledBorder: new UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.white,
-                                          width: 1.0,
-                                          style: BorderStyle.none),
-                                    ),
-                                  )),
-                            ),
-                          ],
+                                  child: _attributes(
+                                    document.data()['AttName'],
+                                    this.attributes.contains(
+                                            document.data()['AttName'])
+                                        ? Constants.basicColor
+                                        : Colors.grey,
+                                    Colors.white,
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          },
                         ),
                       ),
+                      //
 
-                      // SingleChildScrollView(
-                      //   scrollDirection: Axis.horizontal,
-                      //   child: Padding(
-                      //     padding: EdgeInsets.only(top: 10.0),
-                      //     child: Column(
-                      //       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //       children: <Widget>[
-                      //         Row(
-                      //           children: [
-                      //             Padding(
-                      //                 padding: const EdgeInsets.only(
-                      //                     left: 15.0, right: 0),
-                      //                 child: _infoBox(
-                      //                     "KK",
-                      //                     Constants.basicColor.withOpacity(0.67),
-                      //                     Colors.white)),
-                      //             Padding(
-                      //                 padding: const EdgeInsets.only(
-                      //                     left: 15.0, right: 0),
-                      //                 child: _infoBox(
-                      //                     "KK",
-                      //                     Constants.basicColor.withOpacity(0.67),
-                      //                     Colors.white)),
-                      //             Padding(
-                      //                 padding: const EdgeInsets.only(
-                      //                     left: 15.0, right: 0),
-                      //                 child: _infoBox(
-                      //                     "KK",
-                      //                     Constants.basicColor.withOpacity(0.67),
-                      //                     Colors.white)),
-                      //           ],
-                      //         ),
-                      //         SizedBox(height: 10),
-                      //         Row(
-                      //           children: [
-                      //             Padding(
-                      //                 padding: const EdgeInsets.only(
-                      //                     left: 15.0, right: 0),
-                      //                 child: _infoBox(
-                      //                     "KK",
-                      //                     Constants.basicColor.withOpacity(0.67),
-                      //                     Colors.white)),
-                      //             Padding(
-                      //                 padding: const EdgeInsets.only(
-                      //                     left: 15.0, right: 0),
-                      //                 child: _infoBox(
-                      //                     "KK",
-                      //                     Constants.basicColor.withOpacity(0.67),
-                      //                     Colors.white)),
-                      //             Padding(
-                      //                 padding: const EdgeInsets.only(
-                      //                     left: 15.0, right: 0),
-                      //                 child: _infoBox(
-                      //                     "KK",
-                      //                     Constants.basicColor.withOpacity(0.67),
-                      //                     Colors.white)),
-                      //           ],
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
+                      ////
+                      ////
+                      ////
+                      ////
+                      ////
 
                       Padding(
                         padding: EdgeInsets.only(top: 38.0, bottom: 40),
@@ -1171,8 +1134,7 @@ class _AddNewItemState extends State<AddNewItem> {
                               this.newProduct.category = widget.category;
 
                               this.newProduct.subCat = widget.subCategory;
-                              this.newProduct.attributes =
-                                  this.attriburtes.text;
+                              this.newProduct.attributes = this.attributes;
 
                               this.newProduct.address = this.address.text;
                               this.newProduct.aisle = this.aisle.text;
@@ -1210,6 +1172,10 @@ class _AddNewItemState extends State<AddNewItem> {
 
                                   if (response == 1) {
                                     Navigator.of(context).pop();
+                                    Constants.showAlertDialogBox(
+                                        context,
+                                        'Message, A new Product Added Sucessfully!',
+                                        '');
                                   } else {
                                     Constants.showAlertDialogBox(
                                         context,
@@ -1332,5 +1298,37 @@ class _AddNewItemState extends State<AddNewItem> {
       ],
     );
   }
+
   ////////////
+  ///
+  Widget _attributes(String attributeName, Color bg, Color tcolor) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+            height: 100.0,
+            width: 100.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(55.0)),
+              color: bg,
+            ),
+            child: Center(
+              child: Container(
+                // color: Colors.red,
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  '$attributeName',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: tcolor,
+                    fontFamily: "Berlin",
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            )),
+      ],
+    );
+  }
 }

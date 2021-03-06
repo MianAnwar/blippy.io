@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:total_app/APIs/LoginService.dart';
 import '../../../constants.dart';
 
 class SettingApp extends StatefulWidget {
@@ -12,7 +14,7 @@ class _SettingApp extends State<SettingApp> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "App Settings",
+          "",
           style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 18.0,
@@ -28,10 +30,12 @@ class _SettingApp extends State<SettingApp> {
           child: Column(
             children: <Widget>[
               Setting(
-                head: "Setting | Visiblity |",
+                head: "Setup your App Account",
                 sub1: "Change Password",
                 sub2: "My Location",
-                sub3: "Display Logo",
+                sub3: "Main Business Image",
+                sub4: "Display Logo",
+                sub5: "Business Monthly Theme",
               ),
             ],
           ),
@@ -50,22 +54,21 @@ class Setting extends StatelessWidget {
   );
 
   static var _txtCustomSub = TextStyle(
-    color: Colors.black38,
+    color: Colors.black,
     fontSize: 15.0,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.normal,
     fontFamily: "Gotik",
   );
 
-  final String head, sub1, sub2, sub3;
+  final String head, sub1, sub2, sub3, sub4, sub5;
 
-  Setting({this.head, this.sub1, this.sub2, this.sub3});
+  Setting({this.head, this.sub1, this.sub2, this.sub3, this.sub4, this.sub5});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 5.0),
       child: Container(
-        height: 235.0,
         decoration: BoxDecoration(
           color: Colors.white,
         ),
@@ -75,6 +78,7 @@ class Setting extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              // main header
               Padding(
                 padding: EdgeInsets.only(bottom: 15.0, top: 15.0),
                 child: Text(
@@ -89,21 +93,65 @@ class Setting extends StatelessWidget {
                   height: 0.5,
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        sub1,
-                        style: _txtCustomSub,
+
+              //change password
+              InkWell(
+                onTap: () {
+                  var alterDialog = AlertDialog(
+                    title: Column(
+                      children: [
+                        Text('Change Password Securely'),
+                        Text('\n${Constants.firebaseAuth.currentUser.email}'),
+                      ],
+                    ),
+                    actions: [
+                      FlatButton(
+                        onPressed: () async {
+                          ////////////////////////////////////////
+
+                          print(Constants.firebaseAuth.currentUser.email);
+                          //
+                          int res =
+                              await AuthenticationService(FirebaseAuth.instance)
+                                  .sendPasswordResetEmail(
+                                      Constants.firebaseAuth.currentUser.email);
+                          if (res == 0) {
+                            print('Sent');
+                            Navigator.of(context).pop();
+                          }
+                          ////////////////////////////////////////
+                        },
+                        child: Text("Send Email"),
                       ),
-                      Icon(
-                        Icons.keyboard_arrow_right,
-                        color: Colors.black38,
-                      )
-                    ]),
+                    ],
+                  );
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return alterDialog;
+                      });
+
+                  ///////////////////////////////////////////////////
+                  ///
+                },
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          sub1,
+                          style: _txtCustomSub,
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_right,
+                          color: Colors.black38,
+                        )
+                      ]),
+                ),
               ),
+
               Padding(
                 padding: EdgeInsets.only(left: 10.0, right: 20.0),
                 child: Divider(
@@ -111,21 +159,52 @@ class Setting extends StatelessWidget {
                   height: 0.5,
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        sub2,
-                        style: _txtCustomSub,
+
+              // set my location
+              InkWell(
+                onTap: () {
+                  var alterDialog = AlertDialog(
+                    title: Column(
+                      children: [
+                        Text('Change my Company Location'),
+                        Text('Avaiable for Company'),
+                        // Text('\n${Constants.firebaseAuth.currentUser.email}'),
+                      ],
+                    ),
+                    actions: [
+                      FlatButton(
+                        onPressed: null,
+                        child: Text("Change Location from Map"),
                       ),
-                      Icon(
-                        Icons.keyboard_arrow_right,
-                        color: Colors.black38,
-                      )
-                    ]),
+                    ],
+                  );
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return alterDialog;
+                      });
+
+                  ///////////////////////////////////////////////////
+                  ///
+                },
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          sub2,
+                          style: _txtCustomSub,
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_right,
+                          color: Colors.black38,
+                        )
+                      ]),
+                ),
               ),
+
               Padding(
                 padding: EdgeInsets.only(left: 10.0, right: 20.0),
                 child: Divider(
@@ -133,20 +212,154 @@ class Setting extends StatelessWidget {
                   height: 0.5,
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        sub3,
-                        style: _txtCustomSub,
+
+              // Change main business image
+              InkWell(
+                onTap: () {
+                  var alterDialog = AlertDialog(
+                    title: Column(
+                      children: [
+                        Text('Change Company Logo'),
+                        Text('Avaiable for Company'),
+                        // Text('\n${Constants.firebaseAuth.currentUser.email}'),
+                      ],
+                    ),
+                    actions: [
+                      FlatButton(
+                        onPressed: null,
+                        child: Text("Change Logo from Gallery"),
                       ),
-                      Icon(
-                        Icons.keyboard_arrow_right,
-                        color: Colors.black38,
-                      )
-                    ]),
+                    ],
+                  );
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return alterDialog;
+                      });
+
+                  ///////////////////////////////////////////////////
+                  ///
+                },
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          sub3,
+                          style: _txtCustomSub,
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_right,
+                          color: Colors.black38,
+                        )
+                      ]),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+                child: Divider(
+                  color: Colors.black12,
+                  height: 0.5,
+                ),
+              ),
+
+              // Change display image
+              InkWell(
+                onTap: () {
+                  var alterDialog = AlertDialog(
+                    title: Column(
+                      children: [
+                        Text('Change Company Logo'),
+                        Text('Avaiable for Company'),
+                        // Text('\n${Constants.firebaseAuth.currentUser.email}'),
+                      ],
+                    ),
+                    actions: [
+                      FlatButton(
+                        onPressed: null,
+                        child: Text("Change Logo from Gallery"),
+                      ),
+                    ],
+                  );
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return alterDialog;
+                      });
+
+                  ///////////////////////////////////////////////////
+                  ///
+                },
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          sub4,
+                          style: _txtCustomSub,
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_right,
+                          color: Colors.black38,
+                        )
+                      ]),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+                child: Divider(
+                  color: Colors.black12,
+                  height: 0.5,
+                ),
+              ),
+
+              // Change Business Monthly Theme
+              InkWell(
+                onTap: () {
+                  var alterDialog = AlertDialog(
+                    title: Column(
+                      children: [
+                        Text('Change Company Logo'),
+                        Text('Avaiable for Company'),
+                        // Text('\n${Constants.firebaseAuth.currentUser.email}'),
+                      ],
+                    ),
+                    actions: [
+                      FlatButton(
+                        onPressed: null,
+                        child: Text("Change Logo from Gallery"),
+                      ),
+                    ],
+                  );
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return alterDialog;
+                      });
+
+                  ///////////////////////////////////////////////////
+                  ///
+                },
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          sub5,
+                          style: _txtCustomSub,
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_right,
+                          color: Colors.black38,
+                        )
+                      ]),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 20.0),

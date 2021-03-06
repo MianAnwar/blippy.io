@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:total_app/APIs/GettingData.dart';
+import 'package:total_app/DataModels/SearchResult.dart';
+import 'package:total_app/UI/B4_Review/BProducts.dart';
+import 'package:total_app/UI/IntroApps/PlanBSignup.dart';
 import 'package:total_app/constants.dart';
 import 'package:total_app/UI/B4_Review/BStaffs.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
+
+import 'SettingApp.dart';
 
 class ViewEditProfile extends StatefulWidget {
   final Profile profile;
@@ -22,6 +27,7 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
   var countItems;
   var countStaff;
   var businessName;
+  String companylogo;
 
   @override
   void initState() {
@@ -30,11 +36,18 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
     getPC();
     getSC();
     getBusinessName();
+    getCompanyLogo();
     codeCtrl.text = widget.profile.companycode;
     businessemailCtrl.text = widget.profile.email;
     contactCtrl.text = widget.profile.contactNo;
     ownerNameCtrl.text = widget.profile.fullname;
     // businessAddressCtrl.text //;
+  }
+
+  refresh() {
+    getPC();
+    getSC();
+    getBusinessName();
   }
 
   getPC() async {
@@ -56,6 +69,19 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
     setState(() {});
   }
 
+  getCompanyLogo() async {
+    companylogo = 'assets/logos.png';
+
+    this.companylogo =
+        await GettingData.getCompanyUserDPURL(widget.profile.email);
+    companylogo = companylogo ?? '';
+    if (companylogo == '') {
+      companylogo = 'assets/logos.png';
+    }
+
+    setState(() {});
+  }
+
   Widget buildItem() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 13),
@@ -66,26 +92,43 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
             flex: 1,
             child: Column(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10.0),
-                  child: Hero(
-                    tag: 'hero-tag-profile',
-                    child: widget.profile.dpimageURL == ''
-                        ? Image(
-                            image: AssetImage(
-                              'assets/image/icon/profile.png',
-                            ),
-                            fit: BoxFit.cover,
-                          )
-                        : Container(
-                            height: 100,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(widget.profile.dpimageURL),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => SettingApp(),
+                        transitionDuration: Duration(milliseconds: 10),
+                        transitionsBuilder:
+                            (_, Animation<double> animation, __, Widget child) {
+                          return Opacity(
+                            opacity: animation.value,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Hero(
+                      tag: 'hero-tag-profile',
+                      child: companylogo == 'assets/logos.png'
+                          ? Image(
+                              image: AssetImage(
+                                'assets/image/icon/profile.png',
+                              ),
+                              fit: BoxFit.cover,
+                            )
+                          : Container(
+                              height: 100,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(companylogo),
+                                ),
                               ),
                             ),
-                          ),
+                    ),
                   ),
                 ),
               ],
@@ -118,9 +161,10 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
                               onTap: () {
                                 Navigator.of(context).push(PageRouteBuilder(
                                     pageBuilder: (_, __, ___) => BStaffsScreen(
-                                          companyCode:
-                                              widget.profile.companycode,
+                                          profile: widget.profile,
                                         )));
+                                refresh();
+                                setState(() {});
                               },
                               child: Padding(
                                 padding: EdgeInsets.only(left: 5.0),
@@ -161,12 +205,33 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
                                   color: Colors.white,
                                 )),
                             InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) => BStaffsScreen(
-                                          companyCode:
-                                              widget.profile.companycode,
-                                        )));
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+                              onTap: () async {
+                                List<SearchResult> allProducts =
+                                    List<SearchResult>();
+                                allProducts = await GettingData.searchPattern(
+                                    widget.profile.companycode, ' ');
+                                setState(() {});
+                                Navigator.of(context).push(
+                                  PageRouteBuilder(
+                                    pageBuilder: (_, __, ___) => new BProducts(
+                                      results: allProducts,
+                                    ),
+                                    transitionsBuilder: (_,
+                                        Animation<double> animation,
+                                        __,
+                                        Widget child) {
+                                      return Opacity(
+                                        opacity: animation.value,
+                                        child: child,
+                                      );
+                                    },
+                                    transitionDuration:
+                                        Duration(milliseconds: 500),
+                                  ),
+                                );
                               },
                               child: Padding(
                                 padding: EdgeInsets.only(left: 5.0),
@@ -225,7 +290,12 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
             child: Text('Hire Staff'),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => PlanBSignup(
+                        companyCode: widget.profile.companycode,
+                      )));
+            },
             icon: Icon(Icons.history_edu_sharp),
           ),
         ],

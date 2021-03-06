@@ -284,6 +284,6 @@ flutter:
     - assets/image/logo/logo.png
     - assets/video/onBoarding.gif
     - assets/image/illustration/messageIlustration.png
-    - assets/
+    - assets/empty.png
 
 

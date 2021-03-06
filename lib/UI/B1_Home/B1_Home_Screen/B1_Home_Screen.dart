@@ -161,7 +161,7 @@ class _HomeState extends State<Home> {
                   child: child,
                 );
               },
-              transitionDuration: Duration(milliseconds: 500),
+              transitionDuration: Duration(milliseconds: 200),
             ),
           );
         },
@@ -551,7 +551,7 @@ class _HomeState extends State<Home> {
                                         title: Text('Add New'),
                                         content: Container(
                                           // color: Colors.red[100],
-                                          height: 150,
+                                          height: 109,
                                           child: Column(
                                             children: [
                                               Row(
@@ -565,27 +565,20 @@ class _HomeState extends State<Home> {
                                                     },
                                                     child: Text('New Category'),
                                                   ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
                                                   OutlinedButton(
-                                                    onPressed: () {},
-                                                    child: Text('New Sale'),
+                                                    onPressed: () {
+                                                      addNewAttribute();
+                                                    },
+                                                    child:
+                                                        Text('New Attribute'),
                                                   ),
                                                 ],
                                               ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  OutlinedButton(
-                                                    onPressed: () {},
-                                                    child:
-                                                        Text('Feature Product'),
-                                                  ),
-                                                  OutlinedButton(
-                                                    onPressed: () {},
-                                                    child: Text('Add Stock'),
-                                                  ),
-                                                ],
+                                              SizedBox(
+                                                height: 10,
                                               ),
                                               Row(
                                                 mainAxisAlignment:
@@ -716,6 +709,7 @@ class _HomeState extends State<Home> {
                       context, 'Alert', 'Couldn\'t Add');
                 } else {
                   Navigator.of(context).pop();
+                  Constants.showAlertDialogBox(context, 'Added', '');
                 }
               } else {
                 // print('There is problem.');
@@ -876,6 +870,81 @@ class _HomeState extends State<Home> {
                       context, 'Alert', 'Couldn\'t Add');
                 } else {
                   Navigator.of(context).pop();
+                }
+              } else {
+                // print('There is problem.');
+              }
+            }
+          },
+          child: Text("Add"),
+        ),
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text("Exit"),
+        ),
+      ],
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alterDialog;
+        });
+  }
+
+//////////////////
+  String newAttri;
+  var _addAttFormKey = GlobalKey<FormState>();
+  addNewAttribute() {
+    var alterDialog = AlertDialog(
+      title: Text('Add New Attribute'),
+      content: Container(
+        height: 100,
+        child: Form(
+          key: _addAttFormKey,
+          child: Column(
+            children: [
+              TextFormField(
+                validator: (v) {
+                  if (v.isEmpty) {
+                    return "Required";
+                  }
+                  return null;
+                },
+                onChanged: (c) {
+                  newAttri = c;
+                  setState(() {});
+                },
+                decoration: InputDecoration(
+                  labelText: 'Attribute',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        FlatButton(
+          onPressed: () async {
+            int ret;
+            if (_addAttFormKey.currentState.validate()) {
+              ret = await GettingData.checkNewAttribute(
+                  newAttri, widget.profile.companycode);
+              if (ret == 0) {
+                print('Already Exists');
+                Constants.showAlertDialogBox(
+                    context, 'Alert', 'Already Exists');
+              } else if (ret == 1) {
+                // print('Now Add');
+                ret = GettingData.saveNewAttribute(
+                    newAttri, widget.profile.companycode);
+                if (ret != 1) {
+                  Constants.showAlertDialogBox(
+                      context, 'Alert', 'Couldn\'t Add');
+                } else {
+                  Navigator.of(context).pop();
+                  Constants.showAlertDialogBox(context, 'Added!', '');
                 }
               } else {
                 // print('There is problem.');

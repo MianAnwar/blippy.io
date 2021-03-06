@@ -3,7 +3,125 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
 
 class APIServices {
-  //
+/////////////
+////
+////
+/////
+/////////////
+  // deleteAccount
+  // first get the sign in
+  // deleteBusinessAccountToo
+  static Future<bool> deleteBusinessAccountToo(
+      String email, String password, String cc) async {
+    print('C1');
+    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+    print('2');
+
+    try {
+      await _firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+      print('3');
+
+      await FirebaseAuth.instance.currentUser.delete();
+      print('4');
+      bool fg1 = await deleteBusiness(cc);
+      bool fg2 = await deleteRegisteredInfo(email);
+      print('5');
+
+      return fg1 && fg2;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        // print('The user must reauthenticate before this operation can be executed.');
+      }
+      return false;
+    }
+  }
+
+  // delete Business
+  static Future<bool> deleteBusiness(String cc) async {
+    try {
+      CollectionReference testUser =
+          FirebaseFirestore.instance.collection('Companies');
+
+      final doc = await testUser.doc(cc).get();
+      if (doc.exists) {
+        doc.reference.delete();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+/*
+/////////////
+////
+  ///
+  ///
+  ///
+  ///
+/////////////
+*/
+  // deleteAccount
+  // first get the sign in
+  //deleteRegistered
+  static Future<bool> deleteOnlyDesignatedAccount(
+      String email, String password) async {
+    print('R1');
+    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+    print('2');
+
+    try {
+      await _firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+      print('3');
+
+      await FirebaseAuth.instance.currentUser.delete();
+      print('4');
+      bool fg = await deleteRegisteredInfo(email);
+      print('5');
+
+      return fg;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        // print('The user must reauthenticate before this operation can be executed.');
+      }
+      return false;
+    }
+  }
+
+  // delete Registered
+  static Future<bool> deleteRegisteredInfo(String email) async {
+    try {
+      CollectionReference testUser =
+          FirebaseFirestore.instance.collection('RegisteredUsers');
+
+      final doc = await testUser.doc(email).get();
+      if (doc.exists) {
+        doc.reference.delete();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+//
+/*
+
+
+
+
+
+
+
+
+*/
+
 // deleteAccount
 // first get the sign in
   static Future<bool> deleteTestUserAccount(
@@ -31,7 +149,7 @@ class APIServices {
     }
   }
 
-  // deleteUser
+  // delete user
   static Future<bool> deleteTestUserInfo(String email) async {
     try {
       CollectionReference testUser =
@@ -49,7 +167,13 @@ class APIServices {
     }
   }
 
-  // updateTestUser
+/*
+
+
+
+
+*/
+  // update TestUser username
   static Future<int> updateTestUser(String newUsername, String email) async {
     try {
       CollectionReference testUser =
@@ -86,7 +210,7 @@ class APIServices {
     }
   }
 
-  //updateRegisteredUserName
+  // updateRegisteredPhoneNumber
   static Future<int> updateRegisteredPhoneNumber(
       String newphoneNo, String email) async {
     try {
@@ -105,6 +229,7 @@ class APIServices {
     }
   }
 
+  // getTestUserName
   static Future<String> getTestUserName(String email) async {
     try {
       final CollectionReference users =
@@ -122,6 +247,7 @@ class APIServices {
     }
   }
 
+  // getRegisteredUser
   static Future<Profile> getRegisteredUser(String email) async {
     try {
       final CollectionReference users =
@@ -138,6 +264,7 @@ class APIServices {
     }
   }
 
+  // getRegisteredUserName
   static Future<String> getRegisteredUserName(String email) async {
     try {
       final CollectionReference users =

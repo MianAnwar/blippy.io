@@ -190,18 +190,20 @@ class AuthenticationService {
     }
   }
 
-  static int saveStaffUser(Profile p) {
+  static Future<int> saveStaffUser(Profile p) async {
     try {
       CollectionReference users =
           FirebaseFirestore.instance.collection('RegisteredUsers');
-      users.doc(p.email).set(p.toMap()).then((value) {
-        return 1;
+      users.doc(p.email).set(p.toMap()).then((value) async {
+        return await AuthenticationService.incrementCountofStaff(p.companycode)
+            ? 1
+            : 0;
       }).catchError((error) {
-        return -1;
+        return -1; //
       });
       return 1;
     } catch (ex) {
-      return -1;
+      return -1; //
     }
   }
 
@@ -219,6 +221,26 @@ class AuthenticationService {
       }
     } catch (e) {
       return -1;
+    }
+  }
+
+  // getCountofStaff
+  static Future<bool> incrementCountofStaff(String key) async {
+    int currentC = await AuthenticationService.getCountofStaff(key);
+    try {
+      CollectionReference companies =
+          FirebaseFirestore.instance.collection(Constants.companies);
+
+      final DocumentSnapshot doc = await companies.doc(key).get();
+      if (doc.exists) {
+        doc.reference.update({'staffCount': currentC + 1});
+        print(doc.data()['staffCount']);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
     }
   }
 

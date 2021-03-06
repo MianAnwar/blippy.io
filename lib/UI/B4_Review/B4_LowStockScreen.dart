@@ -32,122 +32,141 @@ class _LowStockScreenState extends State<LowStockScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // AppBar
-      appBar: AppBar(
-        elevation: 0.0,
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        title: Text(
-          "Low Stock",
-          style: TextStyle(
-            fontFamily: "Sofia",
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              //////////////////////////////////
-              //////////////////////////////////
-              //////////////////////////////////
-              //////////////////////////////////
-              ProgressDialog dialog = ProgressDialog(context);
-              await dialog.show();
-              refresh();
-              await dialog.hide();
-            },
-            icon: Icon(Icons.refresh),
-          )
-        ],
-      ),
-
-      // body
-      body: Stack(
-        children: <Widget>[
-          // Title + Icon,     Products for Review
-
-          Padding(
-            padding: EdgeInsets.only(top: 0),
-            child: Container(
-              child: ListView.builder(
-                itemBuilder: (ctx, index) {
-                  return InkWell(
-                    child: CardList(lowStockResult[index]),
-                    onTap: () {
-                      showModalBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return Container(
-                              // alignment: Alignment.topCenter,
-                              color: Colors.white12,
-                              height: 225,
-                              child: Column(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      //
-                                    },
-                                    child: ListTile(
-                                      leading: Icon(Icons.open_in_new),
-                                      title: Text('Open'),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      /////
-                                      print(lowStockResult[index].did);
-                                      // print(lowStockResult[index].title);
-                                      // // Navigator
-                                      // Navigator.of(context).push(
-                                      //     PageRouteBuilder(
-                                      //         pageBuilder: (_, __, ___) =>
-                                      //             ProductDetails(
-                                      //               did: lowStockResult[index]
-                                      //                   .did,
-                                      //             )));
-                                    },
-                                    child: ListTile(
-                                      leading: Icon(Icons.open_in_browser),
-                                      title: Text('Add Stock'),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      //
-                                    },
-                                    child: ListTile(
-                                      leading: Icon(Icons.featured_play_list),
-                                      title: Text('Mark Featured'),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      //
-                                    },
-                                    child: ListTile(
-                                      leading: Icon(Icons.delete),
-                                      title: Text('Delete Product'),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          });
-                    },
-                  );
-                },
-                itemCount: lowStockResult.length,
-              ),
+    if (lowStockResult.length != 0) {
+      return Scaffold(
+        // AppBar
+        appBar: AppBar(
+          elevation: 0.0,
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          title: Text(
+            "Low Stock",
+            style: TextStyle(
+              fontFamily: "Sofia",
+              fontWeight: FontWeight.w800,
             ),
           ),
+          actions: [
+            IconButton(
+              onPressed: () async {
+                //////////////////////////////////
+                //////////////////////////////////
+                //////////////////////////////////
+                //////////////////////////////////
+                ProgressDialog dialog = ProgressDialog(context);
+                await dialog.show();
+                refresh();
+                await dialog.hide();
+              },
+              icon: Icon(Icons.refresh),
+            )
+          ],
+        ),
 
-          Divider(),
+        // body
+        body: Stack(
+          children: <Widget>[
+            // Title + Icon,     Products for Review
 
-          //
-        ],
-      ),
-    );
+            Padding(
+              padding: EdgeInsets.only(top: 0),
+              child: Container(
+                child: ListView.builder(
+                  itemBuilder: (ctx, index) {
+                    return InkWell(
+                      child: CardList(lowStockResult[index]),
+                      onTap: () {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return Container(
+                                // alignment: Alignment.topCenter,
+                                color: Colors.white12,
+                                height: 225,
+                                child: Column(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        //
+                                      },
+                                      child: ListTile(
+                                        leading: Icon(Icons.open_in_new),
+                                        title: Text('Open'),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        /////
+                                        print(lowStockResult[index].did);
+                                        // print(lowStockResult[index].title);
+                                        // // Navigator
+                                        // Navigator.of(context).push(
+                                        //     PageRouteBuilder(
+                                        //         pageBuilder: (_, __, ___) =>
+                                        //             ProductDetails(
+                                        //               did: lowStockResult[index]
+                                        //                   .did,
+                                        //             )));
+                                      },
+                                      child: ListTile(
+                                        leading: Icon(Icons.open_in_browser),
+                                        title: Text('Add Stock'),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        //
+                                      },
+                                      child: ListTile(
+                                        leading: Icon(Icons.featured_play_list),
+                                        title: Text('Mark Featured'),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        //
+                                      },
+                                      child: ListTile(
+                                        leading: Icon(Icons.delete),
+                                        title: Text('Delete Product'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            });
+                      },
+                    );
+                  },
+                  itemCount: lowStockResult.length,
+                ),
+              ),
+            ),
+
+            Divider(),
+
+            //
+          ],
+        ),
+      );
+    } else {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          elevation: 0.0,
+        ),
+        body: Center(
+          child: Hero(
+            tag: 'iconImages',
+            child: Image.asset(
+              'assets/empty.png',
+              height: MediaQuery.of(context).size.height * 0.8,
+              width: MediaQuery.of(context).size.width * 0.8,
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   Widget buildReviewItem(

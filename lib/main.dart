@@ -258,6 +258,7 @@ class SplashScreenState extends State<SplashScreen> {
               child: Hero(
                 tag: 'iconImage',
                 child: Image.asset(
+                  // 'assets/Image/illustration/empty.png',
                   'assets/logos.png',
                   height: MediaQuery.of(context).size.height * 0.8,
                   width: MediaQuery.of(context).size.width * 0.8,

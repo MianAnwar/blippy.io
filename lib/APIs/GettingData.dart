@@ -4,14 +4,41 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:total_app/DataModels/ProfileModel.dart';
 import 'package:total_app/DataModels/productModel.dart';
 import 'package:total_app/DataModels/SearchResult.dart';
 import 'package:total_app/DataModels/SearchReviewed.dart';
 import 'package:total_app/DataModels/SearchLowStock.dart';
 import 'package:total_app/DataModels/SaleResult.dart';
 import 'package:total_app/DataModels/ITEMSCounts.dart';
+import 'package:total_app/DataModels/ReportModel.dart';
+import 'package:total_app/DataModels/AttributeModel.dart';
 
 class GettingData {
+  static Future<List<ReportModel>> getAllReports(String cc) async {
+    List<ReportModel> result = List<ReportModel>();
+    CollectionReference ref = FirebaseFirestore.instance
+        .collection('Companies')
+        .doc(cc)
+        .collection('Reorts');
+    try {
+      final QuerySnapshot snapshot = await ref.get();
+
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        result.add(ReportModel.fromMapObj({
+          'comp': doc.id,
+          'date': doc.data()['date'],
+          'action': doc.data()['action'],
+          'name': doc.data()['name'],
+          'email': doc.data()['email'],
+        }));
+      });
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
+
   ////
   static Future<List<SearchResult>> featuredProdcuts(String cc) async {
     List<SearchResult> result = List<SearchResult>();
@@ -25,7 +52,7 @@ class GettingData {
       snapshot.docs.forEach((DocumentSnapshot doc) {
         if (doc.data()['featured'] == 'YES') {
           result.add(SearchResult.fromMapObj({
-            'did': doc.id,
+            'comp': doc.id,
             'imageURL': doc.data()['imageURL'],
             'title': doc.data()['title'],
             'salePrice': doc.data()['salePrice'],
@@ -177,18 +204,17 @@ class GettingData {
         String description = doc.data()['description'];
         String category = doc.data()['category'];
         String subCat = doc.data()['subCat'];
-        String attributes = doc.data()['attributes'];
+        var attributes = (doc.data()['attributes']).toList();
+        print(attributes);
 
         if ((address.toLowerCase()).contains(pattern) ||
             (title.toLowerCase()).contains(pattern) ||
             (description.toLowerCase()).contains(pattern) ||
             (category.toLowerCase()).contains(pattern) ||
             (subCat.toLowerCase()).contains(pattern) ||
-            (attributes.toLowerCase()).contains(pattern)) {
+            (attributes).contains(pattern)) {
           // print('---------------');
-
           // print(doc);
-
           // print('---------------');
           // print(doc.data());
           // print('---------------');
@@ -221,6 +247,33 @@ class GettingData {
       return count - 1;
     } catch (e) {
       return -1;
+    }
+  }
+
+  // Get Staff Data
+  static Future<List<Profile>> getStaff(String cc, String email) async {
+    //
+    List<Profile> result = List<Profile>();
+    CollectionReference ref =
+        FirebaseFirestore.instance.collection('RegisteredUsers');
+
+    try {
+      final QuerySnapshot snapshot = await ref.get();
+
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        if (doc.data()['companycode'] == cc && doc.data()['email'] != email)
+          result.add(Profile.fromMapObj({
+            'companycode': doc.data()['companycode'],
+            'fullname': doc.data()['fullname'],
+            'email': doc.data()['email'],
+            'role': doc.data()['role'],
+            'dpimageURL': doc.data()['dpimageURL'],
+            'contactNo': doc.data()['contactNo'],
+          }));
+      });
+      return result;
+    } catch (e) {
+      return null;
     }
   }
 
@@ -385,6 +438,13 @@ class GettingData {
         .collection('Categories');
   }
 
+  static CollectionReference getAttributesReference(String cc) {
+    return FirebaseFirestore.instance
+        .collection('Companies')
+        .doc(cc)
+        .collection('Attributes');
+  }
+
   static CollectionReference getSubCategoriesReference(String cc, String cat) {
     return FirebaseFirestore.instance
         .collection('Companies')
@@ -411,6 +471,47 @@ class GettingData {
     }
   }
 
+  static Future<int> checkNewAttribute(String nweAttri, String cc) async {
+    final CollectionReference att = FirebaseFirestore.instance
+        .collection('Companies')
+        .doc(cc)
+        .collection('Attributes');
+    try {
+      final DocumentSnapshot doc = await att.doc(nweAttri).get();
+      if (doc.exists) {
+        return 0;
+      } else {
+        return 1;
+      }
+    } catch (e) {
+      return -1;
+    }
+  }
+
+/////getAttributes
+  static Future<List<AttributeModel>> getAttributes(String cc) async {
+    List<AttributeModel> result = List<AttributeModel>();
+    final CollectionReference ref = FirebaseFirestore.instance
+        .collection('Companies')
+        .doc(cc)
+        .collection('Attributes');
+    try {
+      final QuerySnapshot snapshot = await ref.get();
+
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        // print(doc.data()['AttName']);
+
+        result.add(AttributeModel.fromMapObj({
+          'AttName': doc.data()['AttName'],
+          'value': 'NO',
+        }));
+      });
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
+
   static Future<int> checkNewSubCategory(
       String cat, String newSubCat, String cc) async {
     final CollectionReference subcatRef = FirebaseFirestore.instance
@@ -427,6 +528,22 @@ class GettingData {
         return 1;
       }
     } catch (e) {
+      return -1;
+    }
+  }
+
+  static int saveNewAttribute(String newAttribute, String cc) {
+    try {
+      CollectionReference category = getAttributesReference(cc);
+      category.doc(newAttribute).set({
+        'AttName': newAttribute,
+      }).then((value) {
+        return 1;
+      }).catchError((error) {
+        return -1;
+      });
+      return 1;
+    } catch (ex) {
       return -1;
     }
   }

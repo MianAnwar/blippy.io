@@ -31,6 +31,24 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (beingReviewed.length == 0) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          elevation: 0.0,
+        ),
+        body: Center(
+          child: Hero(
+            tag: 'iconImages',
+            child: Image.asset(
+              'assets/empty.png',
+              height: MediaQuery.of(context).size.height * 0.8,
+              width: MediaQuery.of(context).size.width * 0.8,
+            ),
+          ),
+        ),
+      );
+    }
     return Scaffold(
       // AppBar
       appBar: AppBar(

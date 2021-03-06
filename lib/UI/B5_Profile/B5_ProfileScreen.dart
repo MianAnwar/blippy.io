@@ -3,7 +3,7 @@ import 'package:total_app/APIs/LoginService.dart';
 import 'package:total_app/UI/B2_Message/AppBar_ItemScreen/notificationAppbar.dart';
 import 'package:total_app/constants.dart';
 import 'package:total_app/APIs/APIService.dart';
-import 'ListProfile/TSSettingApp.dart';
+import 'ListProfile/SettingApp.dart';
 import 'dart:async';
 import 'ListProfile/License.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
@@ -47,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (companylogo == '') {
       companylogo = 'assets/logos.png';
     }
+
     setState(() {});
   }
 
@@ -60,26 +61,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
             flex: 1,
             child: Column(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10.0),
-                  child: Hero(
-                    tag: 'hero-tag-profile',
-                    child: companylogo == 'assets/logos.png'
-                        ? Image(
-                            image: AssetImage(
-                              'assets/image/icon/profile.png',
-                            ),
-                            fit: BoxFit.cover,
-                          )
-                        : Container(
-                            height: 100,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(companylogo),
+                InkWell(
+                  onTap: () {
+                    print('asdasd');
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => SettingApp(),
+                        transitionDuration: Duration(milliseconds: 10),
+                        transitionsBuilder:
+                            (_, Animation<double> animation, __, Widget child) {
+                          return Opacity(
+                            opacity: animation.value,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Hero(
+                      tag: 'hero-tag-profile',
+                      child: companylogo == 'assets/logos.png'
+                          ? Image(
+                              image: AssetImage(
+                                'assets/image/icon/profile.png',
+                              ),
+                              fit: BoxFit.cover,
+                            )
+                          : Container(
+                              height: 100,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(companylogo),
+                                ),
                               ),
                             ),
-                          ),
+                    ),
                   ),
                 ),
               ],
@@ -242,7 +261,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new TSAppSetting()));
+                        pageBuilder: (_, __, ___) => new SettingApp()));
                   },
                   child: Category(
                     txt: "App Settings",
@@ -268,6 +287,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
 
                 // Delete
+
                 Padding(
                   padding: EdgeInsets.all(2.0),
                   child: CategoryDEL(
@@ -279,8 +299,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         title: Column(
                           children: [
                             Text('Verify your Credentials'),
-                            Text(
-                                '\n${Constants.firebaseAuth.currentUser.email}'),
+                            Text('${Constants.firebaseAuth.currentUser.email}'),
+                            widget.profile.role == Role.Owner.toString()
+                                ? Text(
+                                    '\nCaution: \nAll Records will be erased!',
+                                    style: TextStyle(color: Colors.red),
+                                  )
+                                : Text(
+                                    '\nCaution: \nYou will not be the part of this company any more.',
+                                    style: TextStyle(color: Colors.red),
+                                  )
                           ],
                         ),
                         content: Container(
@@ -306,14 +334,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ////////////////////////////////////////
 
                               print(Constants.firebaseAuth.currentUser.email);
-                              bool result = (await deleteAccount(
-                                  Constants.firebaseAuth.currentUser.email,
-                                  pwd));
+                              bool result = false;
+
+                              if (widget.profile.role ==
+                                  Role.Owner.toString()) {
+                                result = (await deleteBusinessAccountToo(
+                                    Constants.firebaseAuth.currentUser.email,
+                                    pwd,
+                                    widget.profile.companycode));
+                                //
+                              } else if (widget.profile.role ==
+                                  Role.DesignatedStaff.toString()) {
+                                result = (await deleteOnlyDesignatedAccount(
+                                    Constants.firebaseAuth.currentUser.email,
+                                    pwd));
+                              }
+
                               if (result) {
                                 // deleted
                                 //pop, pop
                                 print('deleted!');
-                                Navigator.of(context).pop();
+                                Constants.logoutEmailSP();
+                                // Navigator.of(context).pop();
+                                Constants.showAlertDialogBox(context, 'Alert',
+                                    'Account Successfully deleted!');
+
                                 Navigator.of(context).pushReplacement(
                                   PageRouteBuilder(
                                     pageBuilder: (_, __, ___) => new Login(),
@@ -367,8 +412,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Future<bool> deleteAccount(String email, String pwd) async {
-    bool res = await APIServices.deleteTestUserAccount(email, pwd);
+  Future<bool> deleteOnlyDesignatedAccount(String email, String pwd) async {
+    bool res = await APIServices.deleteOnlyDesignatedAccount(email, pwd);
+    return res;
+  }
+
+  Future<bool> deleteBusinessAccountToo(
+      String email, String pwd, String cc) async {
+    bool res = await APIServices.deleteBusinessAccountToo(email, pwd, cc);
     return res;
   }
 }

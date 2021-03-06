@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:total_app/constants.dart';
-import 'package:total_app/DataModels/SearchReviewed.dart';
+import 'package:total_app/DataModels/ReportModel.dart';
 import 'package:total_app/APIs/GettingData.dart';
-import 'package:total_app/UI/B4_Review/BProductDetails.dart';
 
 class ReportScreen extends StatefulWidget {
   final String companycode;
@@ -13,7 +12,7 @@ class ReportScreen extends StatefulWidget {
 }
 
 class ReportScreenState extends State<ReportScreen> {
-  List<SearchReviewed> beingReviewed = List<SearchReviewed>();
+  List<ReportModel> reports = List<ReportModel>();
 
   @override
   void initState() {
@@ -25,12 +24,30 @@ class ReportScreenState extends State<ReportScreen> {
 
   refresh() async {
     //
-    beingReviewed = await GettingData.flaggedProducts(widget.companycode);
+    reports = await GettingData.getAllReports(widget.companycode);
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    if (reports.length == 0) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          elevation: 0.0,
+        ),
+        body: Center(
+          child: Hero(
+            tag: 'iconImage',
+            child: Image.asset(
+              'assets/empty.png',
+              height: MediaQuery.of(context).size.height * 0.8,
+              width: MediaQuery.of(context).size.width * 0.8,
+            ),
+          ),
+        ),
+      );
+    }
     return Scaffold(
       // AppBar
       appBar: AppBar(
@@ -44,6 +61,14 @@ class ReportScreenState extends State<ReportScreen> {
             fontWeight: FontWeight.w800,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              refresh();
+            },
+          )
+        ],
       ),
 
       // body
@@ -57,10 +82,10 @@ class ReportScreenState extends State<ReportScreen> {
               child: ListView.builder(
                 itemBuilder: (ctx, index) {
                   return InkWell(
-                    child: CardList(beingReviewed[index]),
+                    child: CardList(reports[index]),
                   );
                 },
-                itemCount: beingReviewed.length,
+                itemCount: reports.length,
               ),
             ),
           ),
@@ -74,15 +99,16 @@ class ReportScreenState extends State<ReportScreen> {
 
 ////////////
 class CardList extends StatelessWidget {
-  final SearchReviewed data;
+  final ReportModel data;
 
   CardList(this.data);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: EdgeInsets.all(10.0),
+      child: Container(
+        padding: EdgeInsets.only(top: 10.0),
+        margin: EdgeInsets.only(bottom: 10.0),
         child: ExpansionTile(
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -109,7 +135,7 @@ class CardList extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Text(' ${data.flaggedBy}'),
+                  Text(' ${data.date}'),
                 ],
               ),
               SizedBox(height: 5),
@@ -138,7 +164,7 @@ class CardList extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      ' ${data.flaggedReason}',
+                      ' ${data.action}',
                     ),
                   ],
                 ),
@@ -154,7 +180,7 @@ class CardList extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(left: 10.0),
                     child: Text(
-                      'Name: ${data.title}',
+                      'Name: ${data.name}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -165,7 +191,7 @@ class CardList extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(left: 10.0),
                     child: Text(
-                      'Email: ${data.title}',
+                      'Email: ${data.email}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -196,7 +222,7 @@ class CardList extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        ' ${data.flagged} Update Stock',
+                        ' ${data.action}',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

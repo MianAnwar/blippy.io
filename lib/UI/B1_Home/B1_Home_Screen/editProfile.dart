@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:total_app/APIs/APIService.dart';
-import 'package:total_app/UI/B5_Profile/ListProfile/SettingApp.dart';
+import 'package:total_app/UI/B5_Profile/ListProfile/UploadImage.dart';
 import 'package:total_app/constants.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
 
@@ -46,6 +46,7 @@ class _EditProfileState extends State<EditProfile> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -376,7 +377,11 @@ class _EditProfileState extends State<EditProfile> {
                       onTap: () {
                         Navigator.of(context).pushReplacement(
                           PageRouteBuilder(
-                            pageBuilder: (_, __, ___) => SettingApp(),
+                            pageBuilder: (_, __, ___) => UploadImage(
+                              companycode: widget.profile.companycode,
+                              title: "change Display Image",
+                              optionWhere: 2,
+                            ),
                             transitionDuration: Duration(milliseconds: 1000),
                             transitionsBuilder: (_, Animation<double> animation,
                                 __, Widget child) {

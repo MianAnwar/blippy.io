@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:total_app/constants.dart';
 import 'package:total_app/DataModels/SearchReviewed.dart';
 import 'package:total_app/APIs/GettingData.dart';
-import 'package:total_app/UI/B4_Review/BProductDetails.dart';
+import 'package:total_app/UI/B4_Review/BusinessProductDetail.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class ReviewScreen extends StatefulWidget {
   final String companycode;
@@ -14,6 +15,7 @@ class ReviewScreen extends StatefulWidget {
 
 class _ReviewScreenState extends State<ReviewScreen> {
   List<SearchReviewed> beingReviewed = List<SearchReviewed>();
+  bool deleting = false;
 
   @override
   void initState() {
@@ -36,6 +38,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 0.0,
+          backgroundColor: Colors.transparent,
         ),
         body: Center(
           child: Hero(
@@ -49,113 +52,232 @@ class _ReviewScreenState extends State<ReviewScreen> {
         ),
       );
     }
-    return Scaffold(
-      // AppBar
-      appBar: AppBar(
-        elevation: 0.0,
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        title: Text(
-          "Flagged For Review",
-          style: TextStyle(
-            fontFamily: "Sofia",
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(left: 20, top: 20.0),
-            child: Text('Submit All'),
-          ),
-          IconButton(
-            onPressed: () {
-              //////////////////////////////////
-              //////////////////////////////////
-              //////////////////////////////////
-              //////////////////////////////////
-              Constants.showAlertDialogBox(
-                  context, 'Alter Alert', 'Want to Submit All at once');
-            },
-            icon: Icon(Icons.done_all_outlined),
-          )
-        ],
-      ),
-
-      // body
-      body: Stack(
-        children: <Widget>[
-          // Title + Icon,     Products for Review
-
-          Padding(
-            padding: EdgeInsets.only(top: 0),
-            child: Container(
-              child: ListView.builder(
-                itemBuilder: (ctx, index) {
-                  return InkWell(
-                    child: CardList(beingReviewed[index]),
-                    onTap: () {
-                      showModalBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return Container(
-                              // alignment: Alignment.topCenter,
-                              color: Colors.white12,
-                              height: 175,
-                              child: Column(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      /////
-                                      // print(beingReviewed[index].did);
-                                      // print(beingReviewed[index].title);
-                                      // // Navigator
-                                      Navigator.of(context).push(
-                                          PageRouteBuilder(
-                                              pageBuilder: (_, __, ___) =>
-                                                  ProductDetails(
-                                                    did: beingReviewed[index]
-                                                        .did,
-                                                  )));
-                                    },
-                                    child: ListTile(
-                                      leading: Icon(Icons.open_in_new),
-                                      title: Text('Open and Review'),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      //
-                                    },
-                                    child: ListTile(
-                                      leading: Icon(Icons.done),
-                                      title: Text('Submit'),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      //
-                                    },
-                                    child: ListTile(
-                                      leading: Icon(Icons.delete),
-                                      title: Text('Delete Product'),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          });
-                    },
-                  );
-                },
-                itemCount: beingReviewed.length,
-              ),
+    return ModalProgressHUD(
+      inAsyncCall: deleting,
+      child: Scaffold(
+        // AppBar
+        appBar: AppBar(
+          elevation: 0.0,
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          title: Text(
+            "Flagged For Review",
+            style: TextStyle(
+              fontFamily: "Sofia",
+              fontWeight: FontWeight.w800,
             ),
           ),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(left: 20, top: 20.0),
+              child: Text('Submit All'),
+            ),
+            IconButton(
+              onPressed: () {
+                //////////////////////////////////
+                //////////////////////////////////
+                var alterDialog = AlertDialog(
+                  title: Text('Are you sure to submit All?'),
+                  actions: [
+                    FlatButton(
+                      onPressed: () async {
+                        //YES%
+                        setState(() {
+                          this.deleting = true;
+                        });
+                        Navigator.of(context).pop();
+                        for (int i = 0; i < beingReviewed.length; i++) {
+                          //
+                          print(1);
+                          await GettingData.updateSubmitFlagged(
+                              widget.companycode, beingReviewed[i].did);
+                        }
+                        refresh();
+                        setState(() {
+                          this.deleting = false;
+                        });
+                        //
+                      },
+                      child: Text("Yes"),
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("No"),
+                    )
+                  ],
+                );
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return alterDialog;
+                    });
+                //////////////////////////////////
+                //////////////////////////////////
+              },
+              icon: Icon(Icons.done_all_outlined),
+            )
+          ],
+        ),
 
-          Divider(),
+        // body
+        body: Stack(
+          children: <Widget>[
+            // Title + Icon,     Products for Review
 
-          //
-        ],
+            Padding(
+              padding: EdgeInsets.only(top: 0),
+              child: Container(
+                child: ListView.builder(
+                  itemBuilder: (ctx, index) {
+                    return InkWell(
+                      child: CardList(beingReviewed[index]),
+                      onTap: () {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return Container(
+                                // alignment: Alignment.topCenter,
+                                color: Colors.white12,
+                                height: 175,
+                                child: Column(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        /////
+                                        print(beingReviewed[index].did);
+
+                                        /*
+                                        Now First Get the product object
+                                        and pass towards next View Screen
+                                        */
+
+                                        // print(beingReviewed[index].title);
+                                        // Navigator
+                                        Navigator.of(context).push(
+                                            PageRouteBuilder(
+                                                pageBuilder: (_, __, ___) =>
+                                                    BusinessProductDetail(
+                                                      cc: widget.companycode,
+                                                      did: beingReviewed[index]
+                                                          .did,
+                                                    )));
+                                      },
+                                      child: ListTile(
+                                        leading: Icon(Icons.open_in_new),
+                                        title: Text('Open and Review'),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        //Are you sure to submit
+                                        var alterDialog = AlertDialog(
+                                          title: Text(
+                                              'Are you sure to submit/Remove from Flagged List?\n\n ${beingReviewed[index].title}'),
+                                          actions: [
+                                            FlatButton(
+                                              onPressed: () async {
+                                                //YES%
+                                                setState(() {
+                                                  this.deleting = true;
+                                                });
+                                                Navigator.of(context).pop();
+                                                await GettingData
+                                                    .updateSubmitFlagged(
+                                                        widget.companycode,
+                                                        beingReviewed[index]
+                                                            .did);
+                                                Navigator.of(context).pop();
+                                                refresh();
+                                                setState(() {
+                                                  this.deleting = false;
+                                                });
+                                                //
+                                              },
+                                              child: Text("Yes"),
+                                            ),
+                                            FlatButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("No"),
+                                            )
+                                          ],
+                                        );
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return alterDialog;
+                                            });
+                                      },
+                                      child: ListTile(
+                                        leading: Icon(Icons.done),
+                                        title: Text('Submit'),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        // //Are you sure to delete
+                                        var alterDialog = AlertDialog(
+                                          title: Text(
+                                              'Are you sure to Delete? \n\n${beingReviewed[index].title}'),
+                                          actions: [
+                                            FlatButton(
+                                              onPressed: () async {
+                                                //YES%
+                                                setState(() {
+                                                  this.deleting = true;
+                                                });
+                                                Navigator.of(context).pop();
+                                                await GettingData.deleteProduct(
+                                                    widget.companycode,
+                                                    beingReviewed[index].did);
+                                                Navigator.of(context).pop();
+                                                refresh();
+                                                //
+                                                setState(() {
+                                                  this.deleting = false;
+                                                });
+                                              },
+                                              child: Text("Yes - Delete"),
+                                            ),
+                                            FlatButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("No"),
+                                            )
+                                          ],
+                                        );
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return alterDialog;
+                                            });
+                                      },
+                                      child: ListTile(
+                                        leading: Icon(Icons.delete),
+                                        title: Text('Delete Product'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            });
+                      },
+                    );
+                  },
+                  itemCount: beingReviewed.length,
+                ),
+              ),
+            ),
+
+            Divider(),
+
+            //
+          ],
+        ),
       ),
     );
   }
@@ -196,7 +318,9 @@ class CardList extends StatelessWidget {
                       child: Image(
                         width: 100,
                         height: 100,
-                        image: NetworkImage('${data.imageURL}'),
+                        image: data.imageURL == ''
+                            ? AssetImage('assets/image/icon/box.png')
+                            : NetworkImage('${data.imageURL}'),
                         fit: BoxFit.cover,
                       ),
                     ),

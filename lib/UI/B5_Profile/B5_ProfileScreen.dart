@@ -11,6 +11,7 @@ import 'package:total_app/APIs/GettingData.dart';
 import 'package:total_app/UI/IntroApps/SignningOptions.dart';
 import 'package:total_app/UI/B5_Profile/ListProfile/ViewProfile.dart';
 import 'package:total_app/UI/IntroApps/Login.dart';
+import 'ListProfile/UploadImage.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Profile profile;
@@ -28,7 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     // TO: implement initState
     setUSername();
-    getCompanyLogo();
+    getUserImage();
     super.initState();
   }
 
@@ -38,16 +39,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {});
   }
 
-  getCompanyLogo() async {
+  getUserImage() async {
     companylogo = 'assets/logos.png';
-
     this.companylogo =
         await GettingData.getCompanyUserDPURL(widget.profile.email);
     companylogo = companylogo ?? '';
     if (companylogo == '') {
       companylogo = 'assets/logos.png';
     }
-
     setState(() {});
   }
 
@@ -63,10 +62,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 InkWell(
                   onTap: () {
-                    print('asdasd');
                     Navigator.of(context).push(
                       PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => SettingApp(),
+                        pageBuilder: (_, __, ___) => UploadImage(
+                          companycode: widget.profile.companycode,
+                          title: "change Display Image",
+                          optionWhere: 2,
+                        ),
                         transitionDuration: Duration(milliseconds: 10),
                         transitionsBuilder:
                             (_, Animation<double> animation, __, Widget child) {
@@ -77,6 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                       ),
                     );
+                    getUserImage();
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10.0),
@@ -84,14 +87,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       tag: 'hero-tag-profile',
                       child: companylogo == 'assets/logos.png'
                           ? Image(
+                              height: 100,
+                              width: 100,
                               image: AssetImage(
                                 'assets/image/icon/profile.png',
                               ),
                               fit: BoxFit.cover,
                             )
                           : Container(
-                              height: 100,
-                              width: 100,
+                              height: 120,
+                              width: 120,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
                                   image: NetworkImage(companylogo),
@@ -261,7 +266,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new SettingApp()));
+                        pageBuilder: (_, __, ___) => new SettingApp(
+                            companycode: widget.profile.companycode)));
                   },
                   child: Category(
                     txt: "App Settings",
@@ -287,7 +293,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
 
                 // Delete
-
                 Padding(
                   padding: EdgeInsets.all(2.0),
                   child: CategoryDEL(
@@ -299,7 +304,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         title: Column(
                           children: [
                             Text('Verify your Credentials'),
-                            Text('${Constants.firebaseAuth.currentUser.email}'),
+                            Text(
+                                '${Constants.firebaseAuth.currentUser.email ?? 'Logout and Then login again to delete'}'),
                             widget.profile.role == Role.Owner.toString()
                                 ? Text(
                                     '\nCaution: \nAll Records will be erased!',

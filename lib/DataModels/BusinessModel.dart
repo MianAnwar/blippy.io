@@ -14,6 +14,9 @@ class Business {
   int productCount;
   int staffCount;
 
+  String themeURL;
+  String themeText;
+
   int retToken;
 
   Business(
@@ -27,6 +30,8 @@ class Business {
       this.locationLog = 0.0,
       this.productCount = 0,
       this.staffCount = 0,
+      this.themeURL = '',
+      this.themeText = '',
       this.retToken});
 
   Map<String, dynamic> toMap() {
@@ -46,6 +51,9 @@ class Business {
     map['productCount'] = this.productCount;
     map['staffCount'] = this.staffCount;
 
+    map['themeURL'] = this.themeURL;
+    map['themeText'] = this.themeText;
+
     return map;
   }
 
@@ -64,5 +72,8 @@ class Business {
 
     this.productCount = map['productCount'];
     this.staffCount = map['staffCount'];
+
+    this.themeURL = map['themeURL'];
+    this.themeText = map['themeText'];
   }
 }

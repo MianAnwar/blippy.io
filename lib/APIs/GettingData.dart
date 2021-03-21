@@ -15,18 +15,175 @@ import 'package:total_app/DataModels/ReportModel.dart';
 import 'package:total_app/DataModels/AttributeModel.dart';
 
 class GettingData {
+  static Future<int> updateSale(
+      String cc, String pcode, String sD, String eD, String dealName) async {
+    try {
+      CollectionReference ref = FirebaseFirestore.instance
+          .collection('Companies')
+          .doc(cc)
+          .collection('Products');
+
+      final doc = await ref.doc(pcode).get();
+
+      if (doc.exists) {
+        doc.reference.update({
+          'sale': 'YES',
+          'startSale': sD,
+          'endSale': eD,
+          'dealsss': dealName,
+        });
+        return 0;
+      } else {
+        return 1;
+      }
+    } catch (e) {
+      return -1;
+    }
+  }
+
+  static Future<int> updateRemoveSale(String cc, String pcode) async {
+    try {
+      CollectionReference ref = FirebaseFirestore.instance
+          .collection('Companies')
+          .doc(cc)
+          .collection('Products');
+
+      final doc = await ref.doc(pcode).get();
+
+      if (doc.exists) {
+        doc.reference.update({
+          'sale': 'NO',
+        });
+        return 0;
+      } else {
+        return 1;
+      }
+    } catch (e) {
+      return -1;
+    }
+  }
+
+  static Future<int> updateMarkFeatured(
+      String cc, String pcode, bool yes) async {
+    try {
+      CollectionReference ref = FirebaseFirestore.instance
+          .collection('Companies')
+          .doc(cc)
+          .collection('Products');
+
+      final doc = await ref.doc(pcode).get();
+
+      if (doc.exists) {
+        if (doc.data()['featured'] == 'YES' && yes) {
+          return 0;
+        } else if (doc.data()['featured'] == 'NO' && !yes) {
+          return 0;
+        } else {
+          doc.reference.update({
+            'featured': yes ? 'YES' : 'NO',
+          });
+        }
+        return 0;
+      } else {
+        return 1;
+      }
+    } catch (e) {
+      return -1;
+    }
+  }
+
+  static Future<int> updateStock(String cc, String pcode, int stock) async {
+    try {
+      CollectionReference ref = FirebaseFirestore.instance
+          .collection('Companies')
+          .doc(cc)
+          .collection('Products');
+
+      final doc = await ref.doc(pcode).get();
+
+      if (doc.exists) {
+        int oldStock = int.parse(doc.data()['stock']);
+        int newStock = oldStock + stock;
+        doc.reference.update({
+          'stock': newStock.toString(),
+        });
+        return 0;
+      } else {
+        return 1;
+      }
+    } catch (e) {
+      return -1;
+    }
+  }
+
+  static Future<int> updateSubmitFlagged(String cc, String pcode) async {
+    try {
+      CollectionReference ref = FirebaseFirestore.instance
+          .collection('Companies')
+          .doc(cc)
+          .collection('Products');
+
+      final doc = await ref.doc(pcode).get();
+      if (doc.exists) {
+        doc.reference.update({
+          'flagged': 'NO',
+          'flaggedBy': 'N/A',
+          'flaggedReason': 'N/A',
+        });
+        return 0;
+      } else {
+        return 1;
+      }
+    } catch (e) {
+      return -1;
+    }
+  }
+
+  static Future<bool> deleteProduct(String cc, String pcode) async {
+    CollectionReference ref = FirebaseFirestore.instance
+        .collection('Companies')
+        .doc(cc)
+        .collection('Products');
+    try {
+      final DocumentSnapshot doc = await ref.doc(pcode).get();
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+      // print(doc.data());
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  static Future<Product> getProduct(String cc, String pcode) async {
+    CollectionReference ref = FirebaseFirestore.instance
+        .collection('Companies')
+        .doc(cc)
+        .collection('Products');
+    try {
+      final DocumentSnapshot doc = await ref.doc(pcode).get();
+      // print(doc.data());
+      return Product.fromMapObj(doc.data());
+    } catch (e) {
+      print(e.toString());
+      return Product();
+    }
+  }
+
   static Future<List<ReportModel>> getAllReports(String cc) async {
     List<ReportModel> result = List<ReportModel>();
     CollectionReference ref = FirebaseFirestore.instance
         .collection('Companies')
         .doc(cc)
-        .collection('Reorts');
+        .collection('Reports');
     try {
       final QuerySnapshot snapshot = await ref.get();
 
       snapshot.docs.forEach((DocumentSnapshot doc) {
         result.add(ReportModel.fromMapObj({
-          'comp': doc.id,
+          'did': doc.id,
           'date': doc.data()['date'],
           'action': doc.data()['action'],
           'name': doc.data()['name'],
@@ -39,7 +196,6 @@ class GettingData {
     }
   }
 
-  ////
   static Future<List<SearchResult>> featuredProdcuts(String cc) async {
     List<SearchResult> result = List<SearchResult>();
     CollectionReference ref = FirebaseFirestore.instance
@@ -52,7 +208,7 @@ class GettingData {
       snapshot.docs.forEach((DocumentSnapshot doc) {
         if (doc.data()['featured'] == 'YES') {
           result.add(SearchResult.fromMapObj({
-            'comp': doc.id,
+            'did': doc.id,
             'imageURL': doc.data()['imageURL'],
             'title': doc.data()['title'],
             'salePrice': doc.data()['salePrice'],
@@ -65,7 +221,6 @@ class GettingData {
     }
   }
 
-  ////
   static Future<List<SaleResult>> currentSales(String cc) async {
     List<SaleResult> result = List<SaleResult>();
     CollectionReference ref = FirebaseFirestore.instance
@@ -85,7 +240,7 @@ class GettingData {
             'stock': doc.data()['stock'],
             'startDate': doc.data()['startSale'],
             'endDate': doc.data()['endSale'],
-            'deal': doc.data()['topDeal'],
+            'deal': doc.data()['dealsss'],
           }));
         }
       });
@@ -95,7 +250,6 @@ class GettingData {
     }
   }
 
-  ////
   static Future<List<SearchLowStock>> lowStockProducts(String cc) async {
     int xx = 0;
     List<SearchLowStock> result = List<SearchLowStock>();
@@ -124,7 +278,6 @@ class GettingData {
     }
   }
 
-  ////
   static Future<List<SearchReviewed>> flaggedProducts(String cc) async {
     //
     List<SearchReviewed> result = List<SearchReviewed>();
@@ -155,7 +308,6 @@ class GettingData {
     }
   }
 
-  ////
   static Future<List<SearchResult>> searchByBarcode(
       String cc, String barcode) async {
     //
@@ -186,9 +338,7 @@ class GettingData {
   }
 
   ///
-  static Future<List<SearchResult>> searchPattern(
-      String cc, String pattern) async {
-    pattern = pattern.toLowerCase();
+  static Future<List<SearchResult>> searchNewTag(String cc) async {
     //
     List<SearchResult> result = List<SearchResult>();
     CollectionReference ref = FirebaseFirestore.instance
@@ -199,20 +349,9 @@ class GettingData {
       final QuerySnapshot snapshot = await ref.get();
       // print('$pattern 1');
       snapshot.docs.forEach((DocumentSnapshot doc) {
-        String address = doc.data()['address'];
-        String title = doc.data()['title'];
-        String description = doc.data()['description'];
-        String category = doc.data()['category'];
-        String subCat = doc.data()['subCat'];
-        var attributes = (doc.data()['attributes']).toList();
-        print(attributes);
+        String newTag = doc.data()['newTag'];
 
-        if ((address.toLowerCase()).contains(pattern) ||
-            (title.toLowerCase()).contains(pattern) ||
-            (description.toLowerCase()).contains(pattern) ||
-            (category.toLowerCase()).contains(pattern) ||
-            (subCat.toLowerCase()).contains(pattern) ||
-            (attributes).contains(pattern)) {
+        if ((newTag.toLowerCase()).contains('yes')) {
           // print('---------------');
           // print(doc);
           // print('---------------');
@@ -227,6 +366,59 @@ class GettingData {
           }));
         }
       });
+      print('Corect');
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static Future<List<SearchResult>> searchPattern(
+      String cc, String pattern) async {
+    pattern = pattern.toLowerCase();
+    //
+    List<SearchResult> result = List<SearchResult>();
+    CollectionReference ref = FirebaseFirestore.instance
+        .collection('Companies')
+        .doc(cc)
+        .collection('Products');
+    try {
+      final QuerySnapshot snapshot = await ref.get();
+      // print('$pattern 1');
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        String address = doc.data()['barcode'];
+        String title = doc.data()['title'];
+        String description = doc.data()['description'];
+        String category = doc.data()['category'];
+        String subCat = doc.data()['subCat'];
+        String newTag = doc.data()['newTag'];
+        var attributes = (doc.data()['attributes']).toList();
+        String dealz = (doc.data()['dealsss']);
+        print(attributes);
+
+        if ((address.toLowerCase()).contains(pattern) ||
+            (title.toLowerCase()).contains(pattern) ||
+            (newTag.toLowerCase()).contains('yes') ||
+            (description.toLowerCase()).contains(pattern) ||
+            (category.toLowerCase()).contains(pattern) ||
+            (subCat.toLowerCase()).contains(pattern) ||
+            (attributes).contains(pattern) ||
+            (dealz).contains(pattern)) {
+          // print('---------------');
+          // print(doc);
+          // print('---------------');
+          // print(doc.data());
+          // print('---------------');
+
+          result.add(SearchResult.fromMapObj({
+            'did': doc.id,
+            'imageURL': doc.data()['imageURL'],
+            'salePrice': doc.data()['salePrice'],
+            'title': doc.data()['title'],
+          }));
+        }
+      });
+      print('Corect');
       return result;
     } catch (e) {
       return null;
@@ -428,7 +620,6 @@ class GettingData {
     } catch (ex) {
       return -1;
     }
-    ////////////
   }
 
   static CollectionReference getCategoriesReference(String cc) {
@@ -443,6 +634,13 @@ class GettingData {
         .collection('Companies')
         .doc(cc)
         .collection('Attributes');
+  }
+
+  static CollectionReference getDealsssReference(String cc) {
+    return FirebaseFirestore.instance
+        .collection('Companies')
+        .doc(cc)
+        .collection('Dealsss');
   }
 
   static CollectionReference getSubCategoriesReference(String cc, String cat) {
@@ -532,10 +730,71 @@ class GettingData {
     }
   }
 
+  static int uploadAttributes(String cc) {
+    int res = -1;
+    List<String> attributes = List<String>();
+    attributes.add('All Natural');
+    attributes.add('Artisonal');
+    attributes.add('Keto Friendly');
+    attributes.add('Low Sodium');
+    attributes.add('Non GMO');
+    attributes.add('Organic');
+    attributes.add('Peleo Friendly');
+    attributes.add('RAW');
+    attributes.add('Sugar Conscious');
+    attributes.add('Vegan');
+    attributes.add('Vegetarian');
+    attributes.add('Whole Food Diet');
+    attributes.add('NFC Approved');
+    attributes.add('Fire Retardan');
+    attributes.add('Clean');
+    attributes.add('Cruelty Free');
+    attributes.add('HAS/FSA Eligible');
+    for (int i = 0; i < attributes.length; i++) {
+      res = GettingData.saveNewAttribute(attributes[i], cc);
+    }
+    return res;
+  }
+
+  static int uploadDealsss(String cc) {
+    int res = -1;
+    List<String> dealsss = List<String>();
+    dealsss.add('OverStock');
+    dealsss.add('Rollbacks');
+    dealsss.add('Low Prices');
+    dealsss.add('Special Buys');
+    dealsss.add('2 Day Flash Deal');
+    dealsss.add('3 Day Flash Deal');
+    dealsss.add('Weekly Sale');
+    dealsss.add('Top Deals');
+    dealsss.add('Member deals');
+    dealsss.add('Clearance');
+    for (int i = 0; i < dealsss.length; i++) {
+      res = GettingData.saveNewDealsss(dealsss[i], cc);
+    }
+    return res;
+  }
+
+  static int saveNewDealsss(String newDealss, String cc) {
+    try {
+      CollectionReference dealsss = getDealsssReference(cc);
+      dealsss.doc(newDealss).set({
+        'DealsName': newDealss,
+      }).then((value) {
+        return 1;
+      }).catchError((error) {
+        return -1;
+      });
+      return 1;
+    } catch (ex) {
+      return -1;
+    }
+  }
+
   static int saveNewAttribute(String newAttribute, String cc) {
     try {
-      CollectionReference category = getAttributesReference(cc);
-      category.doc(newAttribute).set({
+      CollectionReference attri = getAttributesReference(cc);
+      attri.doc(newAttribute).set({
         'AttName': newAttribute,
       }).then((value) {
         return 1;

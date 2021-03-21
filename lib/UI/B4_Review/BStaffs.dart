@@ -85,7 +85,43 @@ class _BStaffsScreenState extends State<BStaffsScreen> {
           height: MediaQuery.of(context).size.height,
           color: Colors.white,
           child: ListView.builder(
-            itemBuilder: (ctx, index) => buildStaff(results[index]),
+            itemBuilder: (ctx, index) {
+              return InkWell(
+                  onTap: () {
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return Container(
+                            // alignment: Alignment.topCenter,
+                            color: Colors.white12,
+                            height: 120,
+                            child: Column(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    //
+                                  },
+                                  child: ListTile(
+                                    leading: Icon(Icons.change_history),
+                                    title: Text('Change Role'),
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    //
+                                  },
+                                  child: ListTile(
+                                    leading: Icon(Icons.close),
+                                    title: Text('Fire-Delete'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
+                  },
+                  child: buildStaff(results[index]));
+            },
             itemCount: results.length,
           ),
         ),
@@ -144,11 +180,17 @@ class _BStaffsScreenState extends State<BStaffsScreen> {
                   SizedBox(height: 8),
                   Text(
                     "Email: ${s.email}",
-                    maxLines: 5,
                   ),
                   Text(
                     "Contact: ${s.contactNo}",
-                    maxLines: 5,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      " ${s.role}",
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
                   )
                 ],
               ),

@@ -1,8 +1,15 @@
+/*
+  1st get the list of categories
+   and SubCat
+
+  2nd get the list of products having that categories.
+
+  That's All
+*/
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:total_app/DataSample/travelModelData.dart';
 import 'package:total_app/Library/SupportingLibrary/Ratting/Rating.dart';
-import 'package:total_app/UI/B1_Home/B1_Home_Screen/B1_Home_Screen.dart';
 
 class CategoriesScreen extends StatefulWidget {
   final String title;

@@ -35,6 +35,7 @@ class ReportScreenState extends State<ReportScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 0.0,
+          backgroundColor: Colors.transparent,
         ),
         body: Center(
           child: Hero(

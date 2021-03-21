@@ -2,12 +2,14 @@
 import 'dart:async';
 import 'package:total_app/DataModels/SearchResult.dart';
 import 'package:flutter/material.dart';
+import 'package:total_app/UI/B4_Review/BusinessProductDetail.dart';
 
 import 'package:shimmer/shimmer.dart';
 
 class BProducts extends StatefulWidget {
+  final String comapanycode;
   final List<SearchResult> results;
-  BProducts({this.results});
+  BProducts({this.results, @required this.comapanycode});
 
   @override
   _BProductsState createState() => _BProductsState();
@@ -25,6 +27,8 @@ class _BProductsState extends State<BProducts> {
 
   @override
   void initState() {
+    super.initState();
+
     Timer(Duration(seconds: 2), () {
       setState(() {
         loadImage = false;
@@ -43,11 +47,11 @@ class _BProductsState extends State<BProducts> {
     imageLoaded = Container(
         color: Colors.white,
         child: ListView.builder(
-          itemBuilder: (ctx, index) => CardList(widget.results[index]),
+          itemBuilder: (ctx, index) =>
+              CardList(widget.results[index], widget.comapanycode),
           itemCount: widget.results.length,
         ));
     // TODo implement initState
-    super.initState();
   }
 
   @override
@@ -204,7 +208,9 @@ class ItemGrid extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             InkWell(
-              onTap: () {},
+              onTap: () {
+                //
+              },
               child: Container(
                 decoration: BoxDecoration(color: Colors.white, boxShadow: [
                   BoxShadow(
@@ -231,13 +237,21 @@ class ItemGrid extends StatelessWidget {
                                       child: InkWell(
                                         child: Hero(
                                             tag: "hero-flashsale-${data.did}",
-                                            child: Image.network(
-                                              data.imageURL,
-                                              width: 300.0,
-                                              height: 400.0,
-                                              alignment: Alignment.center,
-                                              fit: BoxFit.contain,
-                                            )),
+                                            child: data.imageURL == ''
+                                                ? Image.asset(
+                                                    'assets/image/icon/box.png',
+                                                    width: 300.0,
+                                                    height: 400.0,
+                                                    alignment: Alignment.center,
+                                                    fit: BoxFit.contain,
+                                                  )
+                                                : Image.network(
+                                                    data.imageURL,
+                                                    width: 300.0,
+                                                    height: 400.0,
+                                                    alignment: Alignment.center,
+                                                    fit: BoxFit.contain,
+                                                  )),
                                         onTap: () {
                                           Navigator.pop(context);
                                         },
@@ -249,12 +263,19 @@ class ItemGrid extends StatelessWidget {
                                     Duration(milliseconds: 500)));
                           },
                           child: SizedBox(
-                            child: Image.network(
-                              data.imageURL,
-                              fit: BoxFit.cover,
-                              height: 140.0,
-                              width: mediaQueryData.size.width / 2.1,
-                            ),
+                            child: data.imageURL == ''
+                                ? Image.asset(
+                                    'assets/image/icon/box.png',
+                                    fit: BoxFit.cover,
+                                    height: 140.0,
+                                    width: mediaQueryData.size.width / 2.1,
+                                  )
+                                : Image.network(
+                                    data.imageURL,
+                                    fit: BoxFit.cover,
+                                    height: 140.0,
+                                    width: mediaQueryData.size.width / 2.1,
+                                  ),
                           ),
                         ),
                       ),
@@ -304,81 +325,98 @@ class CardList extends StatelessWidget {
   );
 
   final SearchResult data;
+  final String cc;
 
-  CardList(this.data);
+  CardList(this.data, this.cc);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
-      child: Container(
-        height: 250.0,
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black12.withOpacity(0.1),
-                  blurRadius: 3.0,
-                  spreadRadius: 1.0)
-            ]),
-        child: Column(
-          children: [
-            Container(
-              height: 165.0,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(10.0),
-                    topLeft: Radius.circular(10.0)),
-                image: DecorationImage(
-                    image: NetworkImage(data.imageURL), fit: BoxFit.cover),
+    return InkWell(
+      onTap: () {
+        //
+        print(data.did);
+        print(cc);
+
+        Navigator.of(context).push(PageRouteBuilder(
+            pageBuilder: (_, __, ___) => BusinessProductDetail(
+                  cc: cc,
+                  did: data.did,
+                )));
+      },
+      child: Padding(
+        padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
+        child: Container(
+          height: 250.0,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black12.withOpacity(0.1),
+                    blurRadius: 3.0,
+                    spreadRadius: 1.0)
+              ]),
+          child: Column(
+            children: [
+              Container(
+                height: 165.0,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10.0),
+                      topLeft: Radius.circular(10.0)),
+                  image: DecorationImage(
+                      image: data.imageURL == ''
+                          ? AssetImage('assets/image/icon/box.png')
+                          : NetworkImage(data.imageURL),
+                      fit: BoxFit.cover),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10.0, right: 10.0),
+                ),
+                alignment: Alignment.topRight,
               ),
-              child: Padding(
-                padding: EdgeInsets.only(top: 10.0, right: 10.0),
-              ),
-              alignment: Alignment.topRight,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                          padding: EdgeInsets.only(left: 10),
-                          width: 220.0,
+              Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                            padding: EdgeInsets.only(left: 10),
+                            width: 220.0,
+                            child: Text(
+                              '${data.title}',
+                              style: _txtStyleTitle,
+                              overflow: TextOverflow.ellipsis,
+                            )),
+                        // Padding(padding: EdgeInsets.only(top: 5.0)),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(right: 20.0),
                           child: Text(
-                            '${data.title}',
-                            style: _txtStyleTitle,
-                            overflow: TextOverflow.ellipsis,
-                          )),
-                      // Padding(padding: EdgeInsets.only(top: 5.0)),
-                    ],
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 20.0),
-                        child: Text(
-                          "\$" + data.salePrice,
-                          style: TextStyle(
-                              fontSize: 25.0,
-                              color: Colors.deepPurpleAccent,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: "Gotik"),
+                            "\$" + data.salePrice,
+                            style: TextStyle(
+                                fontSize: 25.0,
+                                color: Colors.deepPurpleAccent,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: "Gotik"),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

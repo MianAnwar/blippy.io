@@ -77,7 +77,7 @@ class Splash extends StatelessWidget {
               backgroundColor: Colors.white,
               primaryColorLight: Colors.white,
               primaryColorBrightness: Brightness.light,
-              primaryColor: Colors.white,
+              // primaryColor: Colors.white,
             ),
           );
         }
@@ -242,7 +242,7 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(milliseconds: 3300), _timer);
+    Timer(Duration(milliseconds: 10), _timer);
   }
 
   @override

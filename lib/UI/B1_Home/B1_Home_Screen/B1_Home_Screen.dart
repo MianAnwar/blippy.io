@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:total_app/APIs/APIService.dart';
-import 'AddItemScreen.dart';
 import 'Search.dart';
 import 'package:total_app/APIs/GettingData.dart';
 import 'package:total_app/DataModels/ITEMSCounts.dart';
@@ -16,6 +15,8 @@ import 'package:total_app/UI/B4_Review/B4_LowStockScreen.dart';
 import 'package:total_app/UI/B4_Review/B4_CurentSaleScreen.dart';
 import 'package:total_app/UI/B4_Review/B4_FeaturedScreen.dart';
 import 'package:total_app/UI/B4_Review/B4_ReportScreen.dart';
+import 'package:total_app/DataModels/SearchResult.dart';
+import 'package:total_app/UI/B4_Review/BProducts.dart';
 
 class Home extends StatefulWidget {
   Profile profile;
@@ -26,8 +27,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  CollectionReference ref;
-  CollectionReference refSubCat;
+  // CollectionReference ref;
+  // CollectionReference refSubCat;
   var companylogo = 'assets/logos.png';
   var companyMainImage = 'assets/Image/banner/banner1Travel.jpg';
 
@@ -44,7 +45,6 @@ class _HomeState extends State<Home> {
   void initState() {
     // TOD implement initState
     super.initState();
-    ref = (GettingData.getCategoriesReference(widget.profile.companycode));
 
     getCompanyMainIamge(); //
     getCompanyLogo(); //
@@ -217,7 +217,7 @@ class _HomeState extends State<Home> {
                 color: Constants.basicColor,
                 alignment: Alignment.topRight,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 0, right: 15.0),
+                  padding: EdgeInsets.only(top: 0, right: 15.0),
                   child: Text(
                     getToday(), // "Monday, feb 2",
                     style: TextStyle(color: Constants.thirdColor),
@@ -381,6 +381,7 @@ class _HomeState extends State<Home> {
                                                       companycode: widget
                                                           .profile
                                                           .companycode)));
+                                      getCounts();
                                     },
                                     child: buildCardButton(
                                         Icons.flag_outlined,
@@ -388,9 +389,9 @@ class _HomeState extends State<Home> {
                                         true,
                                         itemsCounts.flaggedCount),
                                   ),
-                                  //////////////////
                                   SizedBox(width: 5),
 
+                                  ////////////////// <Low Stock>
                                   InkWell(
                                     onTap: () {
                                       //
@@ -401,97 +402,55 @@ class _HomeState extends State<Home> {
                                                       companycode: widget
                                                           .profile
                                                           .companycode)));
+                                      getCounts();
                                     },
                                     child: buildCardButton(
-                                        Icons.account_tree,
+                                        Icons.stacked_bar_chart,
                                         "Low Stock",
                                         true,
                                         itemsCounts.lowStockCount),
                                   ),
                                   SizedBox(width: 5),
 
-                                  ///////////
+                                  ////////////////// <Added Items>
                                   InkWell(
-                                    onTap: () {
-                                      //
-
-                                      var alterDialog = AlertDialog(
-                                        title:
-                                            Text('Select Appropriate Category'),
-                                        content: StreamBuilder(
-                                          stream: ref.snapshots(),
-                                          // initialData:  ,
-                                          builder: (BuildContext context,
-                                              AsyncSnapshot<QuerySnapshot>
-                                                  snapshot) {
-                                            if (!snapshot.hasData) {
-                                              return Container(
-                                                width: 10,
-                                                height: 10,
-                                                // color: Colors.black,
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              );
-                                            }
-                                            return SingleChildScrollView(
-                                              scrollDirection: Axis.vertical,
-                                              child: Column(
-                                                children: snapshot.data.docs
-                                                    .map((DocumentSnapshot
-                                                        document) {
-                                                  return Column(
-                                                    children: [
-                                                      InkWell(
-                                                        onTap: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-
-                                                          print(document.data()[
-                                                              'CatName']);
-                                                          proceedToSubCategories(
-                                                              document.data()[
-                                                                  'CatName']);
-                                                        },
-                                                        child: _infoCircle(
-                                                            document.data()[
-                                                                'CatName']),
-                                                      ),
-                                                    ],
-                                                  );
-                                                }).toList(),
-                                              ),
+                                    onTap: () async {
+                                      List<SearchResult> allProducts =
+                                          List<SearchResult>();
+                                      allProducts =
+                                          await GettingData.searchPattern(
+                                              widget.profile.companycode, ' ');
+                                      setState(() {});
+                                      Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                          pageBuilder: (_, __, ___) =>
+                                              new BProducts(
+                                            comapanycode:
+                                                widget.profile.companycode,
+                                            results: allProducts,
+                                          ),
+                                          transitionsBuilder: (_,
+                                              Animation<double> animation,
+                                              __,
+                                              Widget child) {
+                                            return Opacity(
+                                              opacity: animation.value,
+                                              child: child,
                                             );
                                           },
+                                          transitionDuration:
+                                              Duration(milliseconds: 100),
                                         ),
-                                        actions: [
-                                          FlatButton(
-                                            onPressed: () {
-                                              // Navigator.of(context).pop();
-                                              addNewCategory();
-                                            },
-                                            child: Text("Add New Category"),
-                                          ),
-                                          FlatButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text("Exit"),
-                                          ),
-                                        ],
                                       );
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return alterDialog;
-                                          });
-                                      //
                                     },
                                     child: buildCardButton(
-                                        Icons.breakfast_dining,
-                                        "Items Add",
+                                        Icons.wifi_protected_setup_outlined,
+                                        "Updated Items",
                                         true,
                                         itemsCounts.itemsCount),
                                   ),
+                                  SizedBox(width: 5),
+                                  //
                                 ],
                               ),
                             ),
@@ -502,7 +461,7 @@ class _HomeState extends State<Home> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  /////////////////////////////////
+                                  ////////////////// <Current Sale>
                                   InkWell(
                                     onTap: () {
                                       //
@@ -513,16 +472,17 @@ class _HomeState extends State<Home> {
                                                       companycode: widget
                                                           .profile
                                                           .companycode)));
+                                      getCounts();
                                     },
                                     child: buildCardButton(
-                                        Icons.assignment_turned_in,
+                                        Icons.add_business_outlined,
                                         "Current Sale",
                                         true,
                                         itemsCounts.currentSaleCount),
                                   ),
-                                  //
                                   SizedBox(width: 5),
 
+                                  ////////////////// <Featured>
                                   InkWell(
                                     onTap: () {
                                       //
@@ -533,6 +493,7 @@ class _HomeState extends State<Home> {
                                                       companycode: widget
                                                           .profile
                                                           .companycode)));
+                                      getCounts();
                                     },
                                     child: buildCardButton(
                                         Icons.star,
@@ -542,77 +503,41 @@ class _HomeState extends State<Home> {
                                   ),
                                   SizedBox(width: 5),
 
-                                  ////////////////////////////////////////////////////////////
-                                  /////////////////////////< Add New>/////////////////////////
-                                  ////////////////////////////////////////////////////////////
+                                  ////////////////// <New keyword>
                                   InkWell(
-                                    onTap: () {
-                                      var alterDialog = AlertDialog(
-                                        title: Text('Add New'),
-                                        content: Container(
-                                          // color: Colors.red[100],
-                                          height: 109,
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  OutlinedButton(
-                                                    onPressed: () {
-                                                      addNewCategory();
-                                                    },
-                                                    child: Text('New Category'),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  OutlinedButton(
-                                                    onPressed: () {
-                                                      addNewAttribute();
-                                                    },
-                                                    child:
-                                                        Text('New Attribute'),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  OutlinedButton(
-                                                    onPressed: () {},
-                                                    child: Text(
-                                                        'Update Monthly theme'),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                    onTap: () async {
+                                      List<SearchResult> allProducts =
+                                          List<SearchResult>();
+                                      allProducts =
+                                          await GettingData.searchNewTag(
+                                              widget.profile.companycode);
+                                      setState(() {});
+                                      Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                          pageBuilder: (_, __, ___) =>
+                                              new BProducts(
+                                            comapanycode:
+                                                widget.profile.companycode,
+                                            results: allProducts,
                                           ),
+                                          transitionsBuilder: (_,
+                                              Animation<double> animation,
+                                              __,
+                                              Widget child) {
+                                            return Opacity(
+                                              opacity: animation.value,
+                                              child: child,
+                                            );
+                                          },
+                                          transitionDuration:
+                                              Duration(milliseconds: 50),
                                         ),
-                                        actions: [
-                                          FlatButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text("Exit"),
-                                          ),
-                                        ],
                                       );
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return alterDialog;
-                                          });
-                                      //
                                     },
                                     child: buildCardButton(
                                         Icons.fiber_new_sharp, "New", false, 0),
                                   ),
+                                  //
                                 ],
                               ),
                             ),
@@ -636,8 +561,12 @@ class _HomeState extends State<Home> {
                                                           .profile
                                                           .companycode)));
                                     },
-                                    child: buildCardButton(Icons.report_problem,
-                                        "Reports", false, 0),
+                                    child: buildCardButton(
+                                      Icons.receipt_long,
+                                      "Reports",
+                                      false,
+                                      0,
+                                    ),
                                   ),
                                   SizedBox(width: 5),
                                   buildCardButton(
@@ -645,6 +574,7 @@ class _HomeState extends State<Home> {
                                 ],
                               ),
                             ),
+                            //
                           ],
                         ),
                       ),
@@ -656,338 +586,6 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-    );
-  }
-
-  String newCat;
-  var _addCatFormKey = GlobalKey<FormState>();
-  addNewCategory() {
-    var alterDialog = AlertDialog(
-      title: Text('Add New Category'),
-      content: Container(
-        height: 100,
-        child: Form(
-          key: _addCatFormKey,
-          child: Column(
-            children: [
-              TextFormField(
-                validator: (v) {
-                  if (v.isEmpty) {
-                    return "Required";
-                  }
-                  return null;
-                },
-                onChanged: (c) {
-                  newCat = c;
-                  setState(() {});
-                },
-                decoration: InputDecoration(
-                  labelText: 'Category',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      actions: [
-        FlatButton(
-          onPressed: () async {
-            int ret;
-            if (_addCatFormKey.currentState.validate()) {
-              ret = await GettingData.checkNewCategory(
-                  newCat, widget.profile.companycode);
-              if (ret == 0) {
-                print('Already Exists');
-                Constants.showAlertDialogBox(
-                    context, 'Alert', 'Already Exists');
-              } else if (ret == 1) {
-                // print('Now Add');
-                ret = GettingData.saveNewCategory(
-                    newCat, widget.profile.companycode);
-                if (ret != 1) {
-                  Constants.showAlertDialogBox(
-                      context, 'Alert', 'Couldn\'t Add');
-                } else {
-                  Navigator.of(context).pop();
-                  Constants.showAlertDialogBox(context, 'Added', '');
-                }
-              } else {
-                // print('There is problem.');
-              }
-            }
-          },
-          child: Text("Add"),
-        ),
-        FlatButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text("Exit"),
-        ),
-      ],
-    );
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alterDialog;
-        });
-  }
-
-  proceedToSubCategories(String cat) {
-    refSubCat =
-        GettingData.getSubCategoriesReference(widget.profile.companycode, cat);
-    //////////////
-    var alterDialog = AlertDialog(
-      title: Text('$cat: Sub Category'),
-      content: StreamBuilder(
-        stream: refSubCat.snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) {
-            return Container(
-              width: 10,
-              height: 10,
-              // color: Colors.black,
-              child: CircularProgressIndicator(),
-            );
-          }
-          return SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              children: snapshot.data.docs.map((DocumentSnapshot document) {
-                return Column(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        //
-                        // print('sdddddddddddddddddddddddd');
-                        // print(document.data()['SubCat']);
-                        // print(cat);
-                        // print('sdddddddddddddddddddddddd');
-
-                        // proceedTo addNew PRoduct with (document.data()['CatName']);
-                        ///////////////
-                        Navigator.of(context).pop();
-
-                        Navigator.of(context).push(
-                          PageRouteBuilder(
-                            pageBuilder: (_, __, ___) => AddNewItem(
-                              profile: widget.profile,
-                              category: cat,
-                              subCategory: document.data()['SubCat'],
-                            ),
-                            transitionDuration: Duration(milliseconds: 1000),
-                            transitionsBuilder: (_, Animation<double> animation,
-                                __, Widget child) {
-                              return Opacity(
-                                opacity: animation.value,
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      child: _infoCircle(document.data()['SubCat']),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-          );
-        },
-      ),
-      actions: [
-        FlatButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            addNewSubCategory(cat);
-          },
-          child: Text("Add New SubCategory"),
-        ),
-        FlatButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text("Exit"),
-        ),
-      ],
-    );
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alterDialog;
-        });
-
-    //////////////
-  }
-
-  String newSubCat = '';
-  var _addSubCatFormKey = GlobalKey<FormState>();
-  addNewSubCategory(String cat) {
-    var alterDialog = AlertDialog(
-      title: Text('Add New SubCategory'),
-      content: Container(
-        height: 100,
-        child: Form(
-          key: _addSubCatFormKey,
-          child: Column(
-            children: [
-              TextFormField(
-                validator: (v) {
-                  if (v.isEmpty) {
-                    return "Required";
-                  }
-                  return null;
-                },
-                onChanged: (c) {
-                  newSubCat = c;
-                  setState(() {});
-                },
-                decoration: InputDecoration(
-                  labelText: 'Sub Category',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      actions: [
-        FlatButton(
-          onPressed: () async {
-            int ret;
-            if (_addSubCatFormKey.currentState.validate()) {
-              ret = await GettingData.checkNewSubCategory(
-                  cat, newSubCat, widget.profile.companycode);
-              if (ret == 0) {
-                print('Already Exists');
-                Constants.showAlertDialogBox(
-                    context, 'Alert', 'Already Exists');
-              } else if (ret == 1) {
-                // print('Now Add');
-                ret = GettingData.saveNewSubCategory(
-                    cat, newSubCat, widget.profile.companycode);
-                if (ret != 1) {
-                  Constants.showAlertDialogBox(
-                      context, 'Alert', 'Couldn\'t Add');
-                } else {
-                  Navigator.of(context).pop();
-                }
-              } else {
-                // print('There is problem.');
-              }
-            }
-          },
-          child: Text("Add"),
-        ),
-        FlatButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text("Exit"),
-        ),
-      ],
-    );
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alterDialog;
-        });
-  }
-
-//////////////////
-  String newAttri;
-  var _addAttFormKey = GlobalKey<FormState>();
-  addNewAttribute() {
-    var alterDialog = AlertDialog(
-      title: Text('Add New Attribute'),
-      content: Container(
-        height: 100,
-        child: Form(
-          key: _addAttFormKey,
-          child: Column(
-            children: [
-              TextFormField(
-                validator: (v) {
-                  if (v.isEmpty) {
-                    return "Required";
-                  }
-                  return null;
-                },
-                onChanged: (c) {
-                  newAttri = c;
-                  setState(() {});
-                },
-                decoration: InputDecoration(
-                  labelText: 'Attribute',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      actions: [
-        FlatButton(
-          onPressed: () async {
-            int ret;
-            if (_addAttFormKey.currentState.validate()) {
-              ret = await GettingData.checkNewAttribute(
-                  newAttri, widget.profile.companycode);
-              if (ret == 0) {
-                print('Already Exists');
-                Constants.showAlertDialogBox(
-                    context, 'Alert', 'Already Exists');
-              } else if (ret == 1) {
-                // print('Now Add');
-                ret = GettingData.saveNewAttribute(
-                    newAttri, widget.profile.companycode);
-                if (ret != 1) {
-                  Constants.showAlertDialogBox(
-                      context, 'Alert', 'Couldn\'t Add');
-                } else {
-                  Navigator.of(context).pop();
-                  Constants.showAlertDialogBox(context, 'Added!', '');
-                }
-              } else {
-                // print('There is problem.');
-              }
-            }
-          },
-          child: Text("Add"),
-        ),
-        FlatButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text("Exit"),
-        ),
-      ],
-    );
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alterDialog;
-        });
-  }
-
-  Widget _infoCircle(String title) {
-    return Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Container(
-          height: 45.0,
-          // width: 85.0,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(15.0)),
-            // color: Color(0xFFF0E5FB),
-            color: Constants.basicColor.withOpacity(1),
-          ),
-          child: Center(
-              child: Text(
-            title,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-          ))),
     );
   }
 

@@ -134,7 +134,9 @@ class _RProfileScreenState extends State<RProfileScreen> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new SettingApp()));
+                        pageBuilder: (_, __, ___) => new SettingApp(
+                              companycode: widget.profile.companycode,
+                            )));
                   },
                   child: Category(
                     txt: "App Settings",

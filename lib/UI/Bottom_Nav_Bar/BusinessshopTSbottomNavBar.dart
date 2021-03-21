@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:total_app/UI/B1_Home/B1_Home_Screen/Search.dart';
 import 'package:total_app/UI/B3_Trips/TShopMain.dart';
-import 'package:total_app/UI/B4_Review/TSProducts.dart';
+import 'package:total_app/UI/B5_Profile/ListProfile/ViewProfile.dart';
 import 'custom_nav_bar.dart';
 import 'package:flutter/services.dart';
 import 'package:total_app/constants.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
-import 'package:total_app/UI/B5_Profile/TSB5_BusinessProfileScreen.dart';
 import 'package:total_app/UI/B3_Trips/BusinessShopMain.dart';
 
 class BusinessShopBtmNavBar extends StatefulWidget {
@@ -28,14 +27,16 @@ class BusinessShopBtmNavBarState extends State<BusinessShopBtmNavBar> {
         );
         break;
       case 1:
-        return new Search();
+        return new Search(
+          companycode: widget.profile.companycode,
+        );
         break;
 
-      case 3:
-        return new TSProducts();
-        break;
+      // case 3:
+      //   return new BProducts();
+      //   break;
       case 4:
-        return new TSBusinessProfileScreen(email: widget.profile.email);
+        return new ViewEditProfile(profile: widget.profile);
         break;
       default:
         return new ShopMain();

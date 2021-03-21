@@ -7,6 +7,7 @@ import 'package:total_app/constants.dart';
 import 'package:total_app/DataModels/User.dart';
 // import 'package:progress_dialog/progress_dialog.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
+// import 'package:stripe_payment/stripe_payment.dart';
 
 class PlanBSignup extends StatefulWidget {
   final String companyCode;
@@ -26,7 +27,7 @@ class _PlanBSignupState extends State<PlanBSignup>
   TextEditingController ckeyCtrl = TextEditingController();
   TextEditingController roleCtrl = TextEditingController();
 
-  var desg = ['Role.DesignatedStaff', 'Role.RegularStaff'];
+  var desg = ['Role.RegularStaff'];
   var designation = 'Role.RegularStaff';
 
   TextEditingController contactCtrl = TextEditingController();

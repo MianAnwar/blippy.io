@@ -110,6 +110,7 @@ class _SearchState extends State<Search> {
                         Navigator.of(context).push(
                           PageRouteBuilder(
                             pageBuilder: (_, __, ___) => new BProducts(
+                              comapanycode: widget.companycode,
                               results: this.result,
                             ),
                             transitionsBuilder: (_, Animation<double> animation,

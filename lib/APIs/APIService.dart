@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
+import 'package:total_app/DataModels/BusinessModel.dart';
 
 class APIServices {
 /////////////
@@ -112,11 +113,6 @@ class APIServices {
 
 //
 /*
-
-
-
-
-
 
 
 
@@ -256,6 +252,24 @@ class APIServices {
       if (doc.exists) {
         // print(doc.data()['username'].toString());
         return Profile.fromMapObj(doc.data());
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+// getRegisteredUser
+  static Future<Business> getBusiness(String cc) async {
+    try {
+      final CollectionReference users =
+          FirebaseFirestore.instance.collection('Companies');
+      final DocumentSnapshot doc = await users.doc(cc).get();
+      if (doc.exists) {
+        // print(doc.data()['username'].toString());
+        print(doc.data());
+        return Business.fromMapObj(doc.data());
       } else {
         return null;
       }

@@ -1,18 +1,19 @@
+import 'package:total_app/APIs/GettingData.dart';
+import 'package:total_app/DataModels/SaleResult.dart';
+import 'package:total_app/DataModels/SearchLowStock.dart';
+import 'package:total_app/DataModels/SearchResult.dart';
 import 'package:total_app/UI/B1_Home/B1_Home_Screen/Search.dart';
 import 'package:flutter/material.dart';
+import 'package:total_app/UI/B5_Profile/ListProfile/SettingApp.dart';
+import 'package:total_app/UI/B5_Profile/ListProfile/UploadImage.dart';
 import 'package:total_app/constants.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:total_app/UI/B5_Profile/ListProfile/TSSettingApp.dart';
-import 'package:total_app/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/maps.dart';
-import 'package:total_app/DataSample/HomeGridRooms.dart';
-import 'package:total_app/DataSample/recentSearchesModel.dart';
-import 'package:total_app/Library/SupportingLibrary/Ratting/Rating.dart';
-import 'package:total_app/DataSample/travelModelData.dart';
 import 'package:total_app/UI/B1_Home/Destination/BusinessCategories.dart';
 import 'package:total_app/UI/B1_Home/Destination/PromoSale.dart';
-import 'package:total_app/UI/B1_Home/Hotel/Hotel_Detail_Concept_1/hotelDetail_concept_1.dart';
-import 'package:total_app/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
+import 'package:total_app/DataModels/BusinessModel.dart';
+import 'package:total_app/APIs/APIService.dart';
+import 'package:total_app/UI/B4_Review/BusinessProductDetail.dart';
 
 class BShopMain extends StatefulWidget {
   final Profile profile;
@@ -23,6 +24,12 @@ class BShopMain extends StatefulWidget {
 }
 
 class _BShopMainState extends State<BShopMain> {
+  Business business = Business();
+  List<SearchResult> newTagProducts = List<SearchResult>();
+  List<SearchResult> featuredProducts = List<SearchResult>();
+  List<SaleResult> topDeal = List<SaleResult>();
+  List<SearchLowStock> lowStockResult = List<SearchLowStock>();
+
   // var listImagesURL = [];
 
   @override
@@ -30,10 +37,42 @@ class _BShopMainState extends State<BShopMain> {
     // TO implement initState
     super.initState();
     // getCompanyImages();
+    refresh();
+    loadNewTagged();
+    loadFeatured();
+    loadSaleTopDeal();
+    loadLowStock();
+  }
+
+  refresh() async {
+    this.business = await APIServices.getBusiness(widget.profile.companycode);
+    setState(() {});
+  }
+
+  loadNewTagged() async {
+    newTagProducts = await GettingData.searchNewTag(widget.profile.companycode);
+    setState(() {});
+  }
+
+  loadFeatured() async {
+    featuredProducts =
+        await GettingData.featuredProdcuts(widget.profile.companycode);
+    setState(() {});
+  }
+
+  loadSaleTopDeal() async {
+    topDeal = await GettingData.currentSales(widget.profile.companycode);
+    setState(() {});
+  }
+
+  loadLowStock() async {
+    lowStockResult =
+        await GettingData.lowStockProducts(widget.profile.companycode);
+    setState(() {});
   }
 
 //////////////////////////////////////
-  Widget buildItemsList(String topTitle) {
+  Widget buildItemsListNew(String topTitle) {
     return Container(
       padding: EdgeInsets.only(right: 5.0, top: 10.0),
       height: 220.0,
@@ -60,9 +99,10 @@ class _BShopMainState extends State<BShopMain> {
                 shrinkWrap: true,
                 primary: false,
                 itemBuilder: (ctx, index) {
-                  return CardLastActivity(recentSearchesModelArray[index]);
+                  return CardLastActivityNew(
+                      newTagProducts[index], widget.profile.companycode);
                 },
-                itemCount: recentSearchesModelArray.length,
+                itemCount: newTagProducts.length,
               ),
             ),
           )
@@ -71,7 +111,7 @@ class _BShopMainState extends State<BShopMain> {
     );
   }
 
-  Widget buildItemsList2(String topTitle) {
+  Widget buildItemsListFeatured(String topTitle) {
     return Container(
       padding: EdgeInsets.only(right: 5.0, top: 10.0),
       height: 220.0,
@@ -98,9 +138,10 @@ class _BShopMainState extends State<BShopMain> {
                 shrinkWrap: true,
                 primary: false,
                 itemBuilder: (ctx, index) {
-                  return CardLastActivity(recentSearchesModelArray[index]);
+                  return CardLastActivityFeatured(
+                      featuredProducts[index], widget.profile.companycode);
                 },
-                itemCount: recentSearchesModelArray.length,
+                itemCount: featuredProducts.length,
               ),
             ),
           )
@@ -109,55 +150,97 @@ class _BShopMainState extends State<BShopMain> {
     );
   }
 
-  ///  Grid item in bottom of Category
-  var _recommendedRooms = SingleChildScrollView(
-    child: Container(
-      color: Colors.white,
+  Widget buildItemsListTopDeal(String topTitle) {
+    return Container(
+      padding: EdgeInsets.only(right: 5.0, top: 10.0),
+      height: 220.0,
+      width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(left: 20.0, top: 40.0, right: 20.0),
+            padding: const EdgeInsets.only(left: 20.0),
             child: Text(
-              "Recommended Rooms",
-              // style: _txtStyle,
+              "$topTitle",
+              style: TextStyle(
+                  fontFamily: "Sofia",
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w700),
             ),
           ),
-
-          /// To set GridView item
-          GridView.count(
-              shrinkWrap: true,
-              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-              crossAxisSpacing: 0.0,
-              mainAxisSpacing: 0.0,
-              childAspectRatio: 0.795,
-              crossAxisCount: 2,
-              primary: false,
-              children: List.generate(
-                gridItemArray.length,
-                (index) => ItemGrid(gridItemArray[index]),
-              ))
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                primary: false,
+                itemBuilder: (ctx, index) {
+                  return CardLastActivityTopDeal(
+                      topDeal[index], widget.profile.companycode);
+                },
+                itemCount: topDeal.length,
+              ),
+            ),
+          )
         ],
       ),
-    ),
-  );
+    );
+  }
+
+  Widget buildItemsListLowStock(String topTitle) {
+    return Container(
+      padding: EdgeInsets.only(right: 5.0, top: 10.0),
+      height: 220.0,
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: Text(
+              "$topTitle",
+              style: TextStyle(
+                  fontFamily: "Sofia",
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w700),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                primary: false,
+                itemBuilder: (ctx, index) {
+                  return CardLastActivityLowStock(
+                      lowStockResult[index], widget.profile.companycode);
+                },
+                itemCount: lowStockResult.length,
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
 
 /////////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
     var _searchBox = Padding(
-      padding: EdgeInsets.only(
-        left: 15.0,
-        right: 15.0,
-        bottom: 10.0,
-      ),
+      padding: EdgeInsets.only(left: 15.0, right: 15.0, bottom: 10.0),
       child: InkWell(
         onTap: () {
           return Navigator.of(context).push(
             PageRouteBuilder(
-              pageBuilder: (_, __, ___) => new Search(),
+              pageBuilder: (_, __, ___) => new Search(
+                companycode: widget.profile.companycode,
+              ),
               transitionsBuilder:
                   (_, Animation<double> animation, __, Widget child) {
                 return Opacity(
@@ -224,7 +307,7 @@ class _BShopMainState extends State<BShopMain> {
         backgroundColor: Constants.basicColor,
         centerTitle: true,
         title: Text(
-          "My Demo Store",
+          "My Store Front",
           style: TextStyle(
             color: Constants.thirdColor,
             fontWeight: FontWeight.bold,
@@ -233,6 +316,7 @@ class _BShopMainState extends State<BShopMain> {
         elevation: 0.0,
       ),
       backgroundColor: Colors.white,
+      //
       body: SingleChildScrollView(
         child: Container(
           height: _height,
@@ -242,14 +326,14 @@ class _BShopMainState extends State<BShopMain> {
               _searchBox,
               SizedBox(height: 3.0),
 
-              //
+              // Categories
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextButton(
                   onPressed: () {
                     Navigator.of(context).push(PageRouteBuilder(
                         pageBuilder: (_, __, ___) =>
-                            new CategoriesScreen(title: 'Categories'),
+                            CategoriesScreen(title: 'Categories'),
                         transitionDuration: Duration(milliseconds: 600),
                         transitionsBuilder:
                             (_, Animation<double> animation, __, Widget child) {
@@ -274,7 +358,8 @@ class _BShopMainState extends State<BShopMain> {
                   ),
                 ),
               ),
-              //
+
+              // Promos & Sales
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextButton(
@@ -307,61 +392,58 @@ class _BShopMainState extends State<BShopMain> {
                 ),
               ),
 
-// theme
-              Padding(
-                padding: EdgeInsets.only(top: 18.0),
-                child: Text(
-                  '\"Monthly Theme\"',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontFamily: "Sofia",
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w700),
+              // theme Headiong
+              InkWell(
+                onTap: () {
+                  // Edit
+                  Navigator.of(context).push(PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => UploadImage(
+                            title: "Change Monthly Theme",
+                          )));
+                  refresh();
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(top: 18.0),
+                  child: Text(
+                    '... \"Monthly Theme\" ...',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontFamily: "Sofia",
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w700),
+                  ),
                 ),
               ),
+
+              // theme image + Text
               Padding(
                 padding: EdgeInsets.only(top: 4.0),
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 200,
-                        child: Image.network(
-                          'https://iogames.space/sites/default/files/Ee1nLJwWAAU6yhC.png',
-                          fit: BoxFit.fitWidth,
-                        ),
-                      ),
-                      // Image.asset('assets/image/room/room9.jpg'),
-                      Container(
-                        color: Colors.grey,
-                        child: Text(
-                          ' Valentines Day .',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: "Sofia",
-                            fontSize: 20.0,
-                            color: Colors.white,
-                            // fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      )
-                    ],
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 200,
+                    child: Image.network(
+                      this.business.themeURL == '' ||
+                              this.business.themeURL == null
+                          ? 'https://iogames.space/sites/default/files/Ee1nLJwWAAU6yhC.png'
+                          : this.business.themeURL,
+                      fit: BoxFit.fitWidth,
+                    ),
                   ),
                 ),
               ),
 
               //
-              buildItemsList('New'),
+              buildItemsListNew('New'),
 
-              buildItemsList('Feature items'),
-              buildItemsList('Top Deal'),
+              buildItemsListFeatured('Feature items'),
 
-              buildItemsList('Low Stock'),
-              buildItemsList('Out of Stock'),
+              buildItemsListTopDeal('Top Deal'),
 
+              buildItemsListLowStock('Low Stock'),
+
+              // Location
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,8 +464,22 @@ class _BShopMainState extends State<BShopMain> {
                         ),
                         TextButton(
                             onPressed: () {
-                              Navigator.of(context).push(PageRouteBuilder(
-                                  pageBuilder: (_, __, ___) => TSAppSetting()));
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder: (_, __, ___) => SettingApp(),
+                                  transitionDuration:
+                                      Duration(milliseconds: 10),
+                                  transitionsBuilder: (_,
+                                      Animation<double> animation,
+                                      __,
+                                      Widget child) {
+                                    return Opacity(
+                                      opacity: animation.value,
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
                             },
                             child: Text('Edit')),
                       ],
@@ -398,52 +494,52 @@ class _BShopMainState extends State<BShopMain> {
                           child: GoogleMap(
                             mapType: MapType.normal,
                             initialCameraPosition: CameraPosition(
-                              target: LatLng(40.7078523, -74.008981),
+                              target: LatLng(40.7078523, 74.008981),
                               zoom: 13.0,
                             ),
                             markers: {
                               Marker(
-                                markerId: MarkerId("40.7078523, -74.008981"),
-                                position: LatLng(40.7078523, -74.008981),
+                                markerId: MarkerId("40.7078523, 74.008981"),
+                                position: LatLng(40.7078523, 74.008981),
                                 icon: BitmapDescriptor.defaultMarker,
                               ),
                             },
                           ),
                         ),
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(top: 135.0, right: 60.0),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) => maps()));
-                              },
-                              child: Container(
-                                height: 35.0,
-                                width: 95.0,
-                                decoration: BoxDecoration(
-                                    color: Colors.black12.withOpacity(0.5),
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(30.0))),
-                                child: Center(
-                                  child: Text("See Map",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: "Sofia")),
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
+                        // Padding(
+                        //   padding:
+                        //       const EdgeInsets.only(top: 135.0, right: 60.0),
+                        //   child: Align(
+                        //     alignment: Alignment.bottomRight,
+                        //     child: InkWell(
+                        //       onTap: () {
+                        //         Navigator.of(context).push(PageRouteBuilder(
+                        //             pageBuilder: (_, __, ___) => maps()));
+                        //       },
+                        //       child: Container(
+                        //         height: 35.0,
+                        //         width: 95.0,
+                        //         decoration: BoxDecoration(
+                        //             color: Colors.black12.withOpacity(0.5),
+                        //             borderRadius: BorderRadius.all(
+                        //                 Radius.circular(30.0))),
+                        //         child: Center(
+                        //           child: Text("See Map",
+                        //               style: TextStyle(
+                        //                   color: Colors.white,
+                        //                   fontFamily: "Sofia")),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
                 ],
               ),
 
-              // _recommended,
+              // _recommendedRooms,
 
               SizedBox(height: 200.0),
               Text('0'),
@@ -455,344 +551,21 @@ class _BShopMainState extends State<BShopMain> {
   }
 }
 
+////////////////////////////////////////
+////////////////////////////////////////
+////////////////////////////////////////
+////////////////////////////////////////
+////////////////////////////////////////
 ///
 
-class cardList extends StatelessWidget {
-  var _txtStyleTitle = TextStyle(
-    color: Colors.black87,
-    fontFamily: "Gotik",
-    fontSize: 17.0,
-    fontWeight: FontWeight.w800,
-  );
-
-  var _txtStyleSub = TextStyle(
-    color: Colors.black26,
-    fontFamily: "Gotik",
-    fontSize: 12.5,
-    fontWeight: FontWeight.w600,
-  );
-
-  travelListData hotelData;
-
-  cardList(this.hotelData);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (_, __, ___) => new hotelDetail2(
-                    title: hotelData.name,
-                    id: hotelData.id,
-                    image: hotelData.img,
-                    location: hotelData.location,
-                    price: hotelData.price,
-                    ratting: hotelData.rating,
-                  ),
-              transitionDuration: Duration(milliseconds: 600),
-              transitionsBuilder:
-                  (_, Animation<double> animation, __, Widget child) {
-                return Opacity(
-                  opacity: animation.value,
-                  child: child,
-                );
-              }));
-        },
-        child: Container(
-          height: 250.0,
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black12.withOpacity(0.1),
-                    blurRadius: 3.0,
-                    spreadRadius: 1.0)
-              ]),
-          child: Column(children: [
-            Hero(
-              tag: 'hero-tag-${hotelData.id}',
-              child: Material(
-                child: Container(
-                  height: 165.0,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10.0),
-                        topLeft: Radius.circular(10.0)),
-                    image: DecorationImage(
-                        image: AssetImage(hotelData.img), fit: BoxFit.cover),
-                  ),
-                  alignment: Alignment.topRight,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                            width: 220.0,
-                            child: Text(
-                              hotelData.name,
-                              style: _txtStyleTitle,
-                              overflow: TextOverflow.ellipsis,
-                            )),
-                        Padding(padding: EdgeInsets.only(top: 5.0)),
-                        Row(
-                          children: <Widget>[
-                            ratingbar(
-                              starRating: hotelData.rating,
-                              color: Colors.blueAccent,
-                            ),
-                            Padding(padding: EdgeInsets.only(left: 5.0)),
-                            Text(
-                              "(" + hotelData.rating.toString() + ")",
-                              style: _txtStyleSub,
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4.9),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.location_on,
-                                size: 16.0,
-                                color: Colors.black26,
-                              ),
-                              Padding(padding: EdgeInsets.only(top: 3.0)),
-                              Text(hotelData.location, style: _txtStyleSub)
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 13.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "\$" + hotelData.price,
-                          style: TextStyle(
-                              fontSize: 25.0,
-                              color: Colors.blueAccent,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: "Gotik"),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ]),
-        ),
-      ),
-    );
-  }
-}
-
-Widget _card(String image, title, location, ratting, id, BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        InkWell(
-          onTap: () {
-            Navigator.of(context).push(PageRouteBuilder(
-                pageBuilder: (_, __, ___) => new hotelDetail(
-                      title: title,
-                      id: id,
-                      image: image,
-                      location: location,
-                      price: ratting,
-                    ),
-                transitionDuration: Duration(milliseconds: 600),
-                transitionsBuilder:
-                    (_, Animation<double> animation, __, Widget child) {
-                  return Opacity(
-                    opacity: animation.value,
-                    child: child,
-                  );
-                }));
-          },
-          child: Hero(
-            tag: 'hero-tag-$id',
-            child: Material(
-              child: Container(
-                height: 220.0,
-                width: 160.0,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage(image), fit: BoxFit.cover),
-                    color: Colors.black12,
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    boxShadow: [
-                      BoxShadow(
-                          blurRadius: 5.0,
-                          color: Colors.black12.withOpacity(0.1),
-                          spreadRadius: 2.0)
-                    ]),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 5.0,
-        ),
-        Text(
-          title,
-          style: TextStyle(
-              fontFamily: "Sofia",
-              fontWeight: FontWeight.w600,
-              fontSize: 17.0,
-              color: Colors.black87),
-        ),
-        SizedBox(
-          height: 2.0,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Icon(
-              Icons.location_on,
-              size: 18.0,
-              color: Colors.black12,
-            ),
-            Text(
-              location,
-              style: TextStyle(
-                  fontFamily: "Sofia",
-                  fontWeight: FontWeight.w500,
-                  fontSize: 15.0,
-                  color: Colors.black26),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.star,
-              size: 18.0,
-              color: Colors.yellow,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 3.0),
-              child: Text(
-                ratting,
-                style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontFamily: "Sofia",
-                    fontSize: 13.0),
-              ),
-            ),
-            SizedBox(
-              width: 35.0,
-            ),
-            Container(
-              height: 27.0,
-              width: 82.0,
-              decoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              child: Center(
-                child: Text("Discount 15%",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 10.0)),
-              ),
-            )
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
-////////
-class cardCountry extends StatelessWidget {
-  Color colorTop, colorBottom;
-  String image, title;
-  cardCountry({this.colorTop, this.colorBottom, this.title, this.image});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 4.0),
-      child: InkWell(
-        onTap: () {},
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              height: 105.0,
-              width: 105.0,
-              decoration: BoxDecoration(
-                boxShadow: [BoxShadow(blurRadius: 8.0, color: Colors.black12)],
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                gradient: LinearGradient(
-                    colors: [colorTop, colorBottom],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(right: 4.0),
-                child: Align(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      image,
-                      height: 60,
-                      color: Colors.white,
-                    )),
-              ),
-            ),
-            SizedBox(
-              height: 5.0,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5.0),
-              child: Text(
-                title,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Sofia",
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 //////////Featured items
-class CardLastActivity extends StatelessWidget {
-  final recentSearchesModel searchesModel;
-
-  CardLastActivity(this.searchesModel);
+class CardLastActivityNew extends StatelessWidget {
+  final SearchResult searchesModel;
+  final String cc;
+  CardLastActivityNew(
+    this.searchesModel,
+    this.cc,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -800,22 +573,14 @@ class CardLastActivity extends StatelessWidget {
       padding: EdgeInsets.only(left: 18.0, top: 10.0, bottom: 8.0),
       child: InkWell(
         onTap: () {
+          print(searchesModel.did);
+          print(cc);
+
           Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (_, __, ___) => new hotelDetail(
-                    title: searchesModel.title,
-                    id: searchesModel.id,
-                    image: searchesModel.img,
-                    location: searchesModel.price,
-                    price: searchesModel.price,
-                  ),
-              transitionDuration: Duration(milliseconds: 600),
-              transitionsBuilder:
-                  (_, Animation<double> animation, __, Widget child) {
-                return Opacity(
-                  opacity: animation.value,
-                  child: child,
-                );
-              }));
+              pageBuilder: (_, __, ___) => BusinessProductDetail(
+                    cc: cc,
+                    did: searchesModel.did,
+                  )));
         },
         child: Container(
           decoration: BoxDecoration(
@@ -847,7 +612,9 @@ class CardLastActivity extends StatelessWidget {
                               topLeft: Radius.circular(7.0),
                               topRight: Radius.circular(7.0)),
                           image: DecorationImage(
-                              image: AssetImage(searchesModel.img),
+                              image: searchesModel.imageURL == ''
+                                  ? AssetImage('assets/image/icon/box.png')
+                                  : NetworkImage(searchesModel.imageURL),
                               fit: BoxFit.cover)),
                     ),
                   ),
@@ -869,16 +636,36 @@ class CardLastActivity extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Padding(padding: EdgeInsets.only(top: 2.0)),
+                  // Padding(padding: EdgeInsets.only(top: 2.0)),
                   Padding(
                     padding: EdgeInsets.only(left: 10.0, right: 0.0),
-                    child: Text(
-                      searchesModel.price,
-                      style: TextStyle(
-                          color: Colors.black54,
-                          fontFamily: "Gotik",
-                          fontWeight: FontWeight.w800,
-                          fontSize: 14.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          '\$${searchesModel.salePrice}',
+                          style: TextStyle(
+                              color: Colors.black54,
+                              fontFamily: "Gotik",
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16.0),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 18.0),
+                          child: Card(
+                            elevation: 5,
+                            child: Text(
+                              ' New ',
+                              style: TextStyle(
+                                // backgroundColor: Colors.white54,
+                                color: Colors.black,
+                                fontFamily: "Gotik",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -891,97 +678,24 @@ class CardLastActivity extends StatelessWidget {
   }
 }
 
-class cardDestinationPopuler extends StatelessWidget {
-  String img, txt;
-  cardDestinationPopuler({this.img, this.txt});
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        // Navigator.of(context).push(PageRouteBuilder(
-        //     pageBuilder: (_, __, ___) => new destination(
-        //           title: this.txt,
-        //         ),
-        //     transitionDuration: Duration(milliseconds: 600),
-        //     transitionsBuilder:
-        //         (_, Animation<double> animation, __, Widget child) {
-        //       return Opacity(
-        //         opacity: animation.value,
-        //         child: child,
-        //       );
-        //     }));
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          height: 400.0,
-          width: 140.0,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              image: DecorationImage(
-                image: AssetImage(img),
-                fit: BoxFit.cover,
-              ),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black12.withOpacity(0.1),
-                    blurRadius: 2.0,
-                    spreadRadius: 1.0)
-              ]),
-          child: Center(
-            child: Text(
-              txt,
-              style: TextStyle(
-                  fontFamily: 'Amira',
-                  color: Colors.white,
-                  fontSize: 40.0,
-                  letterSpacing: 2.0,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black,
-                      blurRadius: 2.0,
-                    )
-                  ]),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// ItemGrid in bottom item "Recomended" item
-class ItemGrid extends StatelessWidget {
-  /// Get data from HomeGridItem.....dart class
-  GridItem gridItem;
-  ItemGrid(this.gridItem);
+//////////Featured items
+class CardLastActivityFeatured extends StatelessWidget {
+  final SearchResult searchesModel;
+  final String cc;
+  CardLastActivityFeatured(this.searchesModel, this.cc);
 
   @override
   Widget build(BuildContext context) {
-    MediaQueryData mediaQueryData = MediaQuery.of(context);
-
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.only(left: 18.0, top: 10.0, bottom: 8.0),
       child: InkWell(
         onTap: () {
+          print(searchesModel.did);
           Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (_, __, ___) => new hotelDetail2(
-                    title: gridItem.title,
-                    id: gridItem.id,
-                    image: gridItem.img,
-                    location: gridItem.location,
-                    price: gridItem.price,
-                    ratting: gridItem.ratingValue,
-                  ),
-              transitionDuration: Duration(milliseconds: 600),
-              transitionsBuilder:
-                  (_, Animation<double> animation, __, Widget child) {
-                return Opacity(
-                  opacity: animation.value,
-                  child: child,
-                );
-              }));
+              pageBuilder: (_, __, ___) => BusinessProductDetail(
+                    cc: cc,
+                    did: searchesModel.did,
+                  )));
         },
         child: Container(
           decoration: BoxDecoration(
@@ -992,7 +706,6 @@ class ItemGrid extends StatelessWidget {
                   color: Color(0xFF656565).withOpacity(0.15),
                   blurRadius: 4.0,
                   spreadRadius: 1.0,
-//           offset: Offset(4.0, 10.0)
                 )
               ]),
           child: Wrap(
@@ -1002,29 +715,146 @@ class ItemGrid extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Hero(
-                    tag: 'hero-tag-${gridItem.id}',
-                    child: Material(
-                      child: Container(
-                        height: mediaQueryData.size.height / 5.8,
-                        width: 200.0,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(7.0),
-                                topRight: Radius.circular(7.0)),
-                            image: DecorationImage(
-                                image: AssetImage(gridItem.img),
-                                fit: BoxFit.cover)),
+                  // Hero(
+                  //   tag: 'hero-tag-${searchesModel.id}',
+                  //   child:
+                  Material(
+                    child: Container(
+                      height: 100.0,
+                      width: 140.0,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(7.0),
+                              topRight: Radius.circular(7.0)),
+                          image: DecorationImage(
+                              image: searchesModel.imageURL == ''
+                                  ? AssetImage('assets/image/icon/box.png')
+                                  : NetworkImage(searchesModel.imageURL),
+                              fit: BoxFit.cover)),
+                    ),
+                  ),
+                  // ),
+                  Padding(padding: EdgeInsets.only(top: 5.0)),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                    child: Container(
+                      width: 110.0,
+                      child: Text(
+                        searchesModel.title,
+                        style: TextStyle(
+                            letterSpacing: 0.5,
+                            color: Colors.black54,
+                            fontFamily: "Sans",
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13.0),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
+                  // Padding(padding: EdgeInsets.only(top: 2.0)),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0, right: 0.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          '\$${searchesModel.salePrice}',
+                          style: TextStyle(
+                              color: Colors.black54,
+                              fontFamily: "Gotik",
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16.0),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10.0),
+                          child: Card(
+                            elevation: 5,
+                            child: Text(
+                              ' Featured ',
+                              style: TextStyle(
+                                // backgroundColor: Colors.white54,
+                                color: Colors.black,
+                                fontFamily: "Gotik",
+                                fontWeight: FontWeight.bold,
+                                // fontSize: 18.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CardLastActivityLowStock extends StatelessWidget {
+  final SearchLowStock lowStockData;
+  final String cc;
+  CardLastActivityLowStock(this.lowStockData, this.cc);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 18.0, top: 10.0, bottom: 8.0),
+      child: InkWell(
+        onTap: () {
+          print(lowStockData.did);
+          Navigator.of(context).push(PageRouteBuilder(
+              pageBuilder: (_, __, ___) => BusinessProductDetail(
+                    cc: cc,
+                    did: lowStockData.did,
+                  )));
+        },
+        child: Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0xFF656565).withOpacity(0.15),
+                  blurRadius: 4.0,
+                  spreadRadius: 1.0,
+                )
+              ]),
+          child: Wrap(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  // Hero(
+                  //   tag: 'hero-tag-${lowStockData.id}',
+                  //   child:
+                  Material(
+                    child: Container(
+                      height: 100.0,
+                      width: 140.0,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(7.0),
+                              topRight: Radius.circular(7.0)),
+                          image: DecorationImage(
+                              image: lowStockData.imageURL == ''
+                                  ? AssetImage('assets/image/icon/box.png')
+                                  : NetworkImage(lowStockData.imageURL),
+                              fit: BoxFit.cover)),
+                    ),
+                  ),
+                  // ),
                   Padding(padding: EdgeInsets.only(top: 5.0)),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
                     child: Container(
-                      width: 130.0,
+                      width: 110.0,
                       child: Text(
-                        gridItem.title,
+                        lowStockData.title,
                         style: TextStyle(
                             letterSpacing: 0.5,
                             color: Colors.black54,
@@ -1036,53 +866,144 @@ class ItemGrid extends StatelessWidget {
                     ),
                   ),
                   Padding(padding: EdgeInsets.only(top: 2.0)),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0, right: 0.0),
-                        child: Text(
-                          gridItem.price,
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0, right: 0.0),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '\$${lowStockData.salePrice}',
+                            style: TextStyle(
+                                color: Colors.black54,
+                                fontFamily: "Gotik",
+                                fontWeight: FontWeight.w800,
+                                fontSize: 16.0),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 20.0),
+                            child: Text(
+                              'Stock: ${lowStockData.stock}',
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontFamily: "Gotik",
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+//////////Featured items
+class CardLastActivityTopDeal extends StatelessWidget {
+  final SaleResult searchesModel;
+  final String cc;
+  CardLastActivityTopDeal(this.searchesModel, this.cc);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 18.0, top: 10.0, bottom: 8.0),
+      child: InkWell(
+        onTap: () {
+          print(searchesModel.did);
+          Navigator.of(context).push(PageRouteBuilder(
+              pageBuilder: (_, __, ___) => BusinessProductDetail(
+                    cc: cc,
+                    did: searchesModel.did,
+                  )));
+        },
+        child: Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0xFF656565).withOpacity(0.15),
+                  blurRadius: 4.0,
+                  spreadRadius: 1.0,
+                )
+              ]),
+          child: Wrap(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  // Hero(
+                  //   tag: 'hero-tag-${searchesModel.id}',
+                  //   child:
+                  Material(
+                    child: Container(
+                      height: 100.0,
+                      width: 140.0,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(7.0),
+                              topRight: Radius.circular(7.0)),
+                          image: DecorationImage(
+                              image: searchesModel.imageURL == ''
+                                  ? AssetImage('assets/image/icon/box.png')
+                                  : NetworkImage(searchesModel.imageURL),
+                              fit: BoxFit.cover)),
+                    ),
+                  ),
+                  // ),
+                  Padding(padding: EdgeInsets.only(top: 5.0)),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                    child: Container(
+                      width: 110.0,
+                      child: Text(
+                        searchesModel.title,
+                        style: TextStyle(
+                            letterSpacing: 0.5,
+                            color: Colors.black54,
+                            fontFamily: "Sans",
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13.0),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.only(top: 4.0)),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0, right: 0.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          '\$${searchesModel.salePrice}',
                           style: TextStyle(
                               color: Colors.black54,
                               fontFamily: "Gotik",
                               fontWeight: FontWeight.w800,
-                              fontSize: 14.0),
+                              fontSize: 16.0),
                         ),
-                      ),
-                      Text(
-                        "/night",
-                        style: TextStyle(
-                            color: Colors.black54,
-                            fontFamily: "Gotik",
-                            fontWeight: FontWeight.w400,
-                            fontSize: 10.0),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10.0, right: 15.0, top: 5.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            ratingbar(
-                              starRating: gridItem.ratingValue,
+                        Padding(
+                          padding: EdgeInsets.only(left: 25.0),
+                          child: Text(
+                            ' Deal ',
+                            style: TextStyle(
+                              backgroundColor: Colors.black26,
+                              color: Colors.white,
+                              fontFamily: "Gotik",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18.0,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 12.0),
-                              child: Text(
-                                gridItem.ratingValue.toString(),
-                                style: TextStyle(
-                                    fontFamily: "Sans",
-                                    color: Colors.black26,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12.0),
-                              ),
-                            )
-                          ],
+                          ),
                         ),
                       ],
                     ),

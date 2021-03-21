@@ -102,4 +102,29 @@ class Constants {
           return alterDialog;
         });
   }
+
+  static showDialogBox(BuildContext context, String title, String msg) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Center(
+              child: Padding(
+                padding: EdgeInsets.only(top: 20.0),
+                child: Text(title,
+                    style: TextStyle(fontSize: 25),
+                    textAlign: TextAlign.center),
+              ),
+            ),
+            actions: [
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("OK"),
+              )
+            ],
+          );
+        });
+  }
 }

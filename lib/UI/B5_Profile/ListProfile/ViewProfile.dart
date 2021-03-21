@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:total_app/APIs/GettingData.dart';
 import 'package:total_app/DataModels/SearchResult.dart';
+import 'package:total_app/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/maps.dart';
 import 'package:total_app/UI/B4_Review/BProducts.dart';
 import 'package:total_app/UI/IntroApps/PlanBSignup.dart';
 import 'package:total_app/constants.dart';
 import 'package:total_app/UI/B4_Review/BStaffs.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
-
+import 'UploadImage.dart';
 import 'SettingApp.dart';
 
 class ViewEditProfile extends StatefulWidget {
@@ -96,7 +98,11 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
                   onTap: () {
                     Navigator.of(context).push(
                       PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => SettingApp(),
+                        pageBuilder: (_, __, ___) => UploadImage(
+                          companycode: widget.profile.companycode,
+                          title: "change Display Image",
+                          optionWhere: 2,
+                        ),
                         transitionDuration: Duration(milliseconds: 10),
                         transitionsBuilder:
                             (_, Animation<double> animation, __, Widget child) {
@@ -114,6 +120,8 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
                       tag: 'hero-tag-profile',
                       child: companylogo == 'assets/logos.png'
                           ? Image(
+                              height: 100,
+                              width: 100,
                               image: AssetImage(
                                 'assets/image/icon/profile.png',
                               ),
@@ -217,6 +225,7 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
                                 Navigator.of(context).push(
                                   PageRouteBuilder(
                                     pageBuilder: (_, __, ___) => new BProducts(
+                                      comapanycode: widget.profile.companycode,
                                       results: allProducts,
                                     ),
                                     transitionsBuilder: (_,
@@ -364,9 +373,82 @@ class _ViewEditProfileState extends State<ViewEditProfile> {
 
             Padding(
               padding: EdgeInsets.only(top: 25.0, right: 20, left: 20),
-              child: Text(
-                'Company Location: ',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Company Location: ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      //
+                      Navigator.of(context).push(
+                        PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => SettingApp(),
+                          transitionDuration: Duration(milliseconds: 10),
+                          transitionsBuilder: (_, Animation<double> animation,
+                              __, Widget child) {
+                            return Opacity(
+                              opacity: animation.value,
+                              child: child,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: Text('Edit'),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    height: 190.0,
+                    child: GoogleMap(
+                      mapType: MapType.normal,
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(40.7078523, -74.008981),
+                        zoom: 13.0,
+                      ),
+                      markers: {
+                        Marker(
+                          markerId: MarkerId("40.7078523, -74.008981"),
+                          position: LatLng(40.7078523, -74.008981),
+                          icon: BitmapDescriptor.defaultMarker,
+                        ),
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 135.0, right: 60.0),
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(PageRouteBuilder(
+                              pageBuilder: (_, __, ___) => maps()));
+                        },
+                        child: Container(
+                          height: 35.0,
+                          width: 95.0,
+                          decoration: BoxDecoration(
+                              color: Colors.black12.withOpacity(0.5),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30.0))),
+                          child: Center(
+                            child: Text("See Map",
+                                style: TextStyle(
+                                    color: Colors.white, fontFamily: "Sofia")),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
           ],

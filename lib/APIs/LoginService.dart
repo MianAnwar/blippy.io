@@ -4,6 +4,7 @@ import 'package:total_app/DataModels/User.dart';
 import 'package:total_app/DataModels/ProfileModel.dart';
 import 'package:total_app/DataModels/BusinessModel.dart';
 import 'package:total_app/constants.dart';
+import 'GettingData.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
@@ -305,6 +306,8 @@ class AuthenticationService {
 
       companyInform.doc(b.secretCode).set(b.toMap()).then(
         (value) {
+          GettingData.uploadAttributes(b.secretCode);
+          GettingData.uploadDealsss(b.secretCode);
           return 1; // Sucessfully saved
         },
       ).catchError((error) {

@@ -2,8 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:total_app/APIs/LoginService.dart';
 import '../../../constants.dart';
+import 'UploadImage.dart';
 
 class SettingApp extends StatefulWidget {
+  final String companycode;
+  SettingApp({this.companycode});
+
   @override
   _SettingApp createState() => _SettingApp();
 }
@@ -13,6 +17,7 @@ class _SettingApp extends State<SettingApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text(
           "",
           style: TextStyle(
@@ -32,7 +37,7 @@ class _SettingApp extends State<SettingApp> {
               Setting(
                 head: "Setup your App Account",
                 sub1: "Change Password",
-                sub2: "My Location",
+                sub2: "Set Business Location",
                 sub3: "Main Business Image",
                 sub4: "Display Logo",
                 sub5: "Business Monthly Theme",
@@ -163,25 +168,24 @@ class Setting extends StatelessWidget {
               // set my location
               InkWell(
                 onTap: () {
-                  var alterDialog = AlertDialog(
-                    title: Column(
-                      children: [
-                        Text('Change my Company Location'),
-                        Text('Avaiable for Company'),
-                        // Text('\n${Constants.firebaseAuth.currentUser.email}'),
-                      ],
-                    ),
-                    actions: [
-                      FlatButton(
-                        onPressed: null,
-                        child: Text("Change Location from Map"),
-                      ),
-                    ],
-                  );
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return alterDialog;
+                        return AlertDialog(
+                          title: Column(
+                            children: [
+                              Text('Change my Company Location'),
+                              Text('Avaiable for Company'),
+                              // Text('\n${Constants.firebaseAuth.currentUser.email}'),
+                            ],
+                          ),
+                          actions: [
+                            FlatButton(
+                              onPressed: null,
+                              child: Text("Change Location from Map"),
+                            ),
+                          ],
+                        );
                       });
 
                   ///////////////////////////////////////////////////
@@ -216,27 +220,11 @@ class Setting extends StatelessWidget {
               // Change main business image
               InkWell(
                 onTap: () {
-                  var alterDialog = AlertDialog(
-                    title: Column(
-                      children: [
-                        Text('Change Company Logo'),
-                        Text('Avaiable for Company'),
-                        // Text('\n${Constants.firebaseAuth.currentUser.email}'),
-                      ],
-                    ),
-                    actions: [
-                      FlatButton(
-                        onPressed: null,
-                        child: Text("Change Logo from Gallery"),
-                      ),
-                    ],
-                  );
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return alterDialog;
-                      });
-
+                  ///////////////////////////////////////////////////
+                  Navigator.of(context).push(PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => UploadImage(
+                            title: "Change Business Logo",
+                          )));
                   ///////////////////////////////////////////////////
                   ///
                 },
@@ -268,27 +256,11 @@ class Setting extends StatelessWidget {
               // Change display image
               InkWell(
                 onTap: () {
-                  var alterDialog = AlertDialog(
-                    title: Column(
-                      children: [
-                        Text('Change Company Logo'),
-                        Text('Avaiable for Company'),
-                        // Text('\n${Constants.firebaseAuth.currentUser.email}'),
-                      ],
-                    ),
-                    actions: [
-                      FlatButton(
-                        onPressed: null,
-                        child: Text("Change Logo from Gallery"),
-                      ),
-                    ],
-                  );
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return alterDialog;
-                      });
-
+                  Navigator.of(context).push(PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => UploadImage(
+                            title: "Change Display Image",
+                            optionWhere: 2,
+                          )));
                   ///////////////////////////////////////////////////
                   ///
                 },
@@ -320,26 +292,11 @@ class Setting extends StatelessWidget {
               // Change Business Monthly Theme
               InkWell(
                 onTap: () {
-                  var alterDialog = AlertDialog(
-                    title: Column(
-                      children: [
-                        Text('Change Company Logo'),
-                        Text('Avaiable for Company'),
-                        // Text('\n${Constants.firebaseAuth.currentUser.email}'),
-                      ],
-                    ),
-                    actions: [
-                      FlatButton(
-                        onPressed: null,
-                        child: Text("Change Logo from Gallery"),
-                      ),
-                    ],
-                  );
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return alterDialog;
-                      });
+                  Navigator.of(context).push(PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => UploadImage(
+                            title: "Change Monthly Theme",
+                            optionWhere: 2,
+                          )));
 
                   ///////////////////////////////////////////////////
                   ///

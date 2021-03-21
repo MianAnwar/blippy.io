@@ -9,15 +9,14 @@ class Product {
   String uom;
   String stock;
 
-  String category;
-  String subCat;
-  dynamic attributes;
-
   String aisle;
   String shelf;
   String section;
   String place;
-  String address;
+
+  String category;
+  String subCat;
+  dynamic attributes;
 
 //
   String imageURL;
@@ -26,13 +25,15 @@ class Product {
   String flaggedBy;
   String flaggedReason;
 
-  String sale;
+  String sale; // YES/NO
   //
   String startSale;
   String endSale;
 
-  String topDeal;
   String featured;
+  String newTag;
+
+  String dealsss;
 
   int retToken;
 
@@ -54,18 +55,21 @@ class Product {
       this.shelf = '',
       this.section = '',
       this.place = '',
-      this.address = '',
       //
       this.imageURL = '',
       //
       this.flagged = "NO",
       this.flaggedBy = "N/A",
       this.flaggedReason = "N/A",
+      //
       this.sale = '',
       this.startSale = '',
       this.endSale = '',
-      this.topDeal = '',
+      //
+      this.newTag = '',
       this.featured = '',
+      //
+      this.dealsss = '',
       //
       this.retToken});
 
@@ -88,7 +92,6 @@ class Product {
     map['shelf'] = this.shelf;
     map['section'] = this.section;
     map['place'] = this.place;
-    map['address'] = this.address;
 //
     map['imageURL'] = this.imageURL;
 //
@@ -100,8 +103,10 @@ class Product {
     map['startSale'] = this.startSale;
     map['endSale'] = this.endSale;
 //
-    map['topDeal'] = this.topDeal;
+    map['newTag'] = this.newTag;
     map['featured'] = this.featured;
+//
+    map['dealsss'] = this.dealsss;
 
     return map;
   }
@@ -124,7 +129,6 @@ class Product {
     this.shelf = map['shelf'];
     this.section = map['section'];
     this.place = map['place'];
-    this.address = map['address'];
 //
     this.imageURL = map['imageURL'];
 //
@@ -136,7 +140,9 @@ class Product {
     this.startSale = map['startSale'];
     this.endSale = map['endSale'];
 //
-    this.topDeal = map['topDeal'];
+    this.newTag = map['newTag'];
     this.featured = map['featured'];
+//
+    this.dealsss = map['dealsss'];
   }
 }

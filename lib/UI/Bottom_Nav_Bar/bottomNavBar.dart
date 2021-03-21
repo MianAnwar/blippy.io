@@ -56,13 +56,15 @@ class _BottomNavBarState extends State<BottomNavBar> {
       floatingActionButton: Container(
         // color: Colors.amber,
         margin: EdgeInsets.only(top: 35),
-        child: FloatingActionButton(
+        child: FloatingActionButton.extended(
           backgroundColor: Constants.basicColor.withOpacity(0.9),
           onPressed: () {
             Navigator.of(context).push(PageRouteBuilder(
-                pageBuilder: (_, __, ___) => BusinessShopBtmNavBar()));
+                pageBuilder: (_, __, ___) => BusinessShopBtmNavBar(
+                      profile: widget.profile,
+                    )));
           },
-          child: Text('Shop'),
+          label: Text('ShopFront'),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -85,7 +87,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 });
               }),
           BottomNavigationDotBarItem(
-              icon: (Icons.qr_code_scanner),
+              icon: (Icons.integration_instructions),
               onTap: () {
                 SystemChrome.setSystemUIOverlayStyle(
                     SystemUiOverlayStyle.light.copyWith(
@@ -111,7 +113,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             },
           ),
           BottomNavigationDotBarItem(
-              icon: Icons.star_rate_outlined,
+              icon: Icons.receipt,
               onTap: () {
                 setState(() {
                   SystemChrome.setSystemUIOverlayStyle(
